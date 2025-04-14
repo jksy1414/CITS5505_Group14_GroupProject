@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/results.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2>📊 Preview Fitness Graph</h2>
+
+  <label>Select Chart Type:</label><br>
+  <select disabled>
+    <option>Line Chart</option>
+    <option>Bar Chart</option>
+    <option>Pie Chart</option>
+  </select><br><br>
+
+  <div style="width: 100%; max-width: 500px; margin: auto;">
+    <img src="https://via.placeholder.com/500x300?text=Graph+Preview" alt="Chart Placeholder" style="width: 100%;">
+  </div><br>
+
+  <button class="btn" disabled>Download Graph</button>
+  <button class="btn" disabled>Share Publicly</button>
+</div>
+{% endblock %}
