@@ -1,49 +1,55 @@
-/* analyze.css */
+/* analyze.css - updated for bug and dirt theme */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4faff;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .container {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 30px;
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  h2 {
-    color: #0a3d62;
-    margin-bottom: 20px;
-  }
-  
-  label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 10px;
-  }
-  
-  input[type="file"] {
-    padding: 10px;
-    margin-bottom: 20px;
-    width: 100%;
-  }
-  
-  input[type="checkbox"] {
-    margin-right: 8px;
-  }
-  
-  button {
-    background-color: #0a3d62;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    font-size: 14px;
-    border-radius: 5px;
-    cursor: not-allowed; /* because it's static */
-  }
-  
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  background: linear-gradient(to bottom, #d2b48c 0%, #fff8dc 100%); /* Dirt to light */
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 30px;
+  background: #fff8dc;
+  border: 2px dashed #8b4513; /* Brown dashed border (dirt feel) */
+  border-radius: 12px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  position: relative;
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/8/89/Cute_ladybug_cartoon.png');
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  background-size: 80px;
+}
+
+h2 {
+  color: #6b8e23; /* Olive green */
+  margin-bottom: 20px;
+}
+
+label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+  color: #8b4513;
+}
+
+input[type="file"],
+input[type="checkbox"] {
+  margin-bottom: 15px;
+}
+
+button {
+  background-color: #6b8e23;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: not-allowed;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #556b2f;
+}
