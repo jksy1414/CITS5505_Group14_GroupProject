@@ -1,0 +1,19 @@
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# Ignore SQLite database files (optional if using SQLAlchemy)
+*.db
+
+# Ignore environment files
+.env
+
+# Ignore VSCode settings (optional)
+.vscode/

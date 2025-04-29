@@ -46,7 +46,7 @@ header .actions .signup {
 
 .hero {
     text-align: center;
-    background: url('image01.jpeg') no-repeat center center/cover;
+    background: url('/static/images/image01.jpeg') no-repeat center center/cover;
     color: rgb(244, 112, 17);
     padding: 100px 20px;
 }
@@ -165,7 +165,7 @@ header .actions .signup {
 .community {
     text-align: center;
     margin: 50px 20px;
-    background: url('images.jpeg') no-repeat center center/cover;
+    background: url('/static/images/Cornifer.webp') no-repeat center center/cover; /* previously images.jpeg ; not too sure about what this image was meant to be */
     background-color: orange;
     color: rgb(9, 9, 9);
     padding: 20px;

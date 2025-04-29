@@ -1,51 +1,61 @@
-/* results.css */
+/* results.css - updated for bug and dirt theme */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #fffaf5;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .container {
-    max-width: 700px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    text-align: center;
-  }
-  
-  h2 {
-    color: #5f27cd;
-    margin-bottom: 25px;
-  }
-  
-  select {
-    padding: 10px;
-    width: 50%;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    margin-bottom: 20px;
-  }
-  
-  img {
-    border: 1px dashed #ccc;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    max-width: 100%;
-  }
-  
-  button {
-    background-color: #5f27cd;
-    color: white;
-    border: none;
-    padding: 12px 18px;
-    margin: 5px;
-    font-size: 14px;
-    border-radius: 5px;
-    cursor: not-allowed;
-  }
-  
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  background: linear-gradient(to top, #d2b48c 0%, #fff8dc 100%);
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 700px;
+  margin: 50px auto;
+  padding: 30px;
+  background: #fff8dc;
+  border: 2px dashed #6b4226; /* darker brown */
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  position: relative;
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/e9/Cute_bumblebee_cartoon.png');
+  background-repeat: no-repeat;
+  background-position: bottom left;
+  background-size: 80px;
+}
+
+h2 {
+  color: #8fbc8f; /* Light green */
+  margin-bottom: 20px;
+}
+
+select {
+  padding: 12px;
+  width: 50%;
+  font-size: 16px;
+  border: 1px solid #8b4513;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+img {
+  border: 2px dashed #8b4513;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  max-width: 100%;
+  background-color: #ffffffaa;
+}
+
+button {
+  background-color: #8fbc8f;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  margin: 5px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: not-allowed;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #6b8e23;
+}

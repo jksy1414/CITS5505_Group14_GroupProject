@@ -1,0 +1,28 @@
+/* Global style */
+body {
+    /* Text */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #f3cc98;
+    /* Background */
+    background-color: #261c09;             /* Dark brown color */
+    /* dirt or soil (underground) background texture options */
+      /* black-felt.png or redox-02.png #292011 or wall-04-light.png #292011 */
+    background-image: url('wall-4-light.png'); 
+    background-repeat: repeat;               /* Repeats the image */;
+    background-size: auto;                   /* Scales image to cover entire screen */
+    background-blend-mode: multiply;         /* Repeating texture */
+    margin: 0;                               /* Removes default body margin */
+}  
+
+
+/* Header */
+header {
+  background-color: #2e610d;
+  /* grass (above-ground) header texture options */
+  /* pool-table.png or football-no-lines.png #  */
+  background-image: url("https://www.transparenttextures.com/patterns/football-no-lines.png");
+  background-size: cover;
+  background-blend-mode: multiply;
+  box-shadow: 0 4px 8px rgba(30, 57, 1, 0.4);
+}
+
