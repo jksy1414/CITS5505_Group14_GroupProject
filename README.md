@@ -16,8 +16,8 @@
 
 
 ## Task assigning (First deliverable)
-- 1 person do welcome and home page
-- 1 person account page plus registration/login
+- 1 person do welcome and home page (Tharuki) 
+- 1 person account page plus registration/login (Qidi)
 - 2 persons doing input and output plus analysis (John & Maryam)
 
 
