@@ -29,7 +29,12 @@
 
             <div class="mb-3">
                 <label class="form-lable">password</label>
-                <input type="password" class="form-control" name="password" required>
+                <input type="password" id="new_password" class="form-control" name="password" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">confirm password</label>
+                <input type="password" id="confirm_password" class="form-control" name="confirm_password" required>
             </div>
 
             <div class="mb-3">
@@ -46,12 +51,17 @@
                 </select>
             </div>
 
+            <div id="error-message" style="color: red; margin-top: 10px;"></div>
+
+            <div id="strength-indicator" style="margin-top: 10px; font-weight: bold;"></div>
+
             <!-- submit button-->
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" id="submitBtn" class="btn btn-primary">Submit</button>
         </form>
 
         <!--lead to login-->
         <p class="mt-3">Already enrolled?<a href="{{ url_for('auth.login') }}">go to login</a></p>
     </div>
+    <script src="{{ url_for('static',filename='js/password_validate.js') }}"></script>
 </body>
 </html>
