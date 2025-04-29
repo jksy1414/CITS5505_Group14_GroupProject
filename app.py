@@ -2,16 +2,34 @@ from flask import Flask, render_template
 from Routes.auth_routes import auth
 from models import db, User
 from flask_login import LoginManager
+from extensions import db, mail
+import os
+from dotenv import load_dotenv
+
+#load env file
+load_dotenv()
 
 app = Flask(__name__)
+
+
+
 # protect cookie/session
 app.config['SECRET_KEY'] = 'your-secret-key'
 # save sqlite db location 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
-# bind SQLAlchemy and Flask
+
+#configurate flask email for resetting passwords
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
+app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT'))
+app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS') == 'True'
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+
+# bind SQLAlchemy, mail with Flask
 db.init_app(app)
+mail.init_app(app)
 
-
+#Login management
 login_manager = LoginManager()
 #if the status is not login, web will transfer to /login
 login_manager.login_view = 'auth.login'
@@ -28,7 +46,6 @@ app.register_blueprint(auth)
 #create db tables
 with app.app_context():
     db.create_all()
-
 
 # Route for input page
 @app.route('/analyze')
