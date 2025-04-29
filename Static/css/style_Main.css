@@ -7,7 +7,7 @@ body {
     background-color: #292011;
     /* dirt or soil (underground) background texture options */
       /* black-felt.png or redox-02.png #292011 or wall-04-light.png #292011 */
-    background-image: url('https://www.transparenttextures.com/patterns/wall-04-light.png'); 
+    background-image: url('https://www.transparenttextures.com/patterns/wall-4-light.png'); 
     background-size: cover;                  /* Scales image to cover entire screen */
     background-blend-mode: multiply;         /* Repeating texture */
     background-position: center center;      /* Centers the image */
