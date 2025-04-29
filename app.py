@@ -29,7 +29,11 @@ app.register_blueprint(auth)
 with app.app_context():
     db.create_all()
 
-
+# Route for home page
+@app.route('/')
+def home():
+    return render_template('home.html')
+    
 # Route for input page
 @app.route('/analyze')
 def analyze():
