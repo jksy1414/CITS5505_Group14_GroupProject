@@ -2,12 +2,12 @@
 body {
     /* Text */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #2c2c2c;
+    color: #f3cc98;
     /* Background */
     background-color: #261c09;             /* Dark brown color */
     /* dirt or soil (underground) background texture options */
       /* black-felt.png or redox-02.png #292011 or wall-04-light.png #292011 */
-    background-image: url('https://www.transparenttextures.com/patterns/wall-4-light.png'); 
+    background-image: url('wall-4-light.png'); 
     background-repeat: repeat;               /* Repeats the image */;
     background-size: auto;                   /* Scales image to cover entire screen */
     background-blend-mode: multiply;         /* Repeating texture */
