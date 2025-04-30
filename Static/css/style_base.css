@@ -1,0 +1,70 @@
+/* Global style */
+body {
+    /* Text */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #f3cc98;
+    /* Background */
+    background-color: #261c09;             /* Dark brown color */
+    /* dirt or soil (underground) background texture options */
+      /* black-felt.png or redox-02.png #292011 or wall-04-light.png #292011 */
+    background-image: url('wall-4-light.png'); 
+    background-repeat: repeat;               /* Repeats the image */;
+    background-size: auto;                   /* Scales image to cover entire screen */
+    background-blend-mode: multiply;         /* Repeating texture */
+    margin: 0;                               /* Removes default body margin */
+}  
+
+
+/* Header */
+header {
+  background: linear-gradient(to bottom, #3b2a05 0%, #412e05 100%);
+  box-shadow: 0 4px 8px rgba(30, 57, 1, 0.4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* from home_styles sheet */
+header .logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: orange;
+}
+
+header nav a {
+  margin: 0 15px;
+  text-decoration: none;
+  color: rgb(250, 183, 58);
+}
+
+header .actions button {
+  margin-left: 10px;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+header .actions .login {
+  background-color: rgb(253, 228, 181);
+  color: black;
+}
+
+header .actions .signup {
+  background-color: rgb(199, 129, 0);
+  color: white;
+}
+/* end from home_style */
+
+
+/* footer */
+footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  margin-top: 20px;
+}

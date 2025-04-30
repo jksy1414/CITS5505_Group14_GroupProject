@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exercise Tracking System: FitBug</title>
     
-    <!-- Load default or page-specific CSS --> 
-    <!--<link rel="stylesheet" href="{{ url_for('static', filename='css/style_Main.css') }}">-->
+    <!-- Load global and then page-specific CSS stylesheet --> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_base.css') }}">
     {% block styles %}
-    <!--  Allow each page to load int heir own style sheet  -->
+    <!--  Page-specific style sheet  -->
     {% endblock %}
 </head>
 
@@ -17,7 +17,7 @@
         <div class="logo">FitBug</div>
         <nav>
             {% block navbar %}
-            
+            <!--  page specific navigation (self-reference via '#')  -->
             {% endblock %}
         </nav>
         <div class="actions">
@@ -42,7 +42,5 @@
   </footer>
 
 </body>
-
-
 
 </html>
