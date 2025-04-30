@@ -1,105 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exercise Tracking System</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/home_style.css') }}">
-</head>
-<body>
-    <header>
-        <div class="logo">FitBug</div>
-        <nav>
-            <a href="#">Home</a>
-            <a href="{{ url_for('analyze') }}">Data Analysis</a>
-            <a href="Templates/base.html">Account</a>
-        </nav>
-        <div class="actions">
-            <a href="{{ url_for('auth.login') }}">
-                <button class="login">Login</button>
-            </a>
-            <a href="{{ url_for('auth.register') }}">
-                <button class="signup">Sign Up</button>
-            </a>
-        </div>
-    </header>
-    <section class="hero">
-        <h1>Welcome to Exercise Tracking System</h1>
-        <p>Track and share activities...
-            <br>Analyse your progress. 
-            <br>Stay motivated.</p>
-    </section>
-    <section class="features">
-        <h2>More than an Exercise Tracking System...</h2>
-        <div class="flip-card-container">
-            <div class="flip-card">
-                <div class="flip-card-inner">
-                    <div class="flip-card-front">
-                        <img src="{{ url_for('static', filename='images/image2.jpeg') }}" alt="Feature 1">
-                        <h3>Analyse Your Progress</h3>
-                    </div>
-                    <div class="flip-card-back">
-                        <p>See a detailed breakdown of each exercise.</p>
-                    </div>
+{% extends "based.html" %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home_style.css') }}">
+{% endblock %}
+
+{% block navbar %}
+<a href="#">Home</a>
+<a href="{{ url_for('analyze') }}">Data Analysis</a>
+<a href="Templates/base.html">???</a>
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Welcome to FitBug</h1>
+    <!--<p>Track and share activities...
+    <br>Analyse your progress. 
+    <br>Stay motivated.</p>-->
+</section>
+<section class="features">
+    <h2>More than an Exercise Tracking System...</h2>
+    <div class="flip-card-container">
+        <div class="flip-card">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <img src="{{ url_for('static', filename='images/image2.jpeg') }}" alt="Feature 1">
+                    <h3>Analyse Your Progress</h3>
                 </div>
-            </div>
-            <div class="flip-card">
-                <div class="flip-card-inner">
-                    <div class="flip-card-front">
-                        <img src="{{ url_for('static', filename='images/image3.jpeg') }}" alt="Feature 2">
-                        <h3>Share your Achievements</h3>
-                    </div>
-                    <div class="flip-card-back">
-                        <p>Get encouragement from friends and fellow runners.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="flip-card">
-                <div class="flip-card-inner">
-                    <div class="flip-card-front">
-                        <img src="{{ url_for('static', filename='images/image4.jpeg') }}" alt="Feature 3">
-                        <h3>Plan your exercises</h3>
-                    </div>
-                    <div class="flip-card-back">
-                        <p>Browse popular exercises or plan your own.</p>
-                    </div>
+                <div class="flip-card-back">
+                    <p>See a detailed breakdown of each exercise.</p>
                 </div>
             </div>
         </div>
-    </section>
-    <section class="wellness">
-        <h2>Take your Wellness to the next level</h2>
-        <div class="wellness-content">
-            <div class="wellness-text">
-                <p>To elevate your wellness, focus on a holistic approach, including physical, mental, and spiritual aspects. This means prioritizing healthy habits, engaging in activities you enjoy, and finding time for self-care and relaxation. Consider incorporating practices like meditation, regular exercise, healthy eating, and adequate sleep. Remember to consult with your healthcare provider before making significant changes to your lifestyle.</p>
-                <button class="signup-now">Signup Now</button>
-                <button class="login-now">Login</button>
-            </div>
-            <img src="{{ url_for('static', filename='images/image5.jpeg') }}" alt="Wellness">
-        </div>
-    </section>
-    <section class="wellness-goals">
-        <h2>Take your Wellness to the next level</h2>
-        <div class="goal-cards">
-            <div class="goal-card">
-                <img src="{{ url_for('static', filename='images/image6.jpeg') }}" alt="Goal 2">
-                <p>Make working out more fun and rewarding with challenges and the support of your friends.</p>
+        <div class="flip-card">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <img src="{{ url_for('static', filename='images/image3.jpeg') }}" alt="Feature 2">
+                    <h3>Share your Achievements</h3>
+                </div>
+                <div class="flip-card-back">
+                    <p>Get encouragement from friends and fellow runners.</p>
+                </div>
             </div>
         </div>
-    </section>
-    <section class="community">
-        <h2>Member community</h2>
-        <div class="community-feedback">
-            <div class="feedback-card">“This is an Amazing website”<br><span>Nathan</span><br><span>best fit</span></div>
-            <div class="feedback-card">“A fantastic bit of work”<br><span>paul</span><br><span>IT manager</span></div>
-            <div class="feedback-card">“A genuinely good work.best for all the busy people”<br><span>Natasha</span><br><span>work Mom</span></div>
+        <div class="flip-card">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <img src="{{ url_for('static', filename='images/image4.jpeg') }}" alt="Feature 3">
+                    <h3>Plan your exercises</h3>
+                </div>
+                <div class="flip-card-back">
+                    <p>Browse popular exercises or plan your own.</p>
+                </div>
+            </div>
         </div>
-       
-    </section>
-    
-    <footer>
-        <p>&copy; 2025 Exercise Tracking System. All Rights Reserved.</p>
-        <p>Contact us : 0432455092</p>
-    </footer>
-</body>
-</html>
+    </div>
+</section>
+<section class="wellness">
+    <h2>Take your Wellness to the next level</h2>
+    <div class="wellness-content">
+        <div class="wellness-text">
+            <p>To elevate your wellness, focus on a holistic approach, including physical, mental, and spiritual aspects. This means prioritizing healthy habits, engaging in activities you enjoy, and finding time for self-care and relaxation. Consider incorporating practices like meditation, regular exercise, healthy eating, and adequate sleep. Remember to consult with your healthcare provider before making significant changes to your lifestyle.</p>
+            <button class="signup-now">Signup Now</button>
+            <button class="login-now">Login</button>
+        </div>
+        <img src="{{ url_for('static', filename='images/image5.jpeg') }}" alt="Wellness">
+    </div>
+</section>
+
+<section class="wellness-goals">
+    <h2>Take your Wellness to the next level</h2>
+    <div class="goal-cards">
+        <div class="goal-card">
+            <img src="{{ url_for('static', filename='images/image6.jpeg') }}" alt="Goal 2">
+            <p>Make working out more fun and rewarding with challenges and the support of your friends.</p>
+        </div>
+    </div>
+</section>
+
+<section class="community">
+    <h2>Member community</h2>
+    <div class="community-feedback">
+        <div class="feedback-card">“This is an Amazing website”<br><span>Nathan</span><br><span>best fit</span></div>
+        <div class="feedback-card">“A fantastic bit of work”<br><span>paul</span><br><span>IT manager</span></div>
+        <div class="feedback-card">“A genuinely good work.best for all the busy people”<br><span>Natasha</span><br><span>work Mom</span></div>
+    </div>   
+</section>
+{% endblock %}
