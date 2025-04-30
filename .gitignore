@@ -17,3 +17,6 @@ env/
 
 # Ignore VSCode settings (optional)
 .vscode/
+
+# Ignore mac automatic generate files
+.DS_Store
