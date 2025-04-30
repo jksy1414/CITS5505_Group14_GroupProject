@@ -74,9 +74,19 @@ body {
   animation: floatBug 3s ease-in-out infinite;  /* ✅ This makes it float */
 }
 
+/* 🌀 When cursor hovers near (on image), rotate 180° */
+.bug-img:hover {
+  transform: rotate(180deg) scale(1.2); /* Rotate and slightly enlarge */
+}
+
 /* Rotate on hover */
 .bug-img:hover {
   transform: rotate(15deg) scale(1.2);
+}
+
+.bug-img:hover {
+  animation: none; /* Disable float while rotating */
+  transform: rotate(180deg) scale(1.2);
 }
 
 @keyframes floatBug {
