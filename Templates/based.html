@@ -4,22 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exercise Tracking System: FitBug</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/home_style.css') }}">
+    
+    <!-- Load global and then page-specific CSS stylesheet --> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_base.css') }}">
+    {% block styles %}
+    <!--  Page-specific style sheet  -->
+    {% endblock %}
 </head>
+
 <body>
     <header>
         <div class="logo">FitBug</div>
         <nav>
-            <a href="#">Home</a>
-            <a href="{{ url_for('analyze') }}">Data Analysis</a>
-            <a href="Templates/base.html">Account</a>
+            {% block navbar %}
+            <!--  page specific navigation (self-reference via '#')  -->
+            {% endblock %}
         </nav>
         <div class="actions">
-            <a href="Templates/login.html">
+            <a href="{{ url_for('auth.login') }}">
                 <button class="login">Login</button>
             </a>
-            <a href="Templates/register.html">
+            <a href="{{ url_for('auth.register') }}">
                 <button class="signup">Sign Up</button>
             </a>
         </div>
     </header>
+
+      <!-- Main content area -->
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer style="text-align: center; margin-top: 50px;">
+    <p>&copy; 2025 CITS5505 Group 14 – Fitness Tracker Project</p>
+  </footer>
+
+</body>
+
+</html>

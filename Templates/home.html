@@ -15,10 +15,10 @@
             <a href="Templates/base.html">Account</a>
         </nav>
         <div class="actions">
-            <a href="Templates/login.html">
+            <a href="{{ url_for('auth.login') }}">
                 <button class="login">Login</button>
             </a>
-            <a href="Templates/register.html">
+            <a href="{{ url_for('auth.register') }}">
                 <button class="signup">Sign Up</button>
             </a>
         </div>
