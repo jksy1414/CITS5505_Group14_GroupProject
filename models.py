@@ -8,7 +8,11 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash= db.Column(db.String(128), nullable= False)
-    role = db.Column(db.String(10), nullable= False) #'student' or 'teacher'
+    height = db.Column(db.Integer)
+    weight = db.Column(db.Integer)
+    age = db.Column(db.Integer)
+    avatar = db.Column(db.String(255), nullable=True)
+
 
     def __repr__(self):
         return f'<User {self.username}>'
