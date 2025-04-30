@@ -1,11 +1,4 @@
 /* results.css - updated for bug and dirt theme */
-body {
-  font-family: 'Comic Sans MS', cursive, sans-serif;
-  background: linear-gradient(to top, #d2b48c 0%, #fff8dc 100%);
-  margin: 0;
-  padding: 0;
-}
-
 .container {
   max-width: 700px;
   margin: 50px auto;
@@ -16,10 +9,10 @@ body {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   text-align: center;
   position: relative;
-  background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/e9/Cute_bumblebee_cartoon.png');
+  background-image: url('/static/images/Cornifer.webp');
   background-repeat: no-repeat;
   background-position: bottom left;
-  background-size: 80px;
+  background-size: 200px;
 }
 
 h2 {

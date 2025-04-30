@@ -1,11 +1,4 @@
 /* analyze.css - updated for bug and dirt theme */
-body {
-  font-family: 'Comic Sans MS', cursive, sans-serif;
-  background: linear-gradient(to bottom, #d2b48c 0%, #fff8dc 100%); /* Dirt to light */
-  margin: 0;
-  padding: 0;
-}
-
 .container {
   max-width: 600px;
   margin: 50px auto;

@@ -46,4 +46,7 @@
 
 
 ## References
-Background textures: https://www.transparenttextures.com/
+Background textures: https://www.transparenttextures.com/ (not used anywhere currently)
+
+Bug image: https://hollowknight.fandom.com/wiki/Hollow_Knight_Wiki
+- https://hollowknight.fandom.com/wiki/Cornifer?file=Cornifer.png
