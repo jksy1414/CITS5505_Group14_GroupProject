@@ -68,8 +68,21 @@ body {
 }
 
 .bug-img {
-  width: 100px;
+  width: 150px;   /* was 100px */
   height: auto;
+  transition: transform 0.3s ease;
+  animation: floatBug 3s ease-in-out infinite;  /* ✅ This makes it float */
+}
+
+/* Rotate on hover */
+.bug-img:hover {
+  transform: rotate(15deg) scale(1.2);
+}
+
+@keyframes floatBug {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
 }
 
 .checkbox-group {
