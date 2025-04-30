@@ -4,22 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exercise Tracking System: FitBug</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/home_style.css') }}">
+    
+    <!-- Load default or page-specific CSS --> 
+    <!--<link rel="stylesheet" href="{{ url_for('static', filename='css/style_Main.css') }}">-->
+    {% block styles %}
+    <!--  Allow each page to load int heir own style sheet  -->
+    {% endblock %}
 </head>
+
 <body>
     <header>
         <div class="logo">FitBug</div>
         <nav>
-            <a href="#">Home</a>
-            <a href="{{ url_for('analyze') }}">Data Analysis</a>
-            <a href="Templates/base.html">Account</a>
+            {% block navbar %}
+            
+            {% endblock %}
         </nav>
         <div class="actions">
-            <a href="Templates/login.html">
+            <a href="{{ url_for('auth.login') }}">
                 <button class="login">Login</button>
             </a>
-            <a href="Templates/register.html">
+            <a href="{{ url_for('auth.register') }}">
                 <button class="signup">Sign Up</button>
             </a>
         </div>
     </header>
+
+      <!-- Main content area -->
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer style="text-align: center; margin-top: 50px;">
+    <p>&copy; 2024 CITS5505 Group 14 – Fitness Tracker Project</p>
+  </footer>
+
+</body>
+
+
+
+</html>
