@@ -46,3 +46,41 @@ button {
 button:hover {
   background-color: #556b2f;
 }
+
+body {
+  background-color: #fff8dc;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+.main-heading {
+  text-align: center;
+  color: #6b8e23;
+  margin-top: 40px;
+  font-size: 28px;
+}
+
+.input-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  margin-top: 30px;
+}
+
+.bug-img {
+  width: 100px;
+  height: auto;
+}
+
+.checkbox-group {
+  text-align: left;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.checkbox-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #8b4513;
+}
