@@ -62,9 +62,8 @@ header .actions .signup {
 
 /* footer */
 footer {
-  background-color: #333;
-  color: white;
+  color: rgba(184, 121, 3, 0.842);
   text-align: center;
-  padding: 10px;
-  margin-top: 20px;
+  padding: 5px;
+  margin-top: 50px;
 }
