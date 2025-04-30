@@ -6,7 +6,8 @@
     <title>Exercise Tracking System: FitBug</title>
     
     <!-- Load global and then page-specific CSS stylesheet --> 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_base.css') }}">
+    <!--  Global style sheet  -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_base.css') }}"> 
     {% block styles %}
     <!--  Page-specific style sheet  -->
     {% endblock %}
