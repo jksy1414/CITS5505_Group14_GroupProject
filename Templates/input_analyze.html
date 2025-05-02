@@ -5,28 +5,39 @@
 {% endblock %}
 
 {% block navbar %}
-<a href="{{ url_for('home') }}">Home</a>
-<a href="#">Data Analysis</a>
-<a href="Templates/base.html">???</a>
+  <a href="{{ url_for('home') }}">Home</a>
+  <a href="{{ url_for('analyze') }}">Analyze</a>
+  <a href="{{ url_for('results') }}">Results</a>
 {% endblock %}
 
 {% block content %}
-<div class="container">
-  <h2>Upload Fitness Data</h2>
+<h2 class="main-heading">Upload Fitness Data</h2>
 
-  <form>
-    <label for="fileUpload">Choose CSV/Excel file:</label><br>
-    <input type="file" id="fileUpload" name="fitnessFile" disabled><br><br>
+<div class="input-wrapper">
+  <!-- Left Ladybug -->
+  <img src="{{ url_for('static', filename='images/ladybug_left.png') }}" class="bug-img left-bug" alt="Left Ladybug">
 
-    <label>Select Data Columns to Analyze:</label><br>
-    <input type="checkbox" disabled> Steps<br>
-    <input type="checkbox" disabled> Calories Burned<br>
-    <input type="checkbox" disabled> Workout Duration<br>
-    <input type="checkbox" disabled> Sleep Hours<br><br>
+  <!-- Center Form -->
+  <div class="container">
+    <form>
+      <label for="fileUpload">Choose CSV/Excel file:</label><br>
+      <input type="file" id="fileUpload" name="fitnessFile"><br><br>
 
-    <a href="{{ url_for('results') }}">
-      <button type="button" class="btn">Proceed to Graph</button>
-    </a>
-  </form>
+      <label>Select Data Columns to Analyze:</label><br>
+      <div class="checkbox-group">
+        <label><input type="checkbox"> Steps</label>
+        <label><input type="checkbox"> Calories Burned</label>
+        <label><input type="checkbox"> Workout Duration</label>
+        <label><input type="checkbox"> Sleep Hours</label>
+      </div><br>
+
+      <a href="{{ url_for('results') }}">
+        <button type="button" class="btn">Proceed to Graph</button>
+      </a>
+    </form>
+  </div>
+
+  <!-- Right Ladybug -->
+  <img src="{{ url_for('static', filename='images/ladybug_right.png') }}" class="bug-img right-bug" alt="Right Ladybug">
 </div>
 {% endblock %}

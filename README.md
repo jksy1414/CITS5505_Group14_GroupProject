@@ -27,6 +27,7 @@
 ### General
 - [ ] Use base.html page for all pages
 - [ ] Make theme/looks consistent
+
 ### home.html
 - [ ] Clean up flavour-text
 - [ ] Replace generic images with more fitting images
@@ -44,7 +45,8 @@
 - [ ] .
 ### .html
 - [ ] .
-
+### Low priority 
+- [ ] Make header a moving heatmap - dynamic 
 
 ## References
 Background textures: https://www.transparenttextures.com/ (not used anywhere currently)

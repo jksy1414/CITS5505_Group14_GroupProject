@@ -46,3 +46,64 @@ button {
 button:hover {
   background-color: #556b2f;
 }
+
+body {
+  background-color: #fff8dc;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+.main-heading {
+  text-align: center;
+  color: #6b8e23;
+  margin-top: 40px;
+  font-size: 28px;
+}
+
+.input-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  margin-top: 30px;
+}
+
+.bug-img {
+  width: 150px;   /* was 100px */
+  height: auto;
+  transition: transform 0.3s ease;
+  animation: floatBug 3s ease-in-out infinite;  /* ✅ This makes it float */
+}
+
+/* 🌀 When cursor hovers near (on image), rotate 180° */
+.bug-img:hover {
+  transform: rotate(180deg) scale(1.2); /* Rotate and slightly enlarge */
+}
+
+/* Rotate on hover */
+.bug-img:hover {
+  transform: rotate(15deg) scale(1.2);
+}
+
+.bug-img:hover {
+  animation: none; /* Disable float while rotating */
+  transform: rotate(180deg) scale(1.2);
+}
+
+@keyframes floatBug {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.checkbox-group {
+  text-align: left;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.checkbox-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #8b4513;
+}
