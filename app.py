@@ -6,6 +6,7 @@ from flask_login import LoginManager
 from extensions import db, mail
 import os
 from dotenv import load_dotenv
+from flask import flash
 
 #load env file
 load_dotenv()
@@ -59,38 +60,65 @@ def home():
 @app.route('/analyze', methods=['GET', 'POST'])
 def analyze():
     if request.method == 'POST':
+        # 1. Grab file + column selection from form
         file = request.files.get('fitnessFile')
         selected_columns = request.form.getlist('columns')
+        visibility = request.form.get('visibility')  # 📦 Share setting
 
-        if not file or not selected_columns:
-            return "Please upload a CSV and select at least one column.", 400
+        # 🧾 Show error if no file
+        if not file or file.filename == "":
+            flash("Please upload a CSV file.", "danger")
+            return redirect(url_for('analyze'))
 
+        # 🧾 Show error if no columns selected
+        if not selected_columns:
+            flash("Please select at least one column to analyze.", "danger")
+            return redirect(url_for('analyze'))
+
+        # 🧪 Try to read the CSV file
         try:
             df = pd.read_csv(file)
         except Exception as e:
-            return f"Error reading CSV: {e}", 500
+            flash("Error reading the CSV file. Please upload a valid .csv format.", "danger")
+            return redirect(url_for('analyze'))
 
-        try:
-            selected_data = df[selected_columns]
-        except KeyError:
-            return "Selected columns not found in the uploaded file.", 400
+        # 🧪 Check that selected columns exist
+        if not all(col in df.columns for col in selected_columns):
+            flash("Selected column(s) not found in the uploaded file. Please check your CSV format.", "danger")
+            return redirect(url_for('analyze'))
 
+        # ✅ Process data
+        selected_data = df[selected_columns]
         session['labels'] = list(selected_data.index)
         session['values'] = selected_data[selected_columns[0]].tolist()
         session['column_name'] = selected_columns[0]
+        session['visibility'] = visibility  # 📦 Save for result sharing
 
+        flash("Analysis successful! Proceed to view your chart.", "success")
         return redirect(url_for('results'))
 
     return render_template('input_analyze.html')
 
-# Route for output page
+
 @app.route('/results')
 def results():
     labels = session.get('labels', [])
     values = session.get('values', [])
     column_name = session.get('column_name', 'Your Fitness Data')
+    visibility = session.get('visibility', 'private')
 
-    return render_template('output_result.html', labels=labels, values=values, column_name=column_name)
+    return render_template('output_result.html',
+                           labels=labels,
+                           values=values,
+                           column_name=column_name,
+                           visibility=visibility)
+
+@app.route('/set_visibility', methods=['POST'])
+def set_visibility():
+    visibility = request.form.get('visibility')
+    session['visibility'] = visibility  # store in session
+    flash("Sharing option updated!", "success")
+    return redirect(url_for('results'))
 
 if __name__ == '__main__':
     app.run(debug=True)
