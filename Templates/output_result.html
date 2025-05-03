@@ -14,6 +14,8 @@
 <div class="container">
   <h2>Fitness Data Chart</h2>
 
+  <p><strong>Current Sharing Option:</strong> {{ visibility|capitalize }}</p>
+
   <!-- Chart type selector -->
   <label for="chartType">Select Chart Type:</label><br>
   <select id="chartType" onchange="renderChart()">
@@ -26,13 +28,22 @@
 
   <!-- Action buttons -->
   <button class="btn" onclick="downloadChart()">Download Graph</button>
-  <button class="btn" disabled>Share Publicly (Coming Soon)</button>
+
+  <!-- Sharing Option Form -->
+  <form method="POST" action="{{ url_for('set_visibility') }}" style="margin-top: 20px;">
+    <label for="visibility">Change Sharing Option:</label>
+    <select name="visibility">
+      <option value="private">Private (Only Me)</option>
+      <option value="public">Public (Everyone)</option>
+      <option value="friends">Friends Only</option>
+    </select>
+    <button type="submit" class="btn">Save Sharing Setting</button>
+  </form>
 </div>
 
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  // Data passed from Flask
   const labels = {{ labels|tojson }};
   const values = {{ values|tojson }};
   const columnName = "{{ column_name }}";
@@ -43,7 +54,6 @@
     const chartType = document.getElementById('chartType').value;
     const ctx = document.getElementById('fitnessChart').getContext('2d');
 
-    // Destroy previous chart if it exists
     if (chart) {
       chart.destroy();
     }
@@ -73,14 +83,6 @@
     });
   }
 
-  function downloadChart() {
-    const link = document.createElement('a');
-    link.download = `${columnName}_chart.png`;
-    link.href = document.getElementById('fitnessChart').toDataURL('image/png');
-    link.click();
-  }
-
-  // Auto render when page loads
   document.addEventListener("DOMContentLoaded", renderChart);
 </script>
 {% endblock %}
