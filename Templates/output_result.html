@@ -5,27 +5,82 @@
 {% endblock %}
 
 {% block navbar %}
-<a href="{{ url_for('home') }}">Home</a>
-<a href="{{ url_for('analyze') }}">Data Analysis</a>
-<a href="Templates/base.html">???</a>
+  <a href="{{ url_for('home') }}">Home</a>
+  <a href="{{ url_for('analyze') }}">Data Analysis</a>
+  <a href="{{ url_for('results') }}">Results</a>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-  <h2>Preview Fitness Graph</h2>
+  <h2>Fitness Data Chart</h2>
 
-  <label>Select Chart Type:</label><br>
-  <select disabled>
-    <option>Line Chart</option>
-    <option>Bar Chart</option>
-    <option>Pie Chart</option>
+  <!-- Chart type selector -->
+  <label for="chartType">Select Chart Type:</label><br>
+  <select id="chartType" onchange="renderChart()">
+    <option value="line">Line Chart</option>
+    <option value="bar">Bar Chart</option>
   </select><br><br>
 
-  <div style="width: 100%; max-width: 500px; margin: auto;">
-    <img src="{{ url_for('static', filename='images/bugchart.jpg') }}" alt="Chart Placeholder" style="width: 100%;">
-  </div><br>
+  <!-- Chart canvas -->
+  <canvas id="fitnessChart" style="width:100%; max-width:600px; margin:auto;"></canvas><br>
 
-  <button class="btn" disabled>Download Graph</button>
-  <button class="btn" disabled>Share Publicly</button>
+  <!-- Action buttons -->
+  <button class="btn" onclick="downloadChart()">Download Graph</button>
+  <button class="btn" disabled>Share Publicly (Coming Soon)</button>
 </div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Data passed from Flask
+  const labels = {{ labels|tojson }};
+  const values = {{ values|tojson }};
+  const columnName = "{{ column_name }}";
+
+  let chart;
+
+  function renderChart() {
+    const chartType = document.getElementById('chartType').value;
+    const ctx = document.getElementById('fitnessChart').getContext('2d');
+
+    // Destroy previous chart if it exists
+    if (chart) {
+      chart.destroy();
+    }
+
+    chart = new Chart(ctx, {
+      type: chartType,
+      data: {
+        labels: labels,
+        datasets: [{
+          label: columnName,
+          data: values,
+          borderWidth: 2,
+          fill: false,
+          borderColor: 'rgba(75, 192, 192, 1)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: true }
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  function downloadChart() {
+    const link = document.createElement('a');
+    link.download = `${columnName}_chart.png`;
+    link.href = document.getElementById('fitnessChart').toDataURL('image/png');
+    link.click();
+  }
+
+  // Auto render when page loads
+  document.addEventListener("DOMContentLoaded", renderChart);
+</script>
 {% endblock %}
