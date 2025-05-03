@@ -13,9 +13,18 @@
 {% block content %}
 <h2 class="main-heading">Upload Fitness Data</h2>
 
+<!-- 🔔 Flash message block -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+  {% endfor %}
+{% endwith %}
+
 <div class="input-wrapper">
+  <!-- Left Ladybug -->
   <img src="{{ url_for('static', filename='images/ladybug_left.png') }}" class="bug-img left-bug" alt="Left Ladybug">
 
+  <!-- Form Container -->
   <div class="container">
     <form method="POST" enctype="multipart/form-data" action="{{ url_for('analyze') }}">
       <label for="fileUpload">Choose CSV file:</label><br>
@@ -29,13 +38,23 @@
         <label><input type="checkbox" name="columns" value="Sleep Hours"> Sleep Hours</label>
       </div><br>
 
+      <!-- 📦 Visibility Dropdown -->
+      <label>Sharing Option:</label><br>
+      <select name="visibility" required>
+        <option value="private">Private (Only Me)</option>
+        <option value="public">Public (All Users)</option>
+        <option value="friends">Friends Only</option>
+      </select><br><br>
+
       <button type="submit" class="btn">Analyze Data</button>
     </form>
   </div>
 
+  <!-- Right Ladybug -->
   <img src="{{ url_for('static', filename='images/ladybug_right.png') }}" class="bug-img right-bug" alt="Right Ladybug">
 </div>
 
+<!-- 🧪 Client-side validation script -->
 <script>
 document.querySelector('form').addEventListener('submit', function(e) {
   const fileInput = document.getElementById('fileUpload');

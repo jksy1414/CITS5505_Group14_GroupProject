@@ -107,3 +107,26 @@ body {
   font-weight: bold;
   color: #8b4513;
 }
+
+/* ✅ Flash message styles (error, success) */
+.alert {
+  padding: 12px 20px;
+  margin: 20px auto;
+  width: 80%;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center;
+  font-family: 'Comic Sans MS', cursive;
+}
+
+.alert-danger {
+  background-color: #fdd;
+  color: #a94442;
+  border: 2px solid #a94442;
+}
+
+.alert-success {
+  background-color: #e6f9e6;
+  color: #3c763d;
+  border: 2px solid #3c763d;
+}
