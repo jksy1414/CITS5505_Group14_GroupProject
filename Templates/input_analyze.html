@@ -14,30 +14,40 @@
 <h2 class="main-heading">Upload Fitness Data</h2>
 
 <div class="input-wrapper">
-  <!-- Left Ladybug -->
   <img src="{{ url_for('static', filename='images/ladybug_left.png') }}" class="bug-img left-bug" alt="Left Ladybug">
 
-  <!-- Center Form -->
   <div class="container">
-    <form>
-      <label for="fileUpload">Choose CSV/Excel file:</label><br>
-      <input type="file" id="fileUpload" name="fitnessFile"><br><br>
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for('analyze') }}">
+      <label for="fileUpload">Choose CSV file:</label><br>
+      <input type="file" id="fileUpload" name="fitnessFile" accept=".csv" required><br><br>
 
       <label>Select Data Columns to Analyze:</label><br>
       <div class="checkbox-group">
-        <label><input type="checkbox"> Steps</label>
-        <label><input type="checkbox"> Calories Burned</label>
-        <label><input type="checkbox"> Workout Duration</label>
-        <label><input type="checkbox"> Sleep Hours</label>
+        <label><input type="checkbox" name="columns" value="Steps"> Steps</label>
+        <label><input type="checkbox" name="columns" value="Calories Burned"> Calories Burned</label>
+        <label><input type="checkbox" name="columns" value="Workout Duration"> Workout Duration</label>
+        <label><input type="checkbox" name="columns" value="Sleep Hours"> Sleep Hours</label>
       </div><br>
 
-      <a href="{{ url_for('results') }}">
-        <button type="button" class="btn">Proceed to Graph</button>
-      </a>
+      <button type="submit" class="btn">Analyze Data</button>
     </form>
   </div>
 
-  <!-- Right Ladybug -->
   <img src="{{ url_for('static', filename='images/ladybug_right.png') }}" class="bug-img right-bug" alt="Right Ladybug">
 </div>
+
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+  const fileInput = document.getElementById('fileUpload');
+  const checkboxes = document.querySelectorAll('input[name="columns"]:checked');
+
+  if (!fileInput.value) {
+    alert("Please select a CSV file.");
+    e.preventDefault();
+  } else if (checkboxes.length === 0) {
+    alert("Please select at least one data column to analyze.");
+    e.preventDefault();
+  }
+});
+</script>
 {% endblock %}
