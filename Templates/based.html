@@ -1,37 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exercise Tracking System: FitBug</title>
-    
-    <!-- Load global and then page-specific CSS stylesheet --> 
-    <!--  Global style sheet  -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_base.css') }}"> 
-    {% block styles %}
-    <!--  Page-specific style sheet  -->
-    {% endblock %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exercise Tracking System: FitBug</title>
+
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style_base.css') }}"> 
+  {% block styles %}
+  <!-- Page-specific CSS -->
+  {% endblock %}
 </head>
 
 <body>
-    <header>
-        <div class="logo">FitBug</div>
-        <nav>
-            {% block navbar %}
-            <!--  page specific navigation (self-reference via '#')  -->
-            {% endblock %}
-        </nav>
-        <div class="actions">
-            <a href="{{ url_for('auth.login') }}">
-                <button class="login">Login</button>
-            </a>
-            <a href="{{ url_for('auth.register') }}">
-                <button class="signup">Sign Up</button>
-            </a>
-        </div>
-    </header>
+  <header>
+    <div class="logo">FitBug</div>
+    <nav>
+      {% block navbar %}
+      <!-- Page-specific nav links -->
+      {% endblock %}
+    </nav>
+    <div class="actions">
+      <a href="{{ url_for('auth.login') }}">
+        <button class="login">Login</button>
+      </a>
+      <a href="{{ url_for('auth.register') }}">
+        <button class="signup">Sign Up</button>
+      </a>
+    </div>
+  </header>
 
-      <!-- Main content area -->
+  <!-- 🔔 Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flashes">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Main content -->
   <main>
     {% block content %}
     {% endblock %}
@@ -42,6 +52,7 @@
     <p>&copy; 2025 CITS5505 Group 14 – Fitness Tracker Project</p>
   </footer>
 
+  <!-- ✅ Page-specific scripts (e.g., Chart.js, form handlers) -->
+  {% block scripts %}{% endblock %}
 </body>
-
 </html>
