@@ -56,23 +56,15 @@ with app.app_context():
 def home():
     return render_template('home.html')
     
-# Route for input page
+# Route for input page (Step 1: Upload CSV)
 @app.route('/analyze', methods=['GET', 'POST'])
 def analyze():
     if request.method == 'POST':
-        # 1. Grab file + column selection from form
         file = request.files.get('fitnessFile')
-        selected_columns = request.form.getlist('columns')
-        visibility = request.form.get('visibility')  # 📦 Share setting
 
         # 🧾 Show error if no file
         if not file or file.filename == "":
             flash("Please upload a CSV file.", "danger")
-            return redirect(url_for('analyze'))
-
-        # 🧾 Show error if no columns selected
-        if not selected_columns:
-            flash("Please select at least one column to analyze.", "danger")
             return redirect(url_for('analyze'))
 
         # 🧪 Try to read the CSV file
@@ -82,22 +74,35 @@ def analyze():
             flash("Error reading the CSV file. Please upload a valid .csv format.", "danger")
             return redirect(url_for('analyze'))
 
-        # 🧪 Check that selected columns exist
-        if not all(col in df.columns for col in selected_columns):
-            flash("Selected column(s) not found in the uploaded file. Please check your CSV format.", "danger")
-            return redirect(url_for('analyze'))
+        # ✅ Save column names and data into session for next page
+        session['column_choices'] = df.columns.tolist()
+        session['csv_data'] = df.to_dict(orient='records')
 
-        # ✅ Process data
+        return redirect(url_for('select_columns'))
+
+    return render_template('input_analyze.html')
+
+@app.route('/select-columns', methods=['GET', 'POST'])
+def select_columns():
+    if request.method == 'POST':
+        selected_columns = request.form.getlist('columns')
+
+        if not selected_columns:
+            flash("Please select at least one column.", "danger")
+            return redirect(url_for('select_columns'))
+
+        import pandas as pd
+        df = pd.DataFrame(session['csv_data'])
         selected_data = df[selected_columns]
+
         session['labels'] = list(selected_data.index)
         session['values'] = selected_data[selected_columns[0]].tolist()
         session['column_name'] = selected_columns[0]
-        session['visibility'] = visibility  # 📦 Save for result sharing
 
-        flash("Analysis successful! Proceed to view your chart.", "success")
         return redirect(url_for('results'))
 
-    return render_template('input_analyze.html')
+    columns = session.get('column_choices', [])
+    return render_template('input_analyze_columns.html', columns=columns)
 
 
 @app.route('/results')

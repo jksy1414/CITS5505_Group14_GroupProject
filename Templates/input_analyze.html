@@ -1,64 +1,46 @@
 {% extends "based.html" %}
 
 {% block styles %}
+  <!-- 🧾 Link to custom CSS for styling this page -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style_input.css') }}">
 {% endblock %}
 
 {% block navbar %}
+  <!-- 🔗 Top navigation bar -->
   <a href="{{ url_for('home') }}">Home</a>
   <a href="{{ url_for('analyze') }}">Analyze</a>
   <a href="{{ url_for('results') }}">Results</a>
 {% endblock %}
 
 {% block content %}
+<!-- 🏷️ Page heading -->
 <h2 class="main-heading">Upload Fitness Data</h2>
 
-<!-- 🔔 Flash message block -->
+<!-- 🔔 Display flash messages like success/error -->
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% for category, message in messages %}
     <div class="alert alert-{{ category }}">{{ message }}</div>
   {% endfor %}
 {% endwith %}
 
+<!-- 🐞 Decorative bug-themed layout -->
 <div class="input-wrapper">
-  <!-- Left Ladybug -->
+
+  <!-- 🐞 Left ladybug image -->
   <img src="{{ url_for('static', filename='images/ladybug_left.png') }}" class="bug-img left-bug" alt="Left Ladybug">
 
-  <!-- Form Container -->
+  <!-- 📦 Form to upload CSV file (Step 1) -->
   <div class="container">
     <form method="POST" enctype="multipart/form-data" action="{{ url_for('analyze') }}">
       <label for="fileUpload">Choose CSV file:</label><br>
       <input type="file" id="fileUpload" name="fitnessFile" accept=".csv" required><br><br>
 
-      <label>Select Data Columns to Analyze:</label><br>
-      <div class="checkbox-group">
-        <label><input type="checkbox" name="columns" value="Steps"> Steps</label>
-        <label><input type="checkbox" name="columns" value="Calories Burned"> Calories Burned</label>
-        <label><input type="checkbox" name="columns" value="Workout Duration"> Workout Duration</label>
-        <label><input type="checkbox" name="columns" value="Sleep Hours"> Sleep Hours</label>
-      </div><br>
-
-      <button type="submit" class="btn">Analyze Data</button>
+      <!-- ▶️ Submit button -->
+      <button type="submit" class="btn">Upload & Continue</button>
     </form>
   </div>
 
-  <!-- Right Ladybug -->
+  <!-- 🐞 Right ladybug image -->
   <img src="{{ url_for('static', filename='images/ladybug_right.png') }}" class="bug-img right-bug" alt="Right Ladybug">
 </div>
-
-<!-- 🧪 Client-side validation script -->
-<script>
-document.querySelector('form').addEventListener('submit', function(e) {
-  const fileInput = document.getElementById('fileUpload');
-  const checkboxes = document.querySelectorAll('input[name="columns"]:checked');
-
-  if (!fileInput.value) {
-    alert("Please select a CSV file.");
-    e.preventDefault();
-  } else if (checkboxes.length === 0) {
-    alert("Please select at least one data column to analyze.");
-    e.preventDefault();
-  }
-});
-</script>
 {% endblock %}
