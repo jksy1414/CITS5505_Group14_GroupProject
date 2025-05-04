@@ -26,13 +26,21 @@
   <!-- 📦 Form to upload CSV file (Step 1) -->
   <div class="container">
     <form method="POST" enctype="multipart/form-data" action="{{ url_for('analyze') }}">
-      <label for="fileUpload">Choose CSV file:</label><br>
-      <input type="file" id="fileUpload" name="fitnessFile" accept=".csv" required><br><br>
-
+      <label for="fileUpload">Choose CSV file (UTF-8 only):</label><br>
+      <input type="file" id="fileUpload" name="fitnessFile" accept=".csv" required><br>
+  
+      <!-- 🟡 Clear and styled warning -->
+      <div class="alert alert-warning" style="margin-top: 10px;">
+        ⚠️ Only <strong>CSV files saved as UTF-8 encoding</strong> will be accepted.
+        <br>
+        In Excel, save your file as: <em>CSV UTF-8 (Comma delimited)</em>
+      </div><br>
+  
       <!-- ▶️ Submit button -->
       <button type="submit" class="btn">Upload & Continue</button>
     </form>
   </div>
+  
 
   <!-- 🐞 Right ladybug image -->
   <img src="{{ url_for('static', filename='images/ladybug_right.png') }}" class="bug-img right-bug" alt="Right Ladybug">

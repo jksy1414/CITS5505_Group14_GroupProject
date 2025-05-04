@@ -130,3 +130,13 @@ body {
   margin-top: -10px;
   margin-bottom: 15px;
 }
+
+.alert-warning {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 2px solid #ffeeba;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center;
+}
