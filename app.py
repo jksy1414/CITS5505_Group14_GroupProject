@@ -56,25 +56,33 @@ with app.app_context():
 def home():
     return render_template('home.html')
     
-# Route for input page (Step 1: Upload CSV)
+# Route for input page (Step 1: Upload CSV UTF-8 only)
 @app.route('/analyze', methods=['GET', 'POST'])
 def analyze():
     if request.method == 'POST':
         file = request.files.get('fitnessFile')
 
-        # 🧾 Show error if no file
+        # 🧾 Check for file presence
         if not file or file.filename == "":
             flash("Please upload a CSV file.", "danger")
             return redirect(url_for('analyze'))
 
-        # 🧪 Try to read the CSV file
-        try:
-            df = pd.read_csv(file)
-        except Exception as e:
-            flash("Error reading the CSV file. Please upload a valid .csv format.", "danger")
+        filename = file.filename.lower()
+
+        # 🚫 Reject non-CSV files
+        if not filename.endswith('.csv'):
+            flash("Only CSV files are allowed (save as UTF-8 encoded).", "danger")
             return redirect(url_for('analyze'))
 
-        # ✅ Save column names and data into session for next page
+        # 🧪 Try reading as UTF-8 encoded CSV
+        try:
+            df = pd.read_csv(file, encoding='utf-8-sig')  # 👈 UTF-8 CSV only
+            df.columns = [col.strip() for col in df.columns]  # 🧹 Clean headers
+        except Exception as e:
+            flash("Error reading the CSV file. Please ensure it is UTF-8 encoded.", "danger")
+            return redirect(url_for('analyze'))
+
+        # ✅ Store for next page
         session['column_choices'] = df.columns.tolist()
         session['csv_data'] = df.to_dict(orient='records')
 
@@ -82,8 +90,14 @@ def analyze():
 
     return render_template('input_analyze.html')
 
+
+# Route for column selection (Step 2: Pick columns to analyze)
 @app.route('/select-columns', methods=['GET', 'POST'])
 def select_columns():
+    if not session.get('column_choices'):  # 🔐 Prevent direct access
+        flash("Please upload a CSV file before selecting columns.", "danger")
+        return redirect(url_for('analyze'))
+
     if request.method == 'POST':
         selected_columns = request.form.getlist('columns')
 
