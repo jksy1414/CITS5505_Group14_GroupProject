@@ -69,7 +69,7 @@ def analyze():
 
         # 🧪 Try to read the CSV file
         try:
-            df = pd.read_csv(file)
+            df = pd.read_csv(file, encoding='utf-8-sig')
         except Exception as e:
             flash("Error reading the CSV file. Please upload a valid .csv format.", "danger")
             return redirect(url_for('analyze'))
