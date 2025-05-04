@@ -17,15 +17,15 @@
     <header>
         <div class="logo">FitBug</div>
         <nav>
-            {% block navbar %}
-            <!--  page specific navigation (self-reference via '#')  -->
-            {% endblock %}
+            <a href="/">Home</a>
+            <a href="/analyze">Data Analysis</a>
+            <a href="Templates/base.html">???</a>
         </nav>
         <div class="actions">
-            <a href="{{ url_for('auth.login') }}">
+            <a href="/login">
                 <button class="login">Login</button>
             </a>
-            <a href="{{ url_for('auth.register') }}">
+            <a href="/register">
                 <button class="signup">Sign Up</button>
             </a>
         </div>
