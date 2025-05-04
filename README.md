@@ -17,39 +17,33 @@
 5. Account page  (full implimentation with history low priority for now)
 
 
-## Task assigning (First deliverable)
-- 1 person do welcome and home page (Tharuki) 
-- 1 person account page plus registration/login (Qidi)
-- 2 persons doing input and output plus analysis (John & Maryam)
-
-
 ## To-do list
 ### General
 - [ ] Use base.html page for all pages
 - [ ] Make theme/looks consistent
-
 ### home.html
 - [ ] Clean up flavour-text
 - [ ] Replace generic images with more fitting images
 - [ ] Misplaced image (line 168 in home_style) 
-### account.html
-- [ ] .
-### login.html
-- [ ] .
 ### input_analyze.html
 - [done] Move heading outside of container (or some other means of emphasising heading)
 - [done] Fix alignment of data column selection text (checkboxes should be aligned)
 - [done] Add (dynamic?) images on the sides of the page to fill empty space
 - add in the function 
-### output_result.html
-- [ ] .
-### .html
-- [ ] .
 ### Low priority 
 - [ ] Make header a moving heatmap - dynamic 
 
 ## References
-Background textures: https://www.transparenttextures.com/ (not used anywhere currently)
+Home page: 
+- https://dribbble.com/shots/7884095-Fitness-Icons
+- https://hollowknight.fandom.com/wiki/Hollow_Knight_Kickstarter?file=Kickstarter_voice.png
+- https://hollowknight.fandom.com/wiki/Cornifer?file=Npc_mapper.png
+- https://hollowknight.fandom.com/wiki/Nailsmith?file=Nailsmith+2.png
 
-Bug image: https://hollowknight.fandom.com/wiki/Hollow_Knight_Wiki
+Data Input page:
 - https://hollowknight.fandom.com/wiki/Cornifer?file=Cornifer.png
+
+Data Output page:
+- https://hollowknight.fandom.com/wiki/Sheo?file=NailmasterSheo.png
+
+

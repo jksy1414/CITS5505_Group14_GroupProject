@@ -58,12 +58,12 @@ header nav a:hover {
 
 
 /* Login Sign up buttons */
-header .actions { /* button positioning (RHS) */
+.actions { /* button positioning (RHS) */
   justify-self: end;
   display: flex;
   gap: 0.45rem;
 }
-header .actions button { /* button specifications */
+.actions button { /* button specifications */
   font-family: 'Comic Sans MS', cursive, sans-serif; 
   font-size: large;
   font-weight: bold;
@@ -76,20 +76,20 @@ header .actions button { /* button specifications */
   cursor: pointer;
   transition: border 0.2s ease;
 }
-header .actions .login { /* login button */
+.actions .login { /* login button */
   background-color: rgb(253, 228, 181);
   color: black;
 }
-header .actions .signup { /* signup button */
+.actions .signup { /* signup button */
   background-color: rgb(199, 129, 0);
   color: whitesmoke;
 }
 /* highlight with border when hovered over */
-header .actions .login:hover { 
+.actions .login:hover { 
   border-bottom: 4px solid rgb(199, 129, 0);
   border-left: 3px solid rgb(199, 129, 0);
  }
- header .actions .signup:hover {
+ .actions .signup:hover {
   border-bottom: 4px solid rgb(253, 228, 181);
   border-left: 3px solid rgb(253, 228, 181);
  }

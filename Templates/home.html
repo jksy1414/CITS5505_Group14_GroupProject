@@ -1,23 +1,19 @@
 {% extends "based.html" %}
 
 {% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/home_style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style_home.css') }}">
 {% endblock %}
 
-<!--
-{% block navbar %}
-<a href="#">Home</a>
-<a href="{{ url_for('analyze') }}">Data Analysis</a>
-<a href="Templates/base.html">???</a>
-{% endblock %}
--->
 
 {% block content %}
-<section class="hero">
+<section class="banner">
+    <img 
+    src="{{ url_for('static', filename='images/flyingbug.png') }}" 
+    class="bug" 
+    alt="Blundering Oberlisk crawling"
+    >
     <h1>Welcome to FitBug</h1>
-    <!--<p>Track and share activities...
-    <br>Analyse your progress. 
-    <br>Stay motivated.</p>-->
+    <p>Your personal exercise tracking system</p>
 </section>
 <section class="features">
     <h2>More than an Exercise Tracking System...</h2>
@@ -25,8 +21,8 @@
         <div class="flip-card">
             <div class="flip-card-inner">
                 <div class="flip-card-front">
-                    <img src="{{ url_for('static', filename='images/image2.jpeg') }}" alt="Feature 1">
-                    <h3>Analyse Your Progress</h3>
+                    <img src="{{ url_for('static', filename='images/cornifer2.webp') }}" alt="Bug Scibing info">
+                    <h3>Analyse your progress</h3>
                 </div>
                 <div class="flip-card-back">
                     <p>See a detailed breakdown of each exercise.</p>
@@ -36,8 +32,8 @@
         <div class="flip-card">
             <div class="flip-card-inner">
                 <div class="flip-card-front">
-                    <img src="{{ url_for('static', filename='images/image3.jpeg') }}" alt="Feature 2">
-                    <h3>Share your Achievements</h3>
+                    <img src="{{ url_for('static', filename='images/share_achievements.webp') }}" alt="Bug speaking into mic">
+                    <h3>Share achievements</h3>
                 </div>
                 <div class="flip-card-back">
                     <p>Get encouragement from friends and fellow runners.</p>
@@ -47,7 +43,7 @@
         <div class="flip-card">
             <div class="flip-card-inner">
                 <div class="flip-card-front">
-                    <img src="{{ url_for('static', filename='images/image4.jpeg') }}" alt="Feature 3">
+                    <img src="{{ url_for('static', filename='images/nailsmith.webp') }}" alt="Feature 3">
                     <h3>Plan your exercises</h3>
                 </div>
                 <div class="flip-card-back">
@@ -62,8 +58,14 @@
     <div class="wellness-content">
         <div class="wellness-text">
             <p>To elevate your wellness, focus on a holistic approach, including physical, mental, and spiritual aspects. This means prioritizing healthy habits, engaging in activities you enjoy, and finding time for self-care and relaxation. Consider incorporating practices like meditation, regular exercise, healthy eating, and adequate sleep. Remember to consult with your healthcare provider before making significant changes to your lifestyle.</p>
-            <button class="signup-now">Signup Now</button>
-            <button class="login-now">Login</button>
+            <div class="actions" id="homepage_actions">
+                <a href="/login">
+                    <button class="login">Login</button>
+                </a>
+                <a href="/register">
+                    <button class="signup">Sign Up</button>
+                </a>
+            </div>
         </div>
         <img src="{{ url_for('static', filename='images/image5.jpeg') }}" alt="Wellness">
     </div>
@@ -87,4 +89,8 @@
         <div class="feedback-card">“A genuinely good work.best for all the busy people”<br><span>Natasha</span><br><span>work Mom</span></div>
     </div>   
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/home_interaction.js')}}"></script> 
 {% endblock %}
