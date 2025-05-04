@@ -56,43 +56,40 @@ with app.app_context():
 def home():
     return render_template('home.html')
     
-# Route for input page (Step 1: Upload CSV or Excel)
+# Route for input page (Step 1: Upload CSV UTF-8 only)
 @app.route('/analyze', methods=['GET', 'POST'])
 def analyze():
     if request.method == 'POST':
         file = request.files.get('fitnessFile')
 
-        # 🧾 Show error if no file
+        # 🧾 Check for file presence
         if not file or file.filename == "":
-            flash("Please upload a CSV or Excel (.xlsx) file.", "danger")
+            flash("Please upload a CSV file.", "danger")
             return redirect(url_for('analyze'))
 
+        filename = file.filename.lower()
+
+        # 🚫 Reject non-CSV files
+        if not filename.endswith('.csv'):
+            flash("Only CSV files are allowed (save as UTF-8 encoded).", "danger")
+            return redirect(url_for('analyze'))
+
+        # 🧪 Try reading as UTF-8 encoded CSV
         try:
-            filename = file.filename.lower()
-
-            # 📥 Handle CSV and Excel files
-            if filename.endswith('.csv'):
-                df = pd.read_csv(file, encoding='utf-8-sig')
-            elif filename.endswith('.xlsx'):
-                df = pd.read_excel(file)
-            else:
-                flash("❌ Only CSV UTF-8 or Excel (.xlsx) files are supported. Please re-save your file in the correct format.", "danger")
-                return redirect(url_for('analyze'))
-
-            # 🧹 Clean column headers
-            df.columns = [col.strip() for col in df.columns]
-
-            # ✅ Save data into session
-            session['column_choices'] = df.columns.tolist()
-            session['csv_data'] = df.to_dict(orient='records')
-
-            return redirect(url_for('select_columns'))
-
+            df = pd.read_csv(file, encoding='utf-8-sig')  # 👈 UTF-8 CSV only
+            df.columns = [col.strip() for col in df.columns]  # 🧹 Clean headers
         except Exception as e:
-            flash("❌ Error reading the file. Make sure it’s a valid CSV UTF-8 or Excel file.", "danger")
+            flash("Error reading the CSV file. Please ensure it is UTF-8 encoded.", "danger")
             return redirect(url_for('analyze'))
+
+        # ✅ Store for next page
+        session['column_choices'] = df.columns.tolist()
+        session['csv_data'] = df.to_dict(orient='records')
+
+        return redirect(url_for('select_columns'))
 
     return render_template('input_analyze.html')
+
 
 # Route for column selection (Step 2: Pick columns to analyze)
 @app.route('/select-columns', methods=['GET', 'POST'])

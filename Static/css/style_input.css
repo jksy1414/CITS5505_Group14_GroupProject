@@ -39,7 +39,7 @@ button {
   padding: 12px 24px;
   font-size: 16px;
   border-radius: 8px;
-  cursor: not-allowed;
+  cursor: pointer;  /* ✅ allow click */
   transition: background-color 0.3s;
 }
 
@@ -68,24 +68,15 @@ body {
 }
 
 .bug-img {
-  width: 150px;   /* was 100px */
+  width: 150px;
   height: auto;
   transition: transform 0.3s ease;
-  animation: floatBug 3s ease-in-out infinite;  /* ✅ This makes it float */
+  animation: floatBug 3s ease-in-out infinite;
 }
 
-/* 🌀 When cursor hovers near (on image), rotate 180° */
+/* ✅ Single correct hover behavior */
 .bug-img:hover {
-  transform: rotate(180deg) scale(1.2); /* Rotate and slightly enlarge */
-}
-
-/* Rotate on hover */
-.bug-img:hover {
-  transform: rotate(15deg) scale(1.2);
-}
-
-.bug-img:hover {
-  animation: none; /* Disable float while rotating */
+  animation: none;
   transform: rotate(180deg) scale(1.2);
 }
 
@@ -129,4 +120,13 @@ body {
   background-color: #e6f9e6;
   color: #3c763d;
   border: 2px solid #3c763d;
+}
+
+/* ✅ For UTF-8 encoding instruction */
+.note {
+  font-size: 0.9em;
+  color: #6b4c1c;
+  display: block;
+  margin-top: -10px;
+  margin-bottom: 15px;
 }
