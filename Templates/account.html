@@ -27,7 +27,7 @@
                 <form id="avatarForm" action="{{ url_for('auth.upload_avatar') }}" method="POST" enctype="multipart/form-data" class="mt-2">
                     <input type="file" name="avatar" id="avatarInput" accept="image/*" style="display: none;" onchange="document.getElementById('avatarForm').submit()">
                     <label for="avatarInput" style="cursor: pointer;">
-                        <img src="{{ url_for('static', filename='uploads/' + user.avatar) if user.avatar else url_for('static', filename='default_avatar.jpg') }}" alt="Avatar" class="profile-pic" title="Click to change avatar">
+                        <img src="{{ url_for('static', filename='uploads/' + user.avatar) if user.avatar else url_for('static', filename='images/default_avatar.jpg') }}" alt="Avatar" class="profile-pic" title="Click to change avatar">
                     </label>
                 </form>
             </div>
