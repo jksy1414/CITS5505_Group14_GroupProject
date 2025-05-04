@@ -37,9 +37,10 @@
 ### login.html
 - [ ] .
 ### input_analyze.html
-- [ ] Move heading outside of container (or some other means of emphasising heading)
-- [ ] Fix alignment of data column selection text (checkboxes should be aligned)
-- [ ] Add (dynamic?) images on the sides of the page to fill empty space 
+- [done] Move heading outside of container (or some other means of emphasising heading)
+- [done] Fix alignment of data column selection text (checkboxes should be aligned)
+- [done] Add (dynamic?) images on the sides of the page to fill empty space
+- add in the function 
 ### output_result.html
 - [ ] .
 ### .html

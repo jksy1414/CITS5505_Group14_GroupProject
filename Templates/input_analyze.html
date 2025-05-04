@@ -1,37 +1,40 @@
 {% extends "based.html" %}
 
 {% block styles %}
+  <!-- 🧾 Link to custom CSS for styling this page -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style_input.css') }}">
 {% endblock %}
 
+
 {% block content %}
+<!-- 🏷️ Page heading -->
 <h2 class="main-heading">Upload Fitness Data</h2>
 
+<!-- 🔔 Display flash messages like success/error -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+  {% endfor %}
+{% endwith %}
+
+<!-- 🐞 Decorative bug-themed layout -->
 <div class="input-wrapper">
-  <!-- Left Ladybug -->
+
+  <!-- 🐞 Left ladybug image -->
   <img src="{{ url_for('static', filename='images/ladybug_left.png') }}" class="bug-img left-bug" alt="Left Ladybug">
 
-  <!-- Center Form -->
+  <!-- 📦 Form to upload CSV file (Step 1) -->
   <div class="container">
-    <form>
-      <label for="fileUpload">Choose CSV/Excel file:</label><br>
-      <input type="file" id="fileUpload" name="fitnessFile"><br><br>
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for('analyze') }}">
+      <label for="fileUpload">Choose CSV file:</label><br>
+      <input type="file" id="fileUpload" name="fitnessFile" accept=".csv" required><br><br>
 
-      <label>Select Data Columns to Analyze:</label><br>
-      <div class="checkbox-group">
-        <label><input type="checkbox"> Steps</label>
-        <label><input type="checkbox"> Calories Burned</label>
-        <label><input type="checkbox"> Workout Duration</label>
-        <label><input type="checkbox"> Sleep Hours</label>
-      </div><br>
-
-      <a href="{{ url_for('results') }}">
-        <button type="button" class="btn">Proceed to Graph</button>
-      </a>
+      <!-- ▶️ Submit button -->
+      <button type="submit" class="btn">Upload & Continue</button>
     </form>
   </div>
 
-  <!-- Right Ladybug -->
+  <!-- 🐞 Right ladybug image -->
   <img src="{{ url_for('static', filename='images/ladybug_right.png') }}" class="bug-img right-bug" alt="Right Ladybug">
 </div>
 {% endblock %}
