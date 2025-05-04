@@ -56,7 +56,7 @@ with app.app_context():
 def home():
     return render_template('home.html')
     
-# Route for input page (Step 1: Upload CSV)
+# Route for input page (Step 1: Upload CSV or Excel)
 @app.route('/analyze', methods=['GET', 'POST'])
 def analyze():
     if request.method == 'POST':
@@ -64,25 +64,35 @@ def analyze():
 
         # 🧾 Show error if no file
         if not file or file.filename == "":
-            flash("Please upload a CSV file.", "danger")
+            flash("Please upload a CSV or Excel (.xlsx) file.", "danger")
             return redirect(url_for('analyze'))
 
-        # 🧪 Try to read the CSV file
         try:
-            df = pd.read_csv(file, encoding='utf-8-sig')
-            df.columns = [col.strip() for col in df.columns]  # 🔧 Clean column headers
+            filename = file.filename.lower()
+
+            # 📥 Handle CSV and Excel files
+            if filename.endswith('.csv'):
+                df = pd.read_csv(file, encoding='utf-8-sig')
+            elif filename.endswith('.xlsx'):
+                df = pd.read_excel(file)
+            else:
+                flash("❌ Only CSV UTF-8 or Excel (.xlsx) files are supported. Please re-save your file in the correct format.", "danger")
+                return redirect(url_for('analyze'))
+
+            # 🧹 Clean column headers
+            df.columns = [col.strip() for col in df.columns]
+
+            # ✅ Save data into session
+            session['column_choices'] = df.columns.tolist()
+            session['csv_data'] = df.to_dict(orient='records')
+
+            return redirect(url_for('select_columns'))
+
         except Exception as e:
-            flash("Error reading the CSV file. Please upload a valid .csv format.", "danger")
+            flash("❌ Error reading the file. Make sure it’s a valid CSV UTF-8 or Excel file.", "danger")
             return redirect(url_for('analyze'))
-
-        # ✅ Save column names and data into session for next page
-        session['column_choices'] = df.columns.tolist()
-        session['csv_data'] = df.to_dict(orient='records')
-
-        return redirect(url_for('select_columns'))
 
     return render_template('input_analyze.html')
-
 
 # Route for column selection (Step 2: Pick columns to analyze)
 @app.route('/select-columns', methods=['GET', 'POST'])
