@@ -70,6 +70,7 @@ def analyze():
         # 🧪 Try to read the CSV file
         try:
             df = pd.read_csv(file, encoding='utf-8-sig')
+            df.columns = [col.strip() for col in df.columns]  # 🔧 Clean column headers
         except Exception as e:
             flash("Error reading the CSV file. Please upload a valid .csv format.", "danger")
             return redirect(url_for('analyze'))
@@ -82,8 +83,14 @@ def analyze():
 
     return render_template('input_analyze.html')
 
+
+# Route for column selection (Step 2: Pick columns to analyze)
 @app.route('/select-columns', methods=['GET', 'POST'])
 def select_columns():
+    if not session.get('column_choices'):  # 🔐 Prevent direct access
+        flash("Please upload a CSV file before selecting columns.", "danger")
+        return redirect(url_for('analyze'))
+
     if request.method == 'POST':
         selected_columns = request.form.getlist('columns')
 
