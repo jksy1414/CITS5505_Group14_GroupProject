@@ -13,22 +13,22 @@
 </head>
 
 <body>
-  <header>
-    <div class="logo">FitBug</div>
-    <nav>
-      {% block navbar %}
-      <!-- Page-specific nav links -->
-      {% endblock %}
-    </nav>
-    <div class="actions">
-      <a href="{{ url_for('auth.login') }}">
-        <button class="login">Login</button>
-      </a>
-      <a href="{{ url_for('auth.register') }}">
-        <button class="signup">Sign Up</button>
-      </a>
-    </div>
-  </header>
+    <header>
+        <div class="logo">FitBug</div>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/analyze">Data Analysis</a>
+            <a href="Templates/base.html">???</a>
+        </nav>
+        <div class="actions">
+            <a href="/login">
+                <button class="login">Login</button>
+            </a>
+            <a href="/register">
+                <button class="signup">Sign Up</button>
+            </a>
+        </div>
+    </header>
 
   <!-- 🔔 Flash messages -->
   {% with messages = get_flashed_messages(with_categories=true) %}

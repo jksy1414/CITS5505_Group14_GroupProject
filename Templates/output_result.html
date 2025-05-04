@@ -4,12 +4,6 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style_output.css') }}">
 {% endblock %}
 
-{% block navbar %}
-  <a href="{{ url_for('home') }}">Home</a>
-  <a href="{{ url_for('analyze') }}">Data Analysis</a>
-  <a href="{{ url_for('results') }}">Results</a>
-{% endblock %}
-
 {% block content %}
 <div class="container">
   <h2>Fitness Data Chart</h2>
