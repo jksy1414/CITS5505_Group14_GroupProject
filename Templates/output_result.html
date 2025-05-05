@@ -1,4 +1,4 @@
-{% extends "based.html" %}
+{% extends "base.html" %}
 
 {% block styles %}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style_output.css') }}">
@@ -8,28 +8,28 @@
 <div class="container">
   <h2>Fitness Data Chart</h2>
 
-  <!-- ✅ Flash messages -->
+  <!-- Flash messages -->
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% for category, message in messages %}
       <div class="alert alert-{{ category }}">{{ message }}</div>
     {% endfor %}
   {% endwith %}
 
-  <!-- 🔎 Caption -->
+  <!-- Caption -->
   <p><strong>Showing:</strong> <em>{{ column_name }}</em></p>
   <p><strong>Current Sharing Option:</strong> {{ visibility|capitalize }}</p>
 
-  <!-- 📊 Chart type selector -->
+  <!-- Chart type selector -->
   <label for="chartType">Select Chart Type:</label><br>
   <select id="chartType" onchange="renderChart()">
     <option value="line">Line Chart</option>
     <option value="bar">Bar Chart</option>
   </select><br><br>
 
-  <!-- 📈 Chart canvas -->
+  <!-- Chart canvas -->
   <canvas id="fitnessChart" style="width:100%; max-width:600px; margin:auto;"></canvas><br>
 
-  <!-- 📌 Data Summary -->
+  <!-- Data Summary -->
   <div id="dataSummary" style="margin-top: 20px;">
     <h4>Summary of {{ column_name }}</h4>
     <ul style="list-style: none; padding-left: 0;">
@@ -39,13 +39,13 @@
     </ul>
   </div>
 
-  <!-- 📥 Download Graph -->
+  <!-- Download Graph -->
   <button class="btn" onclick="downloadChart()">Download Graph</button>
 
-  <!-- 🔁 Back to column selection -->
+  <!-- Back to column selection -->
   <a href="{{ url_for('select_columns') }}" class="btn btn-secondary" style="margin-top: 10px;">🔙 Reselect Column</a>
 
-  <!-- 🌍 Sharing Option Form -->
+  <!-- Sharing Option Form -->
   <form method="POST" action="{{ url_for('set_visibility') }}" style="margin-top: 20px;">
     <label for="visibility">Change Sharing Option:</label>
     <select name="visibility">
@@ -56,8 +56,10 @@
     <button type="submit" class="btn">Save Sharing Setting</button>
   </form>
 </div>
+{%endblock%}
 
-<!-- 📦 Chart.js CDN -->
+{% block scripts %}
+<!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   const labels = {{ labels|tojson }};
