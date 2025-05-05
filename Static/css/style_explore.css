@@ -1,0 +1,41 @@
+/* style_explore.css - For explore.html themed with dirt/ladybug style */
+
+body {
+    background-color: #fff8dc;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+  }
+  
+  .container {
+    max-width: 800px;
+    margin: 40px auto;
+    background-color: #fffef0;
+    padding: 30px;
+    border: 2px dashed #8b4513;
+    border-radius: 15px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+  }
+  
+  h2 {
+    text-align: center;
+    color: #6b8e23;
+    margin-bottom: 30px;
+  }
+  
+  .chart-card {
+    background-color: #f9f5e6;
+    border: 2px solid #deb887;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+  
+  .chart-card h4 {
+    color: #8b4513;
+    margin-bottom: 10px;
+  }
+  
+  hr {
+    border: 1px dashed #8b4513;
+  }
+  
