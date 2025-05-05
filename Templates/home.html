@@ -54,40 +54,43 @@
     </div>
 </section>
 <section class="wellness">
-    <h2>Take your Wellness to the next level</h2>
     <div class="wellness-content">
-        <div class="wellness-text">
-            <p>To elevate your wellness, focus on a holistic approach, including physical, mental, and spiritual aspects. This means prioritizing healthy habits, engaging in activities you enjoy, and finding time for self-care and relaxation. Consider incorporating practices like meditation, regular exercise, healthy eating, and adequate sleep. Remember to consult with your healthcare provider before making significant changes to your lifestyle.</p>
-            <div class="actions" id="homepage_actions">
-                <a href="/login">
-                    <button class="login">Login</button>
-                </a>
-                <a href="/register">
-                    <button class="signup">Sign Up</button>
-                </a>
-            </div>
+        <div class="wellness-image">
+            <img src="{{ url_for('static', filename='images/beetle.png') }}" alt="Wellness">
         </div>
-        <img src="{{ url_for('static', filename='images/image5.jpeg') }}" alt="Wellness">
+        <div class="wellness-text">
+            <h2>Take your wellness to the next level</h2>
+            <p>To elevate your wellness, focus on a holistic approach, including physical, mental, and spiritual aspects. This means prioritizing healthy habits, engaging in activities you enjoy, and finding time for self-care and relaxation. Consider incorporating practices like meditation, regular exercise, healthy eating, and adequate sleep. Remember to consult with your healthcare provider before making significant changes to your lifestyle.</p>
+        <div class="actions" id="homepage_actions">
+            <a href="/login">
+                <button class="login">Login</button>
+            </a>
+            <a href="/register">
+            <button class="signup">Sign Up</button>
+            </a>
+        </div>
     </div>
 </section>
 
-<section class="wellness-goals">
-    <h2>Take your Wellness to the next level</h2>
-    <div class="goal-cards">
-        <div class="goal-card">
+<section class="mobile-compatible">
+    <h2>Mobile-Compatible Web Experience</h2>
+    <div class="mobile-card-container">
+        <div class="mobile-card">
             <img src="{{ url_for('static', filename='images/image6.jpeg') }}" alt="Goal 2">
-            <p>Make working out more fun and rewarding with challenges and the support of your friends.</p>
+            <p>Easily track your progress, update personal data, and stay connected with your goals and friends...All while on the go.</p>
         </div>
+        <!--  add div which links to mobile app (one day inshAllah)  -->
     </div>
 </section>
 
 <section class="community">
-    <h2>Member community</h2>
+    <h2>Community Feedback</h2>
     <div class="community-feedback">
-        <div class="feedback-card">“This is an Amazing website”<br><span>Nathan</span><br><span>best fit</span></div>
-        <div class="feedback-card">“A fantastic bit of work”<br><span>paul</span><br><span>IT manager</span></div>
-        <div class="feedback-card">“A genuinely good work.best for all the busy people”<br><span>Natasha</span><br><span>work Mom</span></div>
-    </div>   
+        <div class="feedback-card"><em>“This is an Amazing website!”</em><br><span>- Daniel</span><br><span>Gym enthusiast</span></div>
+        <div class="feedback-card"><em>“A fantastic bit of work.”</em><br><span>- Paul</span><br><span>IT manager</span></div>
+        <div class="feedback-card"><em>“A genuinely good work, perfect for busy people”</em><br><span>- Natasha</span><br><span>Mum</span></div>
+        <div class="feedback-card"><em>“A very comfortable website and community.”</em><br><span>- Ben Buggington</span><br><span>Bug Guy</span></div>
+    </div> 
 </section>
 {% endblock %}
 
