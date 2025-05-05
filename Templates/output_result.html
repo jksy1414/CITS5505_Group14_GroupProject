@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
+{% block title %}
+  <title>FitBug: Fitness Data Chart Output</title>
+{% endblock %}
+
+
 {% block styles %}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style_output.css') }}">
 {% endblock %}

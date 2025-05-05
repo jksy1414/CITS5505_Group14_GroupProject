@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block title %}
+  <title>FitBug: Select Columns to Analyze</title>
+{% endblock %}
+
 {% block styles %}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style_columns.css') }}">
   <style>
@@ -44,39 +48,33 @@
   </style>
 {% endblock %}
 
-{% block navbar %}
-  <a href="{{ url_for('home') }}">Home</a>
-  <a href="{{ url_for('analyze') }}">Upload CSV</a>
-  <a href="{{ url_for('results') }}">Results</a>
-{% endblock %}
-
 {% block content %}
-<h2 class="main-heading">Select Columns to Analyze</h2>
+  <h2 class="main-heading">Select Columns to Analyze</h2>
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% for category, message in messages %}
-    <div class="alert alert-{{ category }}">{{ message }}</div>
-  {% endfor %}
-{% endwith %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endwith %}
 
-<div class="input-wrapper">
-  <img src="{{ url_for('static', filename='images/ladybug_left.png') }}" class="bug-img left-bug" alt="Ladybug Left">
+  <div class="input-wrapper">
+    <img src="{{ url_for('static', filename='images/ladybug_left.png') }}" class="bug-img left-bug" alt="Ladybug Left">
 
-  <div class="container">
-    <form method="POST" action="{{ url_for('select_columns') }}">
-      <label>Select the data column you want to analyze:</label><br>
+    <div class="container">
+      <form method="POST" action="{{ url_for('select_columns') }}">
+        <label>Select the data column you want to analyze:</label><br>
 
-      <div class="checkbox-group">
-        {% for column in columns %}
-          <label><input type="checkbox" name="columns" value="{{ column }}"> {{ column }}</label>
-        {% endfor %}
-      </div><br>
+        <div class="checkbox-group">
+          {% for column in columns %}
+            <label><input type="checkbox" name="columns" value="{{ column }}"> {{ column }}</label>
+          {% endfor %}
+        </div><br>
 
-      <button type="submit" class="btn">Analyze Selected Column</button>
-      <a href="{{ url_for('analyze') }}" class="btn btn-secondary">Back to Upload</a>
-    </form>
+        <button type="submit" class="btn">Analyze Selected Column</button>
+        <a href="{{ url_for('analyze') }}" class="btn btn-secondary">Back to Upload</a>
+      </form>
+    </div>
+
+    <img src="{{ url_for('static', filename='images/ladybug_right.png') }}" class="bug-img right-bug" alt="Ladybug Right">
   </div>
-
-  <img src="{{ url_for('static', filename='images/ladybug_right.png') }}" class="bug-img right-bug" alt="Ladybug Right">
-</div>
 {% endblock %}
