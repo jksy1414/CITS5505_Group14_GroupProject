@@ -1,27 +1,27 @@
 {% extends "based.html" %}
 
 {% block styles %}
+  <!-- 🧾 External CSS specific to the results page -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style_output.css') }}">
 {% endblock %}
 
 {% block content %}
 <div class="container">
-  <h2>Fitness Data Chart</h2>
+  <h2>Fitness Data Charts</h2>
 
-  <!-- ✅ Flash messages -->
+  {# ✅ Flash messages (e.g., success or error) #}
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% for category, message in messages %}
       <div class="alert alert-{{ category }}">{{ message }}</div>
     {% endfor %}
   {% endwith %}
 
-  <!-- 🔎 Caption -->
-  <p><strong>Showing:</strong> <em>{{ column_name }}</em></p>
+  {# 📝 Display current visibility level #}
   <p><strong>Current Sharing Option:</strong> {{ visibility|capitalize }}</p>
 
-  <!-- 📊 Chart type selector -->
+  {# 📊 Chart type selection dropdown #}
   <label for="chartType">Select Chart Type:</label><br>
-  <select id="chartType" onchange="renderChart()">
+  <select id="chartType" onchange="renderAllCharts()">
     <option value="line">Line Chart</option>
     <option value="bar">Bar Chart</option>
     <option value="pie">Pie Chart</option>
@@ -30,125 +30,108 @@
     <option value="scatter">Scatter Plot</option>
   </select><br><br>
 
-  <!-- 📈 Chart canvas -->
-  <canvas id="fitnessChart" style="width:100%; max-width:600px; margin:auto;"></canvas><br>
+  {# 🔁 Loop through each selected column and render its chart + stats #}
+  {% for column in columns %}
+    <div class="chart-block">
+      <h4>{{ column }}</h4>
+      <canvas id="chart-{{ loop.index0 }}" class="chart-canvas" width="600" height="300"></canvas>
 
-  <!-- 📌 Data Summary -->
-  <div id="dataSummary" style="margin-top: 20px;">
-    <h4>Summary of {{ column_name }}</h4>
-    <ul style="list-style: none; padding-left: 0;">
-      <li><strong>Average:</strong> {{ (values | sum / values | length) | round(2) }}</li>
-      <li><strong>Maximum:</strong> {{ values | max }}</li>
-      <li><strong>Minimum:</strong> {{ values | min }}</li>
-    </ul>
-  </div>
+      <ul style="list-style: none; padding-left: 0;">
+        <li><strong>Average:</strong> {{ (values[column] | sum / values[column] | length) | round(2) }}</li>
+        <li><strong>Maximum:</strong> {{ values[column] | max }}</li>
+        <li><strong>Minimum:</strong> {{ values[column] | min }}</li>
+      </ul>
 
-  <!-- 📥 Download Graph -->
-  <button class="btn" onclick="downloadChart()">Download Graph</button>
+      <button class="btn" onclick="downloadChart({{ loop.index0 }}, '{{ column }}')">Download {{ column }} Chart</button>
+    </div>
+    <hr>
+  {% endfor %}
 
-  <!-- 🔁 Back to column selection -->
-  <a href="{{ url_for('select_columns') }}" class="btn btn-secondary" style="margin-top: 10px;">🔙 Reselect Column</a>
+  {# 📥 Download all charts at once #}
+  <button class="btn" onclick="downloadAllCharts()">Download All Charts</button>
 
-  <!-- 🌍 Sharing Option Form -->
+  {# 🔁 Go back to column selection step #}
+  <a href="{{ url_for('select_columns') }}" class="btn btn-secondary" style="margin-top: 10px;">🔙 Reselect Columns</a>
+
+  {# 🌍 Sharing visibility form (POST to /set_visibility) #}
   <form method="POST" action="{{ url_for('set_visibility') }}" style="margin-top: 20px;">
     <label for="visibility">Change Sharing Option:</label>
     <select name="visibility">
-      <option value="private" {% if visibility == 'private' %}selected{% endif %}>Private (Only Me)</option>
-      <option value="public" {% if visibility == 'public' %}selected{% endif %}>Public (Everyone)</option>
-      <option value="friends" {% if visibility == 'friends' %}selected{% endif %}>Friends Only</option>
+      <option value="private" {% if visibility == 'private' %}selected{% endif %}>Private</option>
+      <option value="public" {% if visibility == 'public' %}selected{% endif %}>Public</option>
+      <option value="friends" {% if visibility == 'friends' %}selected{% endif %}>Friends</option>
     </select>
     <button type="submit" class="btn">Save Sharing Setting</button>
   </form>
-
-  <!-- 💡 Random Fitness Fact -->
-  <div id="fitnessFact" style="margin-top: 30px; background-color: #fff8dc; border-left: 6px solid #6b8e23; padding: 15px; border-radius: 8px;">
-    <h4>💪 Fitness Fact of the Day</h4>
-    <p id="factText">Loading...</p>
-  </div>
 </div>
 
-<!-- 📦 Chart.js CDN -->
+{# 📦 Chart.js setup and dynamic rendering logic #}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  const labels = {{ labels|tojson }};
-  const values = {{ values|tojson }};
-  const columnName = "{{ column_name }}";
-  let chart;
+  const chartTypeSelector = document.getElementById('chartType');
+  const labels = {{ labels | tojson }};
+  const values = {{ values | tojson }};
+  const columns = {{ columns | tojson }};
+  let charts = [];
 
-  function renderChart() {
-    const chartType = document.getElementById('chartType').value;
-    const ctx = document.getElementById('fitnessChart').getContext('2d');
-    if (chart) chart.destroy();
+  function renderAllCharts() {
+    charts.forEach(c => c.destroy());
+    charts = [];
 
-    const chartConfig = {
-      type: chartType,
-      data: {
-        labels: labels,
-        datasets: [{
-          label: columnName,
-          data: values,
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.5)',
-            'rgba(54, 162, 235, 0.5)',
-            'rgba(255, 206, 86, 0.5)',
-            'rgba(75, 192, 192, 0.5)',
-            'rgba(153, 102, 255, 0.5)',
-            'rgba(255, 159, 64, 0.5)'
-          ],
-          borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 2,
-          fill: chartType === 'line' || chartType === 'radar',
-          showLine: chartType !== 'scatter',
-          pointRadius: chartType === 'scatter' ? 5 : 3,
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: true }
+    const selectedType = chartTypeSelector.value;
+
+    columns.forEach((colName, i) => {
+      const ctx = document.getElementById(`chart-${i}`).getContext('2d');
+      const config = {
+        type: selectedType,
+        data: {
+          labels: labels,
+          datasets: [{
+            label: colName,
+            data: values[colName],
+            backgroundColor: 'rgba(75, 192, 192, 0.4)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 2,
+            fill: selectedType === 'line' || selectedType === 'radar',
+            showLine: selectedType !== 'scatter',
+            pointRadius: selectedType === 'scatter' ? 5 : 3,
+          }]
         },
-        scales: (chartType === 'pie' || chartType === 'doughnut') ? {} : {
-          y: { beginAtZero: true },
-          x: {
-            ticks: {
-              autoSkip: true,
-              maxRotation: 45,
-              minRotation: 0
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: true }
+          },
+          scales: (['pie', 'doughnut'].includes(selectedType)) ? {} : {
+            y: { beginAtZero: true },
+            x: {
+              ticks: {
+                autoSkip: true,
+                maxRotation: 45,
+                minRotation: 0
+              }
             }
           }
         }
-      }
-    };
+      };
 
-    chart = new Chart(ctx, chartConfig);
+      const chart = new Chart(ctx, config);
+      charts.push(chart);
+    });
   }
 
-  function downloadChart() {
+  function downloadChart(index, name) {
+    const canvas = document.getElementById(`chart-${index}`);
     const link = document.createElement('a');
-    link.href = document.getElementById('fitnessChart').toDataURL('image/png');
-    link.download = columnName + "_chart.png";
+    link.href = canvas.toDataURL('image/png');
+    link.download = `${name}_chart.png`;
     link.click();
   }
 
-  // 💡 Fitness Facts
-  const fitnessFacts = [
-    "Walking 10,000 steps a day can reduce the risk of heart disease by 40%.",
-    "Strength training boosts metabolism for up to 48 hours after your workout.",
-    "Staying hydrated can improve physical performance by up to 20%.",
-    "Just 30 minutes of exercise a day improves mood and reduces anxiety.",
-    "Sleep plays a crucial role in muscle recovery and overall health.",
-    "Regular workouts improve memory, creativity, and brain function."
-  ];
-
-  function showRandomFact() {
-    const factText = document.getElementById("factText");
-    const fact = fitnessFacts[Math.floor(Math.random() * fitnessFacts.length)];
-    factText.textContent = fact;
+  function downloadAllCharts() {
+    columns.forEach((col, i) => downloadChart(i, col));
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    renderChart();
-    showRandomFact();
-  });
+  document.addEventListener("DOMContentLoaded", renderAllCharts);
 </script>
 {% endblock %}
