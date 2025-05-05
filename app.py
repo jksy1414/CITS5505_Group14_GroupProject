@@ -110,8 +110,13 @@ def select_columns():
         selected_data = df[selected_columns]
 
         session['labels'] = list(selected_data.index)
-        session['values'] = selected_data[selected_columns[0]].tolist()
-        session['column_name'] = selected_columns[0]
+        # Store all selected columns and their values
+        values_dict = {}
+        for col in selected_columns:
+            values_dict[col] = selected_data[col].tolist()
+
+        session['values'] = values_dict
+        session['columns'] = selected_columns
 
         return redirect(url_for('results'))
 
@@ -122,21 +127,22 @@ def select_columns():
 @app.route("/results")
 def results():
     labels = session.get("labels")
-    values = session.get("values")
-    column_name = session.get("column_name")
+    values = session.get("values")  # dict: {column_name: [data]}
+    columns = session.get("columns")  # list of selected column names
     visibility = session.get("visibility", "private")
 
-    if not labels or not values or not column_name:
+    if not labels or not values or not columns:
         flash("Missing data for chart rendering.", "danger")
         return redirect(url_for("select_columns"))
 
     return render_template(
         "output_result.html",
-        column_name=column_name,
+        columns=columns,
         labels=labels,
         values=values,
         visibility=visibility
     )
+
 
 
 @app.route('/set_visibility', methods=['POST'])
