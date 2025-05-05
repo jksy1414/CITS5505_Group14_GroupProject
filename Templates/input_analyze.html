@@ -1,48 +1,53 @@
-{% extends "based.html" %}
+{% extends "base.html" %}
+
+{% block title %}
+  <title>FitBug: Upload Fitness Data</title>
+{% endblock %}
+
 
 {% block styles %}
-  <!-- 🧾 Link to custom CSS for styling this page -->
+  <!-- Link to custom CSS for styling this page -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style_input.css') }}">
 {% endblock %}
 
 
 {% block content %}
-<!-- 🏷️ Page heading -->
-<h2 class="main-heading">Upload Fitness Data</h2>
+  <!-- Page heading -->
+  <h2 class="main-heading">Upload Fitness Data</h2>
 
-<!-- 🔔 Display flash messages like success/error -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% for category, message in messages %}
-    <div class="alert alert-{{ category }}">{{ message }}</div>
-  {% endfor %}
-{% endwith %}
+  <!-- Display flash messages like success/error -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endwith %}
 
-<!-- 🐞 Decorative bug-themed layout -->
-<div class="input-wrapper">
+  <!-- Decorative bug-themed layout -->
+  <div class="input-wrapper">
 
-  <!-- 🐞 Left ladybug image -->
-  <img src="{{ url_for('static', filename='images/ladybug_left.png') }}" class="bug-img left-bug" alt="Left Ladybug">
+    <!-- Left ladybug image -->
+    <img src="{{ url_for('static', filename='images/ladybug_left.png') }}" class="bug-img left-bug" alt="Left Ladybug">
 
-  <!-- 📦 Form to upload CSV file (Step 1) -->
-  <div class="container">
-    <form method="POST" enctype="multipart/form-data" action="{{ url_for('analyze') }}">
-      <label for="fileUpload">Choose CSV file (UTF-8 only):</label><br>
-      <input type="file" id="fileUpload" name="fitnessFile" accept=".csv" required><br>
-  
-      <!-- 🟡 Clear and styled warning -->
-      <div class="alert alert-warning" style="margin-top: 10px;">
-        ⚠️ Only <strong>CSV files saved as UTF-8 encoding</strong> will be accepted.
-        <br>
-        In Excel, save your file as: <em>CSV UTF-8 (Comma delimited)</em>
-      </div><br>
-  
-      <!-- ▶️ Submit button -->
-      <button type="submit" class="btn">Upload & Continue</button>
-    </form>
+    <!-- Form to upload CSV file (Step 1) -->
+    <div class="container">
+      <form method="POST" enctype="multipart/form-data" action="{{ url_for('analyze') }}">
+        <label for="fileUpload">Choose CSV file (UTF-8 only):</label><br>
+        <input type="file" id="fileUpload" name="fitnessFile" accept=".csv" required><br>
+    
+        <!-- Clear and styled warning -->
+        <div class="alert alert-warning" style="margin-top: 10px;">
+          ⚠️ Only <strong>CSV files saved as UTF-8 encoding</strong> will be accepted.
+          <br>
+          In Excel, save your file as: <em>CSV UTF-8 (Comma delimited)</em>
+        </div><br>
+    
+        <!-- Submit button -->
+        <button type="submit" class="btn">Upload & Continue</button>
+      </form>
+    </div>
+    
+
+    <!-- Right ladybug image -->
+    <img src="{{ url_for('static', filename='images/ladybug_right.png') }}" class="bug-img right-bug" alt="Right Ladybug">
   </div>
-  
-
-  <!-- 🐞 Right ladybug image -->
-  <img src="{{ url_for('static', filename='images/ladybug_right.png') }}" class="bug-img right-bug" alt="Right Ladybug">
-</div>
 {% endblock %}

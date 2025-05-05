@@ -1,99 +1,103 @@
-{% extends "based.html" %}
+{% extends "base.html" %}
+
+{% block title %}
+    <title>FitBug: Home/Welcome page</title>
+{% endblock %}
 
 {% block styles %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style_home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_home.css') }}">
 {% endblock %}
 
 
 {% block content %}
-<section class="banner">
-    <img 
-    src="{{ url_for('static', filename='images/flyingbug.png') }}" 
-    class="bug" 
-    alt="Blundering Oberlisk crawling"
-    >
-    <h1>Welcome to FitBug</h1>
-    <p>Your personal exercise tracking system</p>
-</section>
-<section class="features">
-    <h2>More than an Exercise Tracking System...</h2>
-    <div class="flip-card-container">
-        <div class="flip-card">
-            <div class="flip-card-inner">
-                <div class="flip-card-front">
-                    <img src="{{ url_for('static', filename='images/cornifer2.webp') }}" alt="Bug Scibing info">
-                    <h3>Analyse your progress</h3>
+    <section class="banner">
+        <img 
+        src="{{ url_for('static', filename='images/flyingbug.png') }}" 
+        class="bug" 
+        alt="Blundering Oberlisk crawling"
+        >
+        <h1>Welcome to FitBug</h1>
+        <p>Your personal exercise tracking system</p>
+    </section>
+    <section class="features">
+        <h2>More than an Exercise Tracking System...</h2>
+        <div class="flip-card-container">
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <img src="{{ url_for('static', filename='images/cornifer2.webp') }}" alt="Bug Scibing info">
+                        <h3>Analyse your progress</h3>
+                    </div>
+                    <div class="flip-card-back">
+                        <p>See a detailed breakdown of each exercise.</p>
+                    </div>
                 </div>
-                <div class="flip-card-back">
-                    <p>See a detailed breakdown of each exercise.</p>
+            </div>
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <img src="{{ url_for('static', filename='images/share_achievements.webp') }}" alt="Bug speaking into mic">
+                        <h3>Share achievements</h3>
+                    </div>
+                    <div class="flip-card-back">
+                        <p>Get encouragement from friends and fellow runners.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <img src="{{ url_for('static', filename='images/nailsmith.webp') }}" alt="Feature 3">
+                        <h3>Plan your exercises</h3>
+                    </div>
+                    <div class="flip-card-back">
+                        <p>Browse popular exercises or plan your own.</p>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="flip-card">
-            <div class="flip-card-inner">
-                <div class="flip-card-front">
-                    <img src="{{ url_for('static', filename='images/share_achievements.webp') }}" alt="Bug speaking into mic">
-                    <h3>Share achievements</h3>
-                </div>
-                <div class="flip-card-back">
-                    <p>Get encouragement from friends and fellow runners.</p>
-                </div>
+    </section>
+    <section class="wellness">
+        <div class="wellness-content">
+            <div class="wellness-image">
+                <img src="{{ url_for('static', filename='images/beetle.png') }}" alt="Wellness">
+            </div>
+            <div class="wellness-text">
+                <h2>Take your wellness to the next level</h2>
+                <p>To elevate your wellness, focus on a holistic approach, including physical, mental, and spiritual aspects. This means prioritizing healthy habits, engaging in activities you enjoy, and finding time for self-care and relaxation. Consider incorporating practices like meditation, regular exercise, healthy eating, and adequate sleep. Remember to consult with your healthcare provider before making significant changes to your lifestyle.</p>
+            <div class="actions" id="homepage_actions">
+                <a href="/login">
+                    <button class="login">Login</button>
+                </a>
+                <a href="/register">
+                <button class="signup">Sign Up</button>
+                </a>
             </div>
         </div>
-        <div class="flip-card">
-            <div class="flip-card-inner">
-                <div class="flip-card-front">
-                    <img src="{{ url_for('static', filename='images/nailsmith.webp') }}" alt="Feature 3">
-                    <h3>Plan your exercises</h3>
-                </div>
-                <div class="flip-card-back">
-                    <p>Browse popular exercises or plan your own.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="wellness">
-    <div class="wellness-content">
-        <div class="wellness-image">
-            <img src="{{ url_for('static', filename='images/beetle.png') }}" alt="Wellness">
-        </div>
-        <div class="wellness-text">
-            <h2>Take your wellness to the next level</h2>
-            <p>To elevate your wellness, focus on a holistic approach, including physical, mental, and spiritual aspects. This means prioritizing healthy habits, engaging in activities you enjoy, and finding time for self-care and relaxation. Consider incorporating practices like meditation, regular exercise, healthy eating, and adequate sleep. Remember to consult with your healthcare provider before making significant changes to your lifestyle.</p>
-        <div class="actions" id="homepage_actions">
-            <a href="/login">
-                <button class="login">Login</button>
-            </a>
-            <a href="/register">
-            <button class="signup">Sign Up</button>
-            </a>
-        </div>
-    </div>
-</section>
+    </section>
 
-<section class="mobile-compatible">
-    <h2>Mobile-Compatible Web Experience</h2>
-    <div class="mobile-card-container">
-        <div class="mobile-card">
-            <img src="{{ url_for('static', filename='images/image6.jpeg') }}" alt="Goal 2">
-            <p>Easily track your progress, update personal data, and stay connected with your goals and friends...All while on the go.</p>
+    <section class="mobile-compatible">
+        <h2>Mobile-Compatible Web Experience</h2>
+        <div class="mobile-card-container">
+            <div class="mobile-card">
+                <img src="{{ url_for('static', filename='images/image6.jpeg') }}" alt="Goal 2">
+                <p>Easily track your progress, update personal data, and stay connected with your goals and friends...All while on the go.</p>
+            </div>
+            <!--  add div which links to mobile app (one day inshAllah)  -->
         </div>
-        <!--  add div which links to mobile app (one day inshAllah)  -->
-    </div>
-</section>
+    </section>
 
-<section class="community">
-    <h2>Community Feedback</h2>
-    <div class="community-feedback">
-        <div class="feedback-card"><em>“This is an Amazing website!”</em><br><span>- Daniel</span><br><span>Gym enthusiast</span></div>
-        <div class="feedback-card"><em>“A fantastic bit of work.”</em><br><span>- Paul</span><br><span>IT manager</span></div>
-        <div class="feedback-card"><em>“A genuinely good work, perfect for busy people”</em><br><span>- Natasha</span><br><span>Mum</span></div>
-        <div class="feedback-card"><em>“A very comfortable website and community.”</em><br><span>- Ben Buggington</span><br><span>Bug Guy</span></div>
-    </div> 
-</section>
+    <section class="community">
+        <h2>Community Feedback</h2>
+        <div class="community-feedback">
+            <div class="feedback-card"><em>“This is an Amazing website!”</em><br><span>- Daniel</span><br><span>Gym enthusiast</span></div>
+            <div class="feedback-card"><em>“A fantastic bit of work.”</em><br><span>- Paul</span><br><span>IT manager</span></div>
+            <div class="feedback-card"><em>“A genuinely good work, perfect for busy people”</em><br><span>- Natasha</span><br><span>Mum</span></div>
+            <div class="feedback-card"><em>“A very comfortable website and community.”</em><br><span>- Ben Buggington</span><br><span>Bug Guy</span></div>
+        </div> 
+    </section>
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/home_interaction.js')}}"></script> 
+    <script src="{{ url_for('static', filename='js/home_interaction.js')}}"></script> 
 {% endblock %}
