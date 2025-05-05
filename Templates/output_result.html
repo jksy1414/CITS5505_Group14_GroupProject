@@ -8,49 +8,68 @@
 <div class="container">
   <h2>Fitness Data Chart</h2>
 
+  <!-- ✅ Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endwith %}
+
+  <!-- 🔎 Caption -->
+  <p><strong>Showing:</strong> <em>{{ column_name }}</em></p>
   <p><strong>Current Sharing Option:</strong> {{ visibility|capitalize }}</p>
 
-  <!-- Chart type selector -->
+  <!-- 📊 Chart type selector -->
   <label for="chartType">Select Chart Type:</label><br>
   <select id="chartType" onchange="renderChart()">
     <option value="line">Line Chart</option>
     <option value="bar">Bar Chart</option>
   </select><br><br>
 
-  <!-- Chart canvas -->
+  <!-- 📈 Chart canvas -->
   <canvas id="fitnessChart" style="width:100%; max-width:600px; margin:auto;"></canvas><br>
 
-  <!-- Action buttons -->
+  <!-- 📌 Data Summary -->
+  <div id="dataSummary" style="margin-top: 20px;">
+    <h4>Summary of {{ column_name }}</h4>
+    <ul style="list-style: none; padding-left: 0;">
+      <li><strong>Average:</strong> {{ (values | sum / values | length) | round(2) }}</li>
+      <li><strong>Maximum:</strong> {{ values | max }}</li>
+      <li><strong>Minimum:</strong> {{ values | min }}</li>
+    </ul>
+  </div>
+
+  <!-- 📥 Download Graph -->
   <button class="btn" onclick="downloadChart()">Download Graph</button>
 
-  <!-- Sharing Option Form -->
+  <!-- 🔁 Back to column selection -->
+  <a href="{{ url_for('select_columns') }}" class="btn btn-secondary" style="margin-top: 10px;">🔙 Reselect Column</a>
+
+  <!-- 🌍 Sharing Option Form -->
   <form method="POST" action="{{ url_for('set_visibility') }}" style="margin-top: 20px;">
     <label for="visibility">Change Sharing Option:</label>
     <select name="visibility">
-      <option value="private">Private (Only Me)</option>
-      <option value="public">Public (Everyone)</option>
-      <option value="friends">Friends Only</option>
+      <option value="private" {% if visibility == 'private' %}selected{% endif %}>Private (Only Me)</option>
+      <option value="public" {% if visibility == 'public' %}selected{% endif %}>Public (Everyone)</option>
+      <option value="friends" {% if visibility == 'friends' %}selected{% endif %}>Friends Only</option>
     </select>
     <button type="submit" class="btn">Save Sharing Setting</button>
   </form>
 </div>
 
-<!-- Chart.js CDN -->
+<!-- 📦 Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   const labels = {{ labels|tojson }};
   const values = {{ values|tojson }};
   const columnName = "{{ column_name }}";
-
   let chart;
 
   function renderChart() {
     const chartType = document.getElementById('chartType').value;
     const ctx = document.getElementById('fitnessChart').getContext('2d');
 
-    if (chart) {
-      chart.destroy();
-    }
+    if (chart) chart.destroy();
 
     chart = new Chart(ctx, {
       type: chartType,
@@ -71,10 +90,24 @@
           legend: { display: true }
         },
         scales: {
-          y: { beginAtZero: true }
+          y: { beginAtZero: true },
+          x: {
+            ticks: {
+              autoSkip: true,
+              maxRotation: 45,
+              minRotation: 0
+            }
+          }
         }
       }
     });
+  }
+
+  function downloadChart() {
+    const link = document.createElement('a');
+    link.href = document.getElementById('fitnessChart').toDataURL('image/png');
+    link.download = columnName + "_chart.png";
+    link.click();
   }
 
   document.addEventListener("DOMContentLoaded", renderChart);
