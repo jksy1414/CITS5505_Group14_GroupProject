@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import pandas as pd  # for reading CSVs
 from Routes.auth_routes import auth
-from models import db, User
+from models import db, User, Chart
 from flask_login import LoginManager
 from extensions import db, mail
 import os
@@ -139,10 +139,12 @@ def set_visibility():
     flash("Sharing option updated!", "success")
     return redirect(url_for('results'))
 
-if __name__ == '__main__':
-    app.run(debug=True)
-
 @app.route('/explore')
 def explore():
     public_charts = Chart.query.filter(Chart.visibility.in_(['public', 'friends'])).order_by(Chart.created_at.desc()).all()
     return render_template('explore.html', charts=public_charts)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
