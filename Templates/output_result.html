@@ -24,6 +24,10 @@
   <select id="chartType" onchange="renderChart()">
     <option value="line">Line Chart</option>
     <option value="bar">Bar Chart</option>
+    <option value="pie">Pie Chart</option>
+    <option value="doughnut">Doughnut Chart</option>
+    <option value="radar">Radar Chart</option>
+    <option value="scatter">Scatter Plot</option>
   </select><br><br>
 
   <!-- 📈 Chart canvas -->
@@ -55,6 +59,12 @@
     </select>
     <button type="submit" class="btn">Save Sharing Setting</button>
   </form>
+
+  <!-- 💡 Random Fitness Fact -->
+  <div id="fitnessFact" style="margin-top: 30px; background-color: #fff8dc; border-left: 6px solid #6b8e23; padding: 15px; border-radius: 8px;">
+    <h4>💪 Fitness Fact of the Day</h4>
+    <p id="factText">Loading...</p>
+  </div>
 </div>
 
 <!-- 📦 Chart.js CDN -->
@@ -68,20 +78,28 @@
   function renderChart() {
     const chartType = document.getElementById('chartType').value;
     const ctx = document.getElementById('fitnessChart').getContext('2d');
-
     if (chart) chart.destroy();
 
-    chart = new Chart(ctx, {
+    const chartConfig = {
       type: chartType,
       data: {
         labels: labels,
         datasets: [{
           label: columnName,
           data: values,
-          borderWidth: 2,
-          fill: false,
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.5)',
+            'rgba(54, 162, 235, 0.5)',
+            'rgba(255, 206, 86, 0.5)',
+            'rgba(75, 192, 192, 0.5)',
+            'rgba(153, 102, 255, 0.5)',
+            'rgba(255, 159, 64, 0.5)'
+          ],
           borderColor: 'rgba(75, 192, 192, 1)',
-          backgroundColor: 'rgba(75, 192, 192, 0.2)'
+          borderWidth: 2,
+          fill: chartType === 'line' || chartType === 'radar',
+          showLine: chartType !== 'scatter',
+          pointRadius: chartType === 'scatter' ? 5 : 3,
         }]
       },
       options: {
@@ -89,7 +107,7 @@
         plugins: {
           legend: { display: true }
         },
-        scales: {
+        scales: (chartType === 'pie' || chartType === 'doughnut') ? {} : {
           y: { beginAtZero: true },
           x: {
             ticks: {
@@ -100,7 +118,9 @@
           }
         }
       }
-    });
+    };
+
+    chart = new Chart(ctx, chartConfig);
   }
 
   function downloadChart() {
@@ -110,6 +130,25 @@
     link.click();
   }
 
-  document.addEventListener("DOMContentLoaded", renderChart);
+  // 💡 Fitness Facts
+  const fitnessFacts = [
+    "Walking 10,000 steps a day can reduce the risk of heart disease by 40%.",
+    "Strength training boosts metabolism for up to 48 hours after your workout.",
+    "Staying hydrated can improve physical performance by up to 20%.",
+    "Just 30 minutes of exercise a day improves mood and reduces anxiety.",
+    "Sleep plays a crucial role in muscle recovery and overall health.",
+    "Regular workouts improve memory, creativity, and brain function."
+  ];
+
+  function showRandomFact() {
+    const factText = document.getElementById("factText");
+    const fact = fitnessFacts[Math.floor(Math.random() * fitnessFacts.length)];
+    factText.textContent = fact;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    renderChart();
+    showRandomFact();
+  });
 </script>
 {% endblock %}
