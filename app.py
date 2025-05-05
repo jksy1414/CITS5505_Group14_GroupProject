@@ -141,3 +141,8 @@ def set_visibility():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+@app.route('/explore')
+def explore():
+    public_charts = Chart.query.filter(Chart.visibility.in_(['public', 'friends'])).order_by(Chart.created_at.desc()).all()
+    return render_template('explore.html', charts=public_charts)

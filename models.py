@@ -17,3 +17,17 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return f'<User {self.username}>'
     
+class Chart(db.Model):
+    __tablename__ = 'charts'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    title = db.Column(db.String(120))
+    labels = db.Column(db.PickleType)  # Store labels (e.g., dates, indexes)
+    values = db.Column(db.PickleType)  # Store values
+    column_name = db.Column(db.String(120))
+    visibility = db.Column(db.String(20), default='private')  # public, private, friends
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    user = db.relationship('User', backref='charts')

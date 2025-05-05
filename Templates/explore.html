@@ -1,0 +1,39 @@
+{% extends "based.html" %}
+
+{% block content %}
+<div class="container">
+  <h2>🌍 Explore Public Charts</h2>
+  {% if charts %}
+    {% for chart in charts %}
+      <div class="chart-card">
+        <h4>{{ chart.title }}</h4>
+        <p><strong>User:</strong> {{ chart.user.username }} | <strong>Shared as:</strong> {{ chart.visibility }}</p>
+        <canvas id="chart-{{ chart.id }}" width="600" height="300"></canvas>
+        <script>
+          new Chart(document.getElementById('chart-{{ chart.id }}').getContext('2d'), {
+            type: 'bar',
+            data: {
+              labels: {{ chart.labels|tojson }},
+              datasets: [{
+                label: '{{ chart.column_name }}',
+                data: {{ chart.values|tojson }},
+                backgroundColor: 'rgba(75, 192, 192, 0.3)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: { legend: { display: true } },
+              scales: { y: { beginAtZero: true } }
+            }
+          });
+        </script>
+      </div>
+      <hr>
+    {% endfor %}
+  {% else %}
+    <p>No public charts shared yet. Be the first!</p>
+  {% endif %}
+</div>
+{% endblock %}
