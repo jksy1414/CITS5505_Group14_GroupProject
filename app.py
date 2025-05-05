@@ -119,18 +119,25 @@ def select_columns():
     return render_template('input_analyze_columns.html', columns=columns)
 
 
-@app.route('/results')
+@app.route("/results")
 def results():
-    labels = session.get('labels', [])
-    values = session.get('values', [])
-    column_name = session.get('column_name', 'Your Fitness Data')
-    visibility = session.get('visibility', 'private')
+    labels = session.get("labels")
+    values = session.get("values")
+    column_name = session.get("column_name")
+    visibility = session.get("visibility", "private")
 
-    return render_template('output_result.html',
-                           labels=labels,
-                           values=values,
-                           column_name=column_name,
-                           visibility=visibility)
+    if not labels or not values or not column_name:
+        flash("Missing data for chart rendering.", "danger")
+        return redirect(url_for("select_columns"))
+
+    return render_template(
+        "output_result.html",
+        column_name=column_name,
+        labels=labels,
+        values=values,
+        visibility=visibility
+    )
+
 
 @app.route('/set_visibility', methods=['POST'])
 def set_visibility():
