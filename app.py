@@ -1,53 +1,49 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 import pandas as pd  # for reading CSVs
-from Routes.auth_routes import auth
-from models import db, User, Chart
 from flask_login import LoginManager
 from extensions import db, mail
+from Routes.auth_routes import auth
+from models import db, User, Chart
 import os
 from dotenv import load_dotenv
-from flask import flash
 
-#load env file
+# Load environment variables
 load_dotenv()
 
+# Create Flask app instance
 app = Flask(__name__)
 
-
-
-# protect cookie/session
+# Protect cookie/session
 app.config['SECRET_KEY'] = 'your-secret-key'
-# save sqlite db location 
+# Save SQLite DB location
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
-
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
 
-#configurate flask email for resetting passwords
+# Configure Flask email for resetting passwords
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
 app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS') == 'True'
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 
-# bind SQLAlchemy, mail with Flask
+# Bind SQLAlchemy and Mail with Flask
 db.init_app(app)
 mail.init_app(app)
 
-#Login management
+# Login management
 login_manager = LoginManager()
-#if the status is not login, web will transfer to /login
-login_manager.login_view = 'auth.login'
-#bind login_manager and flask
+login_manager.login_view = 'auth.login'  # Redirect to login if not authenticated
 login_manager.init_app(app)
 
-#loading user object from user_id
+# Load user function for Flask-Login
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-#register blueprint
+
+# Register the auth Blueprint
 app.register_blueprint(auth)
 
-#create db tables
+# Create database tables
 with app.app_context():
     db.create_all()
 
@@ -55,7 +51,7 @@ with app.app_context():
 @app.route('/')
 def home():
     return render_template('home.html')
-    
+
 # Route for input page (Step 1: Upload CSV UTF-8 only)
 @app.route('/analyze', methods=['GET', 'POST'])
 def analyze():
@@ -90,7 +86,6 @@ def analyze():
 
     return render_template('input_analyze.html')
 
-
 # Route for column selection (Step 2: Pick columns to analyze)
 @app.route('/select-columns', methods=['GET', 'POST'])
 def select_columns():
@@ -123,7 +118,7 @@ def select_columns():
     columns = session.get('column_choices', [])
     return render_template('input_analyze_columns.html', columns=columns)
 
-
+# Route for results page
 @app.route("/results")
 def results():
     labels = session.get("labels")
@@ -143,8 +138,7 @@ def results():
         visibility=visibility
     )
 
-
-
+# Route for setting visibility of charts
 @app.route('/set_visibility', methods=['POST'])
 def set_visibility():
     visibility = request.form.get('visibility')
@@ -152,12 +146,12 @@ def set_visibility():
     flash("Sharing option updated!", "success")
     return redirect(url_for('results'))
 
+# Route for exploring public charts
 @app.route('/explore')
 def explore():
     public_charts = Chart.query.filter(Chart.visibility.in_(['public', 'friends'])).order_by(Chart.created_at.desc()).all()
     return render_template('explore.html', charts=public_charts)
 
+# Run the app
 if __name__ == '__main__':
     app.run(debug=True)
-
-
