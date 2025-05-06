@@ -17,22 +17,6 @@
 5. Account page  (full implimentation with history low priority for now)
 
 
-## To-do list
-### General
-- [ ] Use base.html page for all pages
-- [ ] Make theme/looks consistent
-### home.html
-- [ ] Clean up flavour-text
-- [ ] Replace generic images with more fitting images
-- [ ] Misplaced image (line 168 in home_style) 
-### input_analyze.html
-- [done] Move heading outside of container (or some other means of emphasising heading)
-- [done] Fix alignment of data column selection text (checkboxes should be aligned)
-- [done] Add (dynamic?) images on the sides of the page to fill empty space
-- add in the function 
-### Low priority 
-- [ ] Make header a moving heatmap - dynamic 
-
 ## References
 Home page: 
 - https://dribbble.com/shots/7884095-Fitness-Icons
