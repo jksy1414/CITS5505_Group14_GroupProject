@@ -75,6 +75,7 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
         
+
         <script>
             // eslint-disable-next-line
             Chart.register(window['chartjs-plugin-annotation']);
@@ -283,16 +284,23 @@
                 });
             }
 
+            
             const radarCanvas = document.getElementById('radarChart');
                 if (radarCanvas) {
                     const radarCtx = radarCanvas.getContext('2d');
+                    {% if health_metrics %}
+                        const radarData = {{ health_metrics.values() | list | tojson }};
+                    {% else %}
+                        const radarData = [];
+                    {% endif %}
+                    
                     new Chart(radarCtx, {
                         type: 'radar',
                         data: {
                             labels: ['Calories Intake', 'Sleep Hours', 'Workout Duration', 'Calories Burned', 'Steps'],
                             datasets: [{
                                 label: 'Your Score',
-                                data: {{ health_metrics.values() | list | tojson if health_metrics else '[]' }},
+                                data: radarData,
                                 fill: true,
                                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
                                 borderColor: 'rgba(54, 162, 235, 1)',

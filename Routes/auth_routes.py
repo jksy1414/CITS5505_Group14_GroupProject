@@ -102,8 +102,9 @@ def register():
 @auth.route('/account', methods=['GET'])
 @login_required
 def account():
-    return render_template('account.html', user=current_user)
+    #return render_template('account.html', user=current_user)
 
+    user = current_user
 
     #computing BMI
     if not user.height or not user.weight:
