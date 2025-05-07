@@ -1,10 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
-<<<<<<< HEAD
+
 from datetime import date
-=======
+
 from werkzeug.security import generate_password_hash, check_password_hash
->>>>>>> 767dabf8021db5f230ff39a59ffac6a2baa89641
+
 
 # Initialize the SQLAlchemy object
 db = SQLAlchemy()
@@ -44,7 +44,7 @@ class Chart(db.Model):
     labels = db.Column(db.PickleType)  # Store labels (e.g., dates, indexes)
     values = db.Column(db.PickleType)  # Store values
     column_name = db.Column(db.String(120))
-<<<<<<< HEAD
+
     visibility = db.Column(db.String(20), default='private')  # public, private, friends
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
@@ -67,7 +67,7 @@ class HealthData(db.Model):
 
     def __repr__(self):
         return f'<HealthData user={self.user_id} date={self.date}>'
-=======
+
     visibility = db.Column(db.String(20), default='private')  # Options: public, private, friends
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
->>>>>>> 767dabf8021db5f230ff39a59ffac6a2baa89641
+
