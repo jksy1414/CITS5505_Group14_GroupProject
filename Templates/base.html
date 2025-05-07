@@ -21,15 +21,19 @@
             <a href="/">Home</a>
             <a href="/analyze">Data Analysis</a>
             <a href="/explore">Explore</a>
+            <a href ="/login">login</a><!--added to check-->
+            <a href ="/register">signup</a><!--added to check-->
         </nav>
         <div class="actions">
+           
           {% if current_user.is_authenticated %}
-          <a href="/account">
+          
+         <a href="/account">
               <img src="{{ url_for('static', filename='uploads/' + current_user.avatar) if current_user.avatar else url_for('static', filename='images/buggohome.jpg') }}" 
                  alt="Profile Picture" 
                  class="profile-pic">
-            </a>
-          {% else %}
+            </a> 
+          {% else %}-->
             <a href="/login">
                 <button class="login">Login</button>
             </a>

@@ -89,3 +89,8 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'success')
     return redirect(url_for('auth.login'))
+
+@auth.route('/upload_avatar', methods=['GET', 'POST'])
+def upload_avatar():
+    # Logic for handling avatar upload
+    return "Upload Avatar Page"
