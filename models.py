@@ -1,5 +1,6 @@
 from extensions import db
 from flask_login import UserMixin
+from datetime import date
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -31,3 +32,21 @@ class Chart(db.Model):
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
     user = db.relationship('User', backref='charts')
+
+class HealthData(db.Model):
+    __tablename__ = 'health_data'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    date = db.Column(db.Date, default=date.today, nullable=False)
+    calories_intake = db.Column(db.Integer)
+    sleep_hours = db.Column(db.Float)
+    workout_duration = db.Column(db.Integer)  # in minutes
+    calories_burned = db.Column(db.Integer)
+    steps = db.Column(db.Integer)
+
+    user = db.relationship('User', backref=db.backref('health_records', lazy=True))
+
+    def __repr__(self):
+        return f'<HealthData user={self.user_id} date={self.date}>'

@@ -63,5 +63,280 @@
                 <button type="submit" class="btn btn-success">Save Changes</button>
             </div>
         </form>
+        <!-- line and bar divs-->
+        <div class="mt-5">
+            <h4>Calories Intake vs Burned (Weekly)</h4>
+            <canvas id="calorieChart" width="400" height="200"></canvas>
+
+            <h4>Your Daily Progress</h4>
+            <canvas id="lineChart" width="400" height="200"></canvas>
+
+            <h4>Weekly Summary</h4>
+                {% if show_weekly_summary %}
+            <canvas id="barChart" width="400" height="200"></canvas>
+                {% else %}
+            <p class="text-muted">Weekly Summary will appear after a full Calendar week of data.</p>
+            {% endif %}
+
+
+            {% if show_radar %}
+                <h4>Your Health Radar</h4>
+                <p><strong>Total Health Score:</strong> {{ health_score }}/100</p>
+                <canvas id="radarChart" width="400" height="400"></canvas>
+            {% else %}
+                <h4>Your Health Radar</h4>
+                <p class="text-muted">Not enough data yet (at least 3 days this week required).</p>
+            {% endif %}
+
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
+        
+        <script>
+            // eslint-disable-next-line
+            Chart.register(window['chartjs-plugin-annotation']);
+
+            const calorieCtx = document.getElementById('calorieChart').getContext('2d');
+
+            new Chart(calorieCtx, {
+                type: 'bar',
+                data: {
+                    labels: {{ calorie_labels | tojson }},
+                    datasets: [
+                        {
+                            label: 'Calories Intake',
+                            data: {{ calorie_intake | tojson }},
+                            backgroundColor: 'rgba(255, 165, 0, 0.6)',
+                            spanGaps: false
+                        },
+                        {
+                            label: 'Calories Burned',
+                            data: {{ calorie_burned | tojson }},
+                            backgroundColor: 'rgba(60, 179, 113, 0.6)',
+                            spanGaps: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Calories'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Weekly Calorie Balance'
+                        }
+                    }
+                }
+            });
+
+
+            //line chart (every day)
+            const lineCtx = document.getElementById("lineChart").getContext('2d');
+            new Chart(lineCtx, {
+                type: 'line',
+                data: {
+                    labels: {{ line_labels | tojson }},
+                    datasets:[
+                        {
+                            label: 'Steps',
+                            data: {{line_steps | tojson }},
+                            borderColor: 'blue',
+                            spanGaps: false,
+                            fill: false,
+                            yAxisID: 'ySteps' //left axis
+                        },
+                        {
+                            label: 'Workout Duration(min)',
+                            data: {{line_workout | tojson}},
+                            borderColor: 'green',
+                            spanGaps: false,
+                            fill: false,
+                            yAxisID: 'yTime' //right axis
+                        },
+                        {
+                            label: 'Sleep Hours',
+                            data: {{ line_sleep | tojson }},
+                            borderColor: 'purple',
+                            fill: false,
+                            yAxisID: 'yTime' //right axis
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        ySteps: {
+                            type: 'linear',
+                            position: 'left',
+                            title: {display: true, text: 'Steps'}
+                        },
+
+                        yTime: {
+                            type: 'linear',
+                            position: 'right',
+                            title: { display:true, text: 'Minutes / Hours' },
+                            grid: {drawOnChartArea: false}
+                        }
+
+                        }
+
+
+                }
+            })
+            const barCanvas = document.getElementById('barChart');
+
+            
+            if (barCanvas) {
+                const barCtx = barCanvas.getContext('2d');
+                new Chart(barCtx, {
+                type: 'bar',
+                    data: {
+                        labels: ['Workout Days', 'Active Days', 'Avg Calorie Deficit'],
+                        datasets: [
+                            {
+                                label: 'Workout Days - Last Week',
+                                data: [{{ last_week_summary.workout_days }}, 0, 0],
+                                backgroundColor: '#6495ed',
+                                yAxisID: 'yCount'
+                            },
+                            {
+                                label: 'Active Days - Last Week',
+                                data: [0, {{ last_week_summary.active_days }}, 0],
+                                backgroundColor: '#87cefa',
+                                yAxisID: 'yCount'
+                            },
+                            {
+                                label: 'Calorie Deficit - Last Week',
+                                data: [0, 0, {{ last_week_summary.avg_deficit }}],
+                                backgroundColor: '#4682b4',
+                                yAxisID: 'yCalorie'
+                            },
+                            {
+                                label: 'Workout Days - This Week',
+                                data: [{{ this_week_summary.workout_days }}, 0, 0],
+                                backgroundColor: '#ff6384',
+                                yAxisID: 'yCount'
+                            },
+                            {
+                                label: 'Active Days - This Week',
+                                data: [0, {{ this_week_summary.active_days }}, 0],
+                                backgroundColor: '#ff9aa2',
+                                yAxisID: 'yCount'
+                            },
+                            {
+                                label: 'Calorie Deficit - This Week',
+                                data: [0, 0, {{ this_week_summary.avg_deficit }}],
+                                backgroundColor: '#e76f51',
+                                yAxisID: 'yCalorie'
+                            }
+                        ]
+                
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                                annotation: {
+                                            annotations: {
+                                                zeroLine: {
+                                                    type: 'line',
+                                                    yScaleID: 'yCalorie',
+                                                    yMin: 0,
+                                                    yMax: 0,
+                                                    borderColor: 'gray',
+                                                    borderWidth: 2,
+                                                    borderDash: [6, 6],
+                                                    label: {
+                                                            display: true,
+                                                            content: 'Calorie Neutral',
+                                                            position: 'start',
+                                                            color: 'gray'
+                                                            }   
+                                                            }   
+                                                        }
+                                            }
+                                },
+                        scales: {
+                            yCount: {
+                                type: 'linear',
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Days'
+                                },
+                                min: 0,
+                                max: 7,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            },
+                            
+                            yCalorie: {
+                                type: 'linear',
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Avg Calorie Deficit (kcal)'
+                                },
+                                grid: {
+                                    drawOnChartArea: false 
+                                },
+                                beginAtZero: true,
+                                suggestedMin: -500,
+                                suggestedMax: 500
+                            }
+                        }
+                    }
+                });
+            }
+
+            const radarCanvas = document.getElementById('radarChart');
+                if (radarCanvas) {
+                    const radarCtx = radarCanvas.getContext('2d');
+                    new Chart(radarCtx, {
+                        type: 'radar',
+                        data: {
+                            labels: ['Calories Intake', 'Sleep Hours', 'Workout Duration', 'Calories Burned', 'Steps'],
+                            datasets: [{
+                                label: 'Your Score',
+                                data: {{ health_metrics.values() | list | tojson if health_metrics else '[]' }},
+                                fill: true,
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                pointBackgroundColor: 'rgba(54, 162, 235, 1)'
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                r: {
+                                    angleLines: { display: true },
+                                    suggestedMin: 0,
+                                    suggestedMax: 100,
+                                    ticks: {
+                                        stepSize: 20,
+                                        backdropColor: 'transparent'
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    position: 'top'
+                                }
+                            }
+                        }
+                    });
+                }
+        </script>
     </div>
 {% endblock %}
