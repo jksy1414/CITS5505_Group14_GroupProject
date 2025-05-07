@@ -20,3 +20,6 @@ env/
 
 # Ignore mac automatic generate files
 .DS_Store
+
+#Ingore shell
+shell.py

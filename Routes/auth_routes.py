@@ -1,7 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-<<<<<<< HEAD
-from flask_login import login_user, logout_user, login_required
 from models import User, HealthData
 import random, string, time, re, os
 from flask import session
@@ -12,11 +10,8 @@ from flask_login import current_user
 from werkzeug.utils import secure_filename
 from util import calculate_health_score, aggregate_week_data
 from datetime import date, timedelta
-
-=======
 from flask_login import login_user, logout_user, login_required, current_user
 from models import db, User
->>>>>>> 767dabf8021db5f230ff39a59ffac6a2baa89641
 
 # Create auth blueprint
 auth = Blueprint('auth', __name__)
