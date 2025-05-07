@@ -30,4 +30,7 @@ Data Input page:
 Data Output page:
 - https://hollowknight.fandom.com/wiki/Sheo?file=NailmasterSheo.png
 
+Default profile picture:
+- from "Artful Anticks" by Oliver Herford, 1894
+
 

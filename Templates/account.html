@@ -6,33 +6,13 @@
 
 {% block styles %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_account.css') }}">
-    <style>
-        .profile-pic{
-            width: 120px;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 2px solid #ccc;
-        }
-    </style>
 {% endblock %}
-
 
 {% block content %}
     <div class="contain mt-4">
         <div class="d-flex justify-content-between align-items-center">
             <h2>My Account</h2>
-            <a href="{{ url_for('auth.logout')}}" class="btn btn-outline-danger">logout</a>
-        </div>
-
-        <div class="text-center my-4">
-            <!-- Default avatar with ? icon-->
-            <form id="avatarForm" action="{{ url_for('auth.upload_avatar') }}" method="POST" enctype="multipart/form-data" class="mt-2">
-                <input type="file" name="avatar" id="avatarInput" accept="image/*" style="display: none;" onchange="document.getElementById('avatarForm').submit()">
-                <label for="avatarInput" style="cursor: pointer;">
-                    <img src="{{ url_for('static', filename='uploads/' + user.avatar) if user.avatar else url_for('static', filename='images/default_avatar.jpg') }}" alt="Avatar" class="profile-pic" title="Click to change avatar">
-                </label>
-            </form>
+            
         </div>
             
         <form method="POST" action="{{ url_for('auth.update_profile') }}">
@@ -41,19 +21,19 @@
 
                 <div class="mb-2">
                     <label><strong>Username:</strong></label>
-                    <input type="text" name="username" class="form-control" value="{{user.username}}" readonly>           
+                    <input type="text" name="username" class="form-control" value="{{ user.username }}" readonly>           
                 </div>
                 <div class="mb-2">
                     <label><strong>Age:</strong></label>
-                    <input type="text" name="age" class="form-control" value="{{user.age}}" required>           
+                    <input type="text" name="age" class="form-control" value="{{ user.age }}" required>           
                 </div>
                 <div class="mb-2">
                     <label><strong>Height (cm):</strong></label>
-                    <input type="text" name="height" class="form-control" value="{{user.height}}" required>           
+                    <input type="text" name="height" class="form-control" value="{{ user.height }}" required>           
                 </div>
                 <div class="mb-2">
                     <label><strong>Weight (kg):</strong></label>
-                    <input type="text" name="weight" class="form-control" value="{{user.weight}}" required>           
+                    <input type="text" name="weight" class="form-control" value="{{ user.weight }}" required>           
                 </div>
                 <div class="mb-3">
                     <label><strong>BMI:</strong></label>
@@ -62,6 +42,8 @@
                     
                 <button type="submit" class="btn btn-success">Save Changes</button>
             </div>
+
+            <p>Need to log out??? you can <a href="/logout" class="btn btn-outline-danger">Logout</a> from here</p>
         </form>
         <!-- line and bar divs-->
         <div class="mt-5">
