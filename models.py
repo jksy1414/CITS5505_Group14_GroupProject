@@ -46,8 +46,6 @@ class Chart(db.Model):
     visibility = db.Column(db.String(20), default='private')  # public, private, friends
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
-    user = db.relationship('User', backref='charts')
-
 class HealthData(db.Model):
     __tablename__ = 'health_data'
 
