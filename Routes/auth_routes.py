@@ -94,3 +94,8 @@ def logout():
 def upload_avatar():
     # Logic for handling avatar upload
     return "Upload Avatar Page"
+
+@auth.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    # Placeholder for forgot password functionality
+    return "Forgot Password Page (TODO)"
