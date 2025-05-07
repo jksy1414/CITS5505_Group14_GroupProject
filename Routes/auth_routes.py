@@ -50,7 +50,7 @@ def register():
         # Check if username or email already exists
         existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
         if existing_user:
-            flash('Username or email already exists!', 'danger')
+            flash('There is already an account using this username or email address.', 'danger')
             return redirect(url_for('auth.register'))
 
         try:
@@ -66,11 +66,9 @@ def register():
             db.session.add(new_user)
             db.session.commit()
 
-            # Log in the user immediately after registration
-            login_user(new_user)
-
-            flash('Registration successful!', 'success')
-            return redirect(url_for('auth.account'))
+            # Display success message and redirect to login page
+            flash('Account created - please login.', 'success')
+            return redirect(url_for('auth.login'))
 
         except ValueError:
             flash('Invalid value for height, weight, or age.', 'danger')
