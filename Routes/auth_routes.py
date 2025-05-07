@@ -3,10 +3,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
 from models import db, User
 
+# Create auth blueprint
 auth = Blueprint('auth', __name__)
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+    """Login route for user authentication."""
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
@@ -26,8 +28,10 @@ def login():
 
     return render_template('login.html')
 
+
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
+    """Register route for creating a new user."""
     if request.method == 'POST':
         username = request.form.get('username')
         email = request.form.get('email')
@@ -38,7 +42,7 @@ def register():
         age = request.form.get('age')
 
         # Validate that all required fields are provided
-        if not username or not email or not password or not confirm_password or not height or not weight or not age:
+        if not all([username, email, password, confirm_password, height, weight, age]):
             flash('All fields are required!', 'danger')
             return redirect(url_for('auth.register'))
 
@@ -73,29 +77,66 @@ def register():
             return redirect(url_for('auth.account'))
 
         except ValueError:
-            flash('Invalid value for height, weight, or age.', 'danger')
+            flash('Invalid value for height, weight, or age. Please provide valid numbers.', 'danger')
+            return redirect(url_for('auth.register'))
+
+        except Exception as e:
+            # Handle unexpected errors
+            flash(f'An unexpected error occurred: {str(e)}', 'danger')
             return redirect(url_for('auth.register'))
 
     return render_template('register.html')
+
 
 @auth.route('/account', methods=['GET'])
 @login_required
 def account():
     return render_template('account.html', user=current_user)
 
+
 @auth.route('/logout')
 @login_required
 def logout():
+    """Logout route to end the user session."""
     logout_user()
     flash('You have been logged out.', 'success')
     return redirect(url_for('auth.login'))
 
-@auth.route('/upload_avatar', methods=['GET', 'POST'])
-def upload_avatar():
-    # Logic for handling avatar upload
-    return "Upload Avatar Page"
 
 @auth.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
-    # Placeholder for forgot password functionality
-    return "Forgot Password Page (TODO)"
+    """Placeholder for forgot password functionality."""
+    if request.method == 'POST':
+        # Logic for handling password reset can be added here
+        flash('Password reset instructions have been sent to your email.', 'info')
+        return redirect(url_for('auth.login'))
+
+    return render_template('forgot_password.html')  # Create a corresponding template if needed
+
+@auth.route('/update_profile', methods=['POST'])
+@login_required
+def update_profile():
+    """Update user profile."""
+    username = request.form.get('username')
+    age = request.form.get('age')
+    height = request.form.get('height')
+    weight = request.form.get('weight')
+
+    # Validate input
+    if not all([username, age, height, weight]):
+        flash('All fields are required!', 'danger')
+        return redirect(url_for('auth.account'))
+
+    try:
+        # Update user details
+        current_user.username = username
+        current_user.age = int(age)
+        current_user.height = float(height)
+        current_user.weight = float(weight)
+        db.session.commit()
+
+        flash('Profile updated successfully!', 'success')
+    except ValueError:
+        flash('Invalid input. Please provide valid numbers for age, height, and weight.', 'danger')
+
+    return redirect(url_for('auth.account'))
