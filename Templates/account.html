@@ -16,8 +16,10 @@
     <div class="account-tabs">
         <button class="tab-btn active" onclick="showTab('overview')">Overview</button>
         <button class="tab-btn" onclick="showTab('history')">History</button>
+        <button class="tab-btn" onclick="showTab('activity')">Activity Log</button>
         <button class="tab-btn" onclick="showTab('goals')">Goals</button>
         <button class="tab-btn" onclick="showTab('profile')">Profile</button>
+        <button class="tab-btn" onclick="showTab('settings')">Settings</button>
     </div>
 
     <!-- Overview Tab -->
@@ -51,6 +53,27 @@
         <p class="text-muted">This section will display previous uploads, analysis summaries, and downloadable graphs (feature coming soon).</p>
     </div>
 
+    <!-- Activity Log Tab -->
+    <div id="activity" class="tab-section">
+        <h4>Recent Health Activity</h4>
+        {% if activity_data %}
+            <ul>
+                {% for record in activity_data %}
+                <li>
+                    <strong>{{ record.date.strftime('%Y-%m-%d') }}</strong>: 
+                    Steps: {{ record.steps or 0 }}, 
+                    Workout: {{ record.workout_duration or 0 }} mins, 
+                    Sleep: {{ record.sleep_hours or 0 }} hrs, 
+                    Intake: {{ record.calories_intake or 0 }} kcal, 
+                    Burned: {{ record.calories_burned or 0 }} kcal
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No recent activity available.</p>
+        {% endif %}
+    </div>
+
     <!-- Goals Tab -->
     <div id="goals" class="tab-section">
         <h4>Fitness Goals</h4>
@@ -59,7 +82,6 @@
 
     <!-- Profile Tab -->
     <div id="profile" class="tab-section">
-        <!-- View Mode -->
         <div id="profile-view">
             <p><strong>Username:</strong> {{ user.username }}</p>
             <p><strong>Age:</strong> {{ user.age }}</p>
@@ -69,7 +91,6 @@
             <button class="btn btn-success" onclick="toggleEdit(true)">Edit Profile</button>
         </div>
 
-        <!-- Edit Mode -->
         <div id="profile-edit" style="display: none;">
             <form method="POST" action="{{ url_for('auth.update_profile') }}">
                 <div class="card">
@@ -92,6 +113,29 @@
             </form>
         </div>
     </div>
+
+    <!-- Settings Tab -->
+    <div id="settings" class="tab-section">
+        <h4>Settings</h4>
+        <form method="POST" action="{{ url_for('auth.change_password') }}">
+            <div class="card">
+                <label>Current Password:</label>
+                <input type="password" name="current_password" class="form-control" required>
+                <label>New Password:</label>
+                <input type="password" name="new_password" class="form-control" required>
+                <label>Confirm New Password:</label>
+                <input type="password" name="confirm_password" class="form-control" required>
+                <button type="submit" class="btn btn-success mt-2">Change Password</button>
+            </div>
+        </form>
+        <div class="mt-3">
+            <label>Theme Mode:</label>
+            <select id="themeToggle" class="form-control" onchange="toggleTheme(this.value)">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+            </select>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
@@ -107,6 +151,14 @@ function showTab(tabId) {
 function toggleEdit(showEdit) {
     document.getElementById('profile-view').style.display = showEdit ? 'none' : 'block';
     document.getElementById('profile-edit').style.display = showEdit ? 'block' : 'none';
+}
+
+function toggleTheme(mode) {
+    if (mode === 'dark') {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
+    }
 }
 </script>
 
