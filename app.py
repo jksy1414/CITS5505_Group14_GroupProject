@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import pandas as pd  # for reading CSVs
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user, login_required
 from extensions import db, mail
 from Routes.auth_routes import auth
 from models import db, User, Chart
@@ -59,7 +59,12 @@ def home():
 def analyze():
     if request.method == 'POST':
         # ✅ Clear any existing session data
-        session.clear()
+        #session.clear()
+        session.pop('column_choices', None)
+        session.pop('csv_data', None)
+        session.pop('labels', None)
+        session.pop('values', None)
+        session.pop('columns', None)
 
         file = request.files.get('fitnessFile')
 
@@ -177,7 +182,37 @@ def results():
 @app.route('/set_visibility', methods=['POST'])
 def set_visibility():
     visibility = request.form.get('visibility')
-    session['visibility'] = visibility  # store in session
+    session['visibility'] = visibility  # Store in session
+
+    # Require login only if visibility is "public"
+    if visibility == "public" and not current_user.is_authenticated:
+        flash("You must be logged in to set visibility to public.", "danger")
+        return redirect(url_for('auth.login', next=request.url))
+
+    # Save chart data to the database if visibility is "public"
+    if visibility == "public":
+        labels = session.get("labels")
+        values = session.get("values")
+        columns = session.get("columns")
+
+        if not labels or not values or not columns:
+            flash("Missing data for saving the chart.", "danger")
+            return redirect(url_for('results'))
+
+        # Save each column as a separate chart
+        for column in columns:
+            chart = Chart(
+                user_id=current_user.id if current_user.is_authenticated else None,  # Use the logged-in user's ID
+                title=f"Chart for {column}",
+                labels=labels,
+                values=values[column],
+                column_name=column,
+                visibility=visibility
+            )
+            db.session.add(chart)
+
+        db.session.commit()
+
     flash("Sharing option updated!", "success")
     return redirect(url_for('results'))
 
