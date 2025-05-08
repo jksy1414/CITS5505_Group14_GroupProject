@@ -59,33 +59,38 @@
 
     <!-- Profile Tab -->
     <div id="profile" class="tab-section">
-        <form method="POST" action="{{ url_for('auth.update_profile') }}">
-            <div class="card">
-                <h4 class="mb-3">Profile Info</h4>
-                <div class="mb-2">
-                    <label><strong>Username:</strong></label>
-                    <input type="text" name="username" class="form-control" value="{{ user.username }}" readonly>           
+        <!-- View Mode -->
+        <div id="profile-view">
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Age:</strong> {{ user.age }}</p>
+            <p><strong>Height (cm):</strong> {{ user.height }}</p>
+            <p><strong>Weight (kg):</strong> {{ user.weight }}</p>
+            <p><strong>BMI:</strong> {{ bmi }}</p>
+            <button class="btn btn-success" onclick="toggleEdit(true)">Edit Profile</button>
+        </div>
+
+        <!-- Edit Mode -->
+        <div id="profile-edit" style="display: none;">
+            <form method="POST" action="{{ url_for('auth.update_profile') }}">
+                <div class="card">
+                    <h4 class="mb-3">Edit Profile</h4>
+                    <label>Age:</label>
+                    <input type="text" name="age" class="form-control" value="{{ user.age }}" required>
+
+                    <label>Height (cm):</label>
+                    <input type="text" name="height" class="form-control" value="{{ user.height }}" required>
+
+                    <label>Weight (kg):</label>
+                    <input type="text" name="weight" class="form-control" value="{{ user.weight }}" required>
+
+                    <label>BMI:</label>
+                    <input type="text" class="form-control" value="{{ bmi }}" readonly>
+
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                    <button type="button" class="btn btn-outline-danger" onclick="toggleEdit(false)">Cancel</button>
                 </div>
-                <div class="mb-2">
-                    <label><strong>Age:</strong></label>
-                    <input type="text" name="age" class="form-control" value="{{ user.age }}" required>           
-                </div>
-                <div class="mb-2">
-                    <label><strong>Height (cm):</strong></label>
-                    <input type="text" name="height" class="form-control" value="{{ user.height }}" required>           
-                </div>
-                <div class="mb-2">
-                    <label><strong>Weight (kg):</strong></label>
-                    <input type="text" name="weight" class="form-control" value="{{ user.weight }}" required>           
-                </div>
-                <div class="mb-3">
-                    <label><strong>BMI:</strong></label>
-                    <input type="text" class="form-control" value="{{ bmi }}" readonly>           
-                </div>
-                <button type="submit" class="btn btn-success">Save Changes</button>
-                <a href="/logout" class="btn btn-outline-danger">Logout</a>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -98,9 +103,13 @@ function showTab(tabId) {
     document.getElementById(tabId).classList.add('active');
     event.target.classList.add('active');
 }
+
+function toggleEdit(showEdit) {
+    document.getElementById('profile-view').style.display = showEdit ? 'none' : 'block';
+    document.getElementById('profile-edit').style.display = showEdit ? 'block' : 'none';
+}
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
-<!-- You can move the full chart.js code into external JS files or keep this block to render charts -->
 {% endblock %}
