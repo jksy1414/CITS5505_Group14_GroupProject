@@ -65,16 +65,20 @@ header nav a:hover {
   gap: 0.45rem;
 }
 .actions button { /* general button specifications */
-  font-family: 'Comic Sans MS', cursive, sans-serif; 
+  font-family: 'Comic Sans MS', cursive, sans-serif;
   font-size: 1.3rem;
   font-weight: bold;
-  margin-left: 0.5rem;
-  border: 0;
-  border-bottom: 4px solid rgba(255, 255, 255, 0);
-  border-left: 3px solid rgba(255, 255, 255, 0);
-  border-radius: 7px;
+  padding: 10px 18px;
+  min-width: 100px; /* ✅ Ensures consistent width */
+  height: 45px;     /* ✅ Ensures same height */
+  border: none;
+  border-radius: 10px;
   cursor: pointer;
-  transition: border 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: border 0.2s ease, transform 0.2s ease;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 }
 .actions .login { /* login button */
   background-color: rgb(253, 228, 181);
@@ -118,4 +122,20 @@ footer {
   padding: 0.2rem;
   margin-top: 0;
   position: relative;
+}
+
+/* Flash popup style (for temporary success/error messages) */
+.flash-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 10px 20px;
+  border: 1px solid #ffeeba;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-weight: bold;
 }
