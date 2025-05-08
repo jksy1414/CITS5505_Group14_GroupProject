@@ -56,6 +56,9 @@ def home():
 @app.route('/analyze', methods=['GET', 'POST'])
 def analyze():
     if request.method == 'POST':
+        # ✅ Clear any existing session data
+        session.clear()
+
         file = request.files.get('fitnessFile')
 
         # 🧾 Check for file presence
@@ -70,20 +73,22 @@ def analyze():
             flash("Only CSV files are allowed (save as UTF-8 encoded).", "danger")
             return redirect(url_for('analyze'))
 
-        # 🧪 Try reading as UTF-8 encoded CSV
         try:
-            df = pd.read_csv(file, encoding='utf-8-sig')  # 👈 UTF-8 CSV only
-            df.columns = [col.strip() for col in df.columns]  # 🧹 Clean headers
+            # 🧪 Read UTF-8 CSV and clean headers
+            df = pd.read_csv(file, encoding='utf-8-sig')
+            df.columns = [col.strip() for col in df.columns]
         except Exception as e:
-            flash("Error reading the CSV file. Please ensure it is UTF-8 encoded.", "danger")
+            flash(f"Error reading the CSV file: {str(e)}", "danger")
             return redirect(url_for('analyze'))
 
-        # ✅ Store for next page
+        # ✅ Store new data for use in selection page
         session['column_choices'] = df.columns.tolist()
         session['csv_data'] = df.to_dict(orient='records')
 
+        flash("File uploaded successfully!", "success")
         return redirect(url_for('select_columns'))
 
+    # Initial GET request shows the upload form
     return render_template('input_analyze.html')
 
 # Route for column selection (Step 2: Pick columns to analyze)
