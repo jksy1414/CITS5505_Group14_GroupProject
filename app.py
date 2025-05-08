@@ -6,6 +6,8 @@ from Routes.auth_routes import auth
 from models import db, User, Chart
 import os
 from dotenv import load_dotenv
+import csv
+
 
 # Load environment variables
 load_dotenv()
@@ -61,29 +63,58 @@ def analyze():
 
         file = request.files.get('fitnessFile')
 
-        # 🧾 Check for file presence
+        # Check for file presence
         if not file or file.filename == "":
             flash("Please upload a CSV file.", "danger")
             return redirect(url_for('analyze'))
 
         filename = file.filename.lower()
 
-        # 🚫 Reject non-CSV files
+        # Reject non-CSV files
         if not filename.endswith('.csv'):
-            flash("Only CSV files are allowed (save as UTF-8 encoded).", "danger")
+            flash("Only CSV files are allowed.", "danger")
             return redirect(url_for('analyze'))
 
         try:
-            # 🧪 Read UTF-8 CSV and clean headers
-            df = pd.read_csv(file, encoding='utf-8-sig')
-            df.columns = [col.strip() for col in df.columns]
-        except Exception as e:
-            flash(f"Error reading the CSV file: {str(e)}", "danger")
+            # Detect delimiter dynamically
+            sample = file.read(2048).decode('utf-8-sig')  # Increase sample size
+            file.seek(0)  # Reset file pointer after reading sample
+            dialect = csv.Sniffer().sniff(sample)
+            delimiter = dialect.delimiter
+            print(f"DEBUG: Detected delimiter: {delimiter}")  # Debug log
+        except csv.Error:
+            # Fallback to default delimiter if detection fails
+            delimiter = ','
+            flash("Could not determine delimiter. Using default delimiter (comma).", "warning")
+            print("DEBUG: Could not determine delimiter. Using default delimiter (comma).")  # Debug log
+
+        try:
+            # Read the CSV file with the detected or default delimiter
+            df = pd.read_csv(file, encoding='utf-8-sig', delimiter=delimiter)
+        except UnicodeDecodeError:
+            try:
+                file.seek(0)  # Reset file pointer
+                df = pd.read_csv(file, encoding='latin1', delimiter=delimiter)
+                flash("File read successfully with fallback encoding (latin1).", "info")
+            except Exception as e:
+                flash("Error reading the CSV file. Please ensure it is a valid CSV.", "danger")
+                print(f"DEBUG: Error reading file: {e}")  # Debug log
+                return redirect(url_for('analyze'))
+
+        # Clean headers
+        df.columns = [col.strip() for col in df.columns]
+        print(f"DEBUG: Headers: {df.columns.tolist()}")  # Debug log
+
+        # Validate headers
+        if df.columns.duplicated().any():
+            flash("Duplicate column names detected. Please check your CSV file.", "danger")
+            print("DEBUG: Duplicate column names detected.")  # Debug log
             return redirect(url_for('analyze'))
 
-        # ✅ Store new data for use in selection page
+        # Store for next page
         session['column_choices'] = df.columns.tolist()
         session['csv_data'] = df.to_dict(orient='records')
+        print(f"DEBUG: First few rows: {df.head()}")  # Debug log
 
         flash("File uploaded successfully!", "success")
         return redirect(url_for('select_columns'))
@@ -105,7 +136,6 @@ def select_columns():
             flash("Please select at least one column.", "danger")
             return redirect(url_for('select_columns'))
 
-        import pandas as pd
         df = pd.DataFrame(session['csv_data'])
         selected_data = df[selected_columns]
 
