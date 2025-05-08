@@ -58,6 +58,9 @@ def home():
 @app.route('/analyze', methods=['GET', 'POST'])
 def analyze():
     if request.method == 'POST':
+        # ✅ Clear any existing session data
+        session.clear()
+
         file = request.files.get('fitnessFile')
 
         # Check for file presence
@@ -113,8 +116,10 @@ def analyze():
         session['csv_data'] = df.to_dict(orient='records')
         print(f"DEBUG: First few rows: {df.head()}")  # Debug log
 
+        flash("File uploaded successfully!", "success")
         return redirect(url_for('select_columns'))
 
+    # Initial GET request shows the upload form
     return render_template('input_analyze.html')
 
 # Route for column selection (Step 2: Pick columns to analyze)
