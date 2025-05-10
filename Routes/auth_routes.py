@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, HealthData
 import random, string, time, re, os
@@ -12,9 +12,15 @@ from util import calculate_health_score, aggregate_week_data
 from datetime import date, timedelta
 from flask_login import login_user, logout_user, login_required, current_user
 from models import db, User
+from urllib.parse import urlparse, urljoin
 
 # Create auth blueprint
 auth = Blueprint('auth', __name__)
+
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -34,10 +40,16 @@ def login():
         # Log in the user
         login_user(user)
         flash('Login successful!', 'success')
-        return redirect(url_for('auth.account'))  # Redirect to the account page after login
 
-    return render_template('login.html')
+        # Redirect to the original page or account page
+        next_page = request.args.get('next')
+        if next_page and not is_safe_url(next_page):
+            return abort(400)  # Bad Request
+        return redirect(next_page) if next_page else redirect(url_for('results'))
 
+    # Capture the `next` parameter and pass it to the login template
+    next_page = request.args.get('next')
+    return render_template('login.html', next=next_page)
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
