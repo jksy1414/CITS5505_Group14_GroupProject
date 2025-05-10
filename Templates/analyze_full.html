@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+
+{% block title %}
+  <title>FitBug: Full Data Analysis</title>
+{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_analyze.css') }}">
+  <style>
+    .tab-section { display: none; }
+    .tab-section.active { display: block; }
+    .step-buttons { margin-top: 20px; }
+    .step-buttons button { margin-right: 10px; }
+    .step-indicator {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+    }
+    .step-indicator div {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      border-bottom: 4px solid #ccc;
+    }
+    .step-indicator .active {
+      font-weight: bold;
+      border-color: #5a3e1b;
+      background-color: #f5f5dc;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <h2 class="main-heading">Fitness Data Analyzer</h2>
+
+  <div class="step-indicator">
+    <div id="step-label-0" class="active">1. Upload Data</div>
+    <div id="step-label-1">2. Select Columns</div>
+    <div id="step-label-2">3. Rename Headers</div>
+    <div id="step-label-3">4. View Results</div>
+  </div>
+
+  <!-- Step 1: Upload CSV -->
+  <div class="tab-section active" id="step-0">
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for('auth.analyze_full') }}">
+        <input type="hidden" name="step" value="upload">
+      <label for="fileUpload">Choose CSV file (UTF-8 only):</label><br>
+      <input type="file" id="fileUpload" name="fitnessFile" accept=".csv" required><br>
+      <div class="alert alert-warning">
+        ⚠️ Only <strong>CSV files saved as UTF-8 encoding</strong> will be accepted.
+        In Excel, save your file as: <em>CSV UTF-8 (Comma delimited)</em>
+      </div>
+      <div class="step-buttons">
+        <button type="submit" class="btn">Next →</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Step 2: Select Columns -->
+  <div class="tab-section" id="step-1">
+    <form method="POST" action="{{ url_for('auth.analyze_full') }}">
+        <input type="hidden" name="step" value="columns">
+      <label>Select the data column(s) to analyze:</label><br>
+      <div class="checkbox-group">
+        {% for column in columns %}
+          <label><input type="checkbox" name="columns" value="{{ column }}"> {{ column }}</label>
+        {% endfor %}
+      </div>
+      <div class="step-buttons">
+        <button type="button" onclick="switchStep(0)" class="btn btn-secondary">← Back</button>
+        <button type="submit" class="btn">Next →</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Step 3: Rename Headers -->
+  <div class="tab-section" id="step-2">
+    <form method="POST" action="{{ url_for('auth.analyze_full') }}">
+      <input type="hidden" name="step" value="rename">
+      <label>Rename headers for selected columns:</label>
+      <table>
+        <thead>
+          <tr><th>Detected Header</th><th>Choose Existing or New</th><th>Custom Name</th></tr>
+        </thead>
+        <tbody>
+          {% for col in selected_columns %}
+          <tr>
+            <td>{{ col }}</td>
+            <td>
+              <select name="header_map_{{ loop.index0 }}" onchange="handleRenameOption(this, {{ loop.index0 }})">
+                {% for opt in predefined_headers %}
+                  <option value="{{ opt }}">{{ opt }}</option>
+                {% endfor %}
+                <option value="custom">Create New</option>
+              </select>
+            </td>
+            <td>
+              <input type="text" name="custom_{{ loop.index0 }}" id="custom_{{ loop.index0 }}" style="display:none;" placeholder="e.g., Steps_Week1">
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="step-buttons">
+        <button type="button" onclick="switchStep(1)" class="btn btn-secondary">← Back</button>
+        <button type="submit" class="btn">Next →</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Step 4: Show Results -->
+  <div class="tab-section" id="step-3">
+    <label for="chartType">Select Chart Type:</label>
+    <select id="chartType" onchange="renderAllCharts()">
+      <option value="line">Line</option>
+      <option value="bar">Bar</option>
+      <option value="pie">Pie</option>
+      <option value="doughnut">Doughnut</option>
+      <option value="radar">Radar</option>
+      <option value="scatter">Scatter</option>
+    </select><br><br>
+
+    {% for column in columns %}
+  <div class="chart-block">
+    <h4>{{ column }}</h4>
+    <canvas id="chart-{{ loop.index0 }}" width="600" height="300"></canvas>
+    <ul>
+      {% if values[column]|length > 0 %}
+        <li><strong>Average:</strong> {{ (values[column] | sum / values[column] | length) | round(2) }}</li>
+        <li><strong>Max:</strong> {{ values[column] | max }}</li>
+        <li><strong>Min:</strong> {{ values[column] | min }}</li>
+      {% else %}
+        <li><strong>Average:</strong> N/A</li>
+        <li><strong>Max:</strong> N/A</li>
+        <li><strong>Min:</strong> N/A</li>
+      {% endif %}
+    </ul>
+    <button onclick="downloadChart({{ loop.index0 }}, '{{ column }}')" class="btn">Download Chart</button>
+  </div>
+  <hr>
+{% endfor %}
+
+    
+    <button onclick="downloadAllCharts()" class="btn">Download All</button>
+    <div class="step-buttons">
+      <button type="button" onclick="switchStep(2)" class="btn btn-secondary">← Back</button>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // ✅ Map the current step string to a numeric index
+  const stepMap = {
+    'upload': 0,
+    'columns': 1,
+    'rename': 2,
+    'results': 3
+  };
+
+  // ✅ Set the current step from Flask
+  let currentStep = stepMap['{{ step }}'] || 0;
+
+  // ✅ Activate the correct tab on load
+  function switchStep(index) {
+    document.querySelectorAll('.tab-section').forEach((section, i) => {
+      section.classList.toggle('active', i === index);
+      document.getElementById(`step-label-${i}`).classList.toggle('active', i === index);
+    });
+    currentStep = index;
+  }
+
+  function handleRenameOption(selectEl, index) {
+    const customInput = document.getElementById(`custom_${index}`);
+    customInput.style.display = (selectEl.value === 'custom') ? 'inline' : 'none';
+  }
+
+  const labels = {{ labels | tojson }};
+  const values = {{ values | tojson }};
+  const columns = {{ columns | tojson }};
+  let charts = [];
+
+  function renderAllCharts() {
+    charts.forEach(c => c.destroy());
+    charts = [];
+    const selectedType = document.getElementById('chartType').value;
+
+    columns.forEach((col, i) => {
+      const ctx = document.getElementById(`chart-${i}`).getContext('2d');
+      const chart = new Chart(ctx, {
+        type: selectedType,
+        data: {
+          labels: labels,
+          datasets: [{
+            label: col,
+            data: values[col],
+            backgroundColor: 'rgba(75,192,192,0.4)',
+            borderColor: 'rgba(75,192,192,1)',
+            borderWidth: 2,
+            fill: selectedType === 'line' || selectedType === 'radar',
+            showLine: selectedType !== 'scatter',
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: true } },
+          scales: ['pie', 'doughnut'].includes(selectedType) ? {} : {
+            y: { beginAtZero: true },
+            x: {
+              ticks: {
+                autoSkip: true,
+                maxRotation: 45
+              }
+            }
+          }
+        }
+      });
+      charts.push(chart);
+    });
+  }
+
+  function downloadChart(index, name) {
+    const canvas = document.getElementById(`chart-${index}`);
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    link.download = `${name}_chart.png`;
+    link.click();
+  }
+
+  function downloadAllCharts() {
+    columns.forEach((col, i) => downloadChart(i, col));
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    switchStep(currentStep);  // ✅ Show correct tab based on backend step
+    if (document.getElementById('chartType')) {
+      renderAllCharts();
+    }
+  });
+</script>
+{% endblock %}

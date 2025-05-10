@@ -13,6 +13,8 @@ from datetime import date, timedelta
 from flask_login import login_user, logout_user, login_required, current_user
 from models import db, User
 from urllib.parse import urlparse, urljoin
+import pandas as pd
+
 
 # Create auth blueprint
 auth = Blueprint('auth', __name__)
@@ -317,3 +319,81 @@ def change_password():
     db.session.commit()
     flash('Password changed successfully!', 'success')
     return redirect(url_for('auth.account'))
+
+@auth.route('/analyze_full', methods=['GET', 'POST'])
+@login_required
+def analyze_full():
+    if request.method == 'POST':
+        step = request.form.get('step')
+
+        # --- Step 1: Upload CSV ---
+        if step == 'upload':
+            file = request.files.get('fitnessFile')
+            if not file:
+                flash("No file uploaded!", "danger")
+                return redirect(url_for('auth.analyze_full'))
+
+            try:
+                df = pd.read_csv(file)
+                session['data'] = df.to_dict(orient='list')
+                session['columns'] = df.columns.tolist()
+                return redirect(url_for('auth.analyze_full', step='columns'))
+            except Exception as e:
+                flash(f"Error reading CSV: {e}", "danger")
+                return redirect(url_for('auth.analyze_full'))
+
+        # --- Step 2: Column Selection ---
+        elif step == 'columns':
+            selected = request.form.getlist('columns')
+            if not selected:
+                flash("Please select at least one column.", "danger")
+                return redirect(url_for('auth.analyze_full', step='columns'))
+            session['selected_columns'] = selected
+            return redirect(url_for('auth.analyze_full', step='rename'))
+
+        # --- Step 3: Rename Headers ---
+        elif step == 'rename':
+            selected = session.get('selected_columns', [])
+            new_headers = {}
+            for i, col in enumerate(selected):
+                mapped = request.form.get(f'header_map_{i}')
+                if mapped == 'custom':
+                    mapped = request.form.get(f'custom_{i}', col)
+                new_headers[col] = mapped or col
+            session['renamed_headers'] = new_headers
+            return redirect(url_for('auth.analyze_full', step='results'))
+
+    # --- GET Request: Render Correct Step Page ---
+    step_param = request.args.get('step', 'upload')
+
+    data = session.get('data')
+    columns = session.get('columns', [])
+    selected_columns = session.get('selected_columns', [])
+    renamed_headers = session.get('renamed_headers', {})
+
+    # Build chart data for results step
+    values = {}
+    labels = []
+    if step_param == 'results' and data and selected_columns:
+        for old_name in selected_columns:
+            new_name = renamed_headers.get(old_name, old_name)
+            try:
+                values[new_name] = [float(v) for v in data.get(old_name, []) if v not in [None, '', 'nan']]
+            except Exception:
+                values[new_name] = []
+
+        if values:
+            labels = list(range(len(next(iter(values.values()), []))))  # Use row count as x-axis
+
+    predefined_headers = ['Steps', 'Calories', 'Workout', 'Sleep']
+
+    return render_template(
+        'analyze_full.html',
+        step=step_param,
+        columns=columns,
+        selected_columns=selected_columns,
+        predefined_headers=predefined_headers,
+        renamed_headers=renamed_headers,
+        values=values,
+        labels=labels
+    )

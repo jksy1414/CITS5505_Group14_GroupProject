@@ -1,0 +1,298 @@
+/* FitBug - Unified CSS Theme */
+
+/* General Layout & Theme */
+body {
+    background-color: #fff8dc;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    color: #333;
+  }
+  
+  h2, h4 {
+    color: #6b8e23;
+    margin-bottom: 20px;
+  }
+  
+  .container {
+    max-width: 700px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #fff8dc;
+    border: 2px dashed #8b4513;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    position: relative;
+    background-image: url('/static/images/Cornifer.webp');
+    background-repeat: no-repeat;
+    background-position: bottom left;
+    background-size: 200px;
+    animation: fadeInContainer 1s ease-in-out;
+  }
+  
+  @keyframes fadeInContainer {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Inputs & Form Controls */
+  label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+    color: #8b4513;
+  }
+  
+  input[type="file"],
+  input[type="text"],
+  input[type="checkbox"],
+  select,
+  textarea {
+    margin-bottom: 15px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #8b4513;
+    background-color: #fff;
+    width: 80%;
+  }
+  
+  select {
+    width: 60%;
+    transition: border-color 0.3s;
+  }
+  select:hover {
+    border-color: #6b8e23;
+  }
+  
+  /* Buttons */
+  button,
+  .btn {
+    background-color: #6b8e23;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 10px 5px;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+  
+  button:hover,
+  .btn:hover {
+    background-color: #556b2f;
+    transform: scale(1.05);
+  }
+  
+  .btn-secondary {
+    background-color: #ccc;
+    color: #333;
+  }
+  .btn-secondary:hover {
+    background-color: #bbb;
+  }
+  
+  /* Checkbox Groups */
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 20px;
+  }
+  
+  .checkbox-group label {
+    margin: 8px 0;
+    font-size: 16px;
+    background-color: #f5f5dc;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+  }
+  
+  .checkbox-group label:hover {
+    background-color: #eee8aa;
+  }
+  
+  /* Flash Messages */
+  .alert {
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin: 20px auto;
+    width: 90%;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .alert-success {
+    background-color: #e6f9e6;
+    color: #3c763d;
+    border: 2px solid #3c763d;
+  }
+  
+  .alert-danger {
+    background-color: #fdd;
+    color: #a94442;
+    border: 2px solid #a94442;
+  }
+  
+  .alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 2px solid #ffeeba;
+  }
+  
+  /* Chart.js Canvas Styling */
+  canvas {
+    margin: 20px 0;
+    background-color: #fefefe;
+    border: 1px dashed #ccc;
+    padding: 10px;
+    border-radius: 8px;
+    animation: popIn 0.8s ease;
+  }
+  
+  @keyframes popIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  
+  /* Floating Ladybug */
+  .bug-img {
+    width: 150px;
+    height: auto;
+    animation: floatBug 3s ease-in-out infinite;
+    transition: transform 0.3s ease;
+  }
+  .bug-img:hover {
+    animation: none;
+    transform: rotate(180deg) scale(1.2);
+  }
+  
+  @keyframes floatBug {
+    0%   { transform: translateY(0); }
+    50%  { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+  }
+  
+  /* Step Indicator UI */
+  .step-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+  }
+  .step-indicator div {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border-bottom: 4px solid #ccc;
+  }
+  .step-indicator .active {
+    font-weight: bold;
+    border-color: #5a3e1b;
+    background-color: #f5f5dc;
+  }
+  
+  /* Data Summary Styling */
+  #dataSummary {
+    text-align: left;
+    margin-top: 20px;
+    background-color: #fcf8e3;
+    border: 1px solid #f1e7b4;
+    padding: 15px 25px;
+    border-radius: 8px;
+    display: inline-block;
+  }
+  #dataSummary li {
+    font-size: 16px;
+    margin: 6px 0;
+    color: #5a3e1b;
+  }
+  
+  /* 🌙 Dark Mode Overrides */
+  body.dark-mode {
+    background-color: #1a1a1a;
+    color: #f2f2f2;
+  }
+  body.dark-mode a { color: #3498db; }
+  
+  body.dark-mode header,
+  body.dark-mode footer,
+  body.dark-mode nav {
+    background-color: #292929;
+    border-color: #444;
+  }
+  
+  body.dark-mode .container {
+    background-color: #292929;
+    color: #f2f2f2;
+    border-color: #aa8866;
+    background-image: url('/static/images/Cornifer.webp');
+    background-size: 200px;
+  }
+  
+  body.dark-mode .checkbox-group label {
+    background-color: #3a3a3a;
+    color: #f2f2f2;
+  }
+  body.dark-mode .checkbox-group label:hover {
+    background-color: #555;
+  }
+  
+  body.dark-mode button,
+  body.dark-mode .btn {
+    background-color: #e74c3c;
+    color: #fff;
+  }
+  body.dark-mode button:hover,
+  body.dark-mode .btn:hover {
+    background-color: #c0392b;
+  }
+  
+  body.dark-mode input,
+  body.dark-mode select,
+  body.dark-mode textarea {
+    background-color: #333;
+    color: #f2f2f2;
+    border: 1px solid #555;
+  }
+  
+  body.dark-mode .alert-success {
+    background-color: #2e4d2e;
+    color: #ccffcc;
+    border-color: #66bb66;
+  }
+  
+  body.dark-mode .alert-danger {
+    background-color: #5c1e1e;
+    color: #ffaaaa;
+    border-color: #cc6666;
+  }
+  
+  body.dark-mode .alert-warning {
+    background-color: #5c4300;
+    color: #ffe28a;
+    border-color: #aa8833;
+  }
+  
+  body.dark-mode .btn-secondary {
+    background-color: #555;
+    color: #f2f2f2;
+  }
+  body.dark-mode .btn-secondary:hover {
+    background-color: #666;
+  }
+  
+  body.dark-mode canvas {
+    background-color: #1e1e1e;
+    border-color: #666;
+  }
+  
+  body.dark-mode #dataSummary {
+    background-color: #2e2e2e;
+    border-color: #777;
+  }
+  body.dark-mode #dataSummary li {
+    color: #f2f2f2;
+  }
+  
