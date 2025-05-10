@@ -44,6 +44,9 @@
                 <button class="signup">Sign Up</button>
             </a>
           {% endif %}
+
+          <!-- 🌙 Dark Mode Toggle Button (Add This) -->
+            <button id="theme-toggle" class="toggle-dark-mode">🌙</button>
         </div>
     </header>
 
@@ -76,6 +79,23 @@
           flash.style.display = "none";
         }, 3000);
       }
+    });
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggleBtn = document.getElementById("theme-toggle");
+      const body = document.body;
+      const darkMode = localStorage.getItem("dark-mode");
+
+      if (darkMode === "enabled") {
+        body.classList.add("dark-mode");
+      }
+
+      toggleBtn?.addEventListener("click", () => {
+        body.classList.toggle("dark-mode");
+        localStorage.setItem("dark-mode", body.classList.contains("dark-mode") ? "enabled" : "disabled");
+      });
     });
   </script>
 

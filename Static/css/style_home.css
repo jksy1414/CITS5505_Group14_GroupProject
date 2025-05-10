@@ -1,292 +1,395 @@
-/* Banner section */
-.banner { /* section as a whole // welcome text and background image */
-    /* welcome text */
-    display: flex; 
-    flex-direction: column; /* Stack items vertically */
-    justify-content: center; /* Align items to the bottom */
-    align-items: center; 
-    text-align: center; 
-    color: rgb(255, 165, 0);
-    text-shadow: 3px 3px 7px rgb(70, 93, 24);
-    /* banner image */
-    position: relative;
-    background: url('/static/images/gymgym2.jpg') no-repeat center center/cover;
-    background-size: cover;
-    height: 60vh;
-    width: 100%;
-    overflow: hidden;
-    border-radius: 10px;
-    padding: 0;
-}
-.banner::before { /* Dark overlay */
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(27, 18, 0, 0.5); /* Dark overlay with 50% opacity */
-    z-index: 1; /* Place it below the text */
-}
-.bug { /* Bug png crawling over the banner */
-    position: absolute;
-    bottom: 5rem; 
-    left: -1rem; /* Start offscreen */
-    height: 20%; 
-    width: 10%; 
-    pointer-events: none;
-    animation: crawl 10s linear infinite;
-    transform: rotate(90deg); /* Start rotated */
-    z-index: 1; /* Ensure it appears above the background */
-}
-@keyframes crawl { /* Animation for the bug crawling across the screen */
-    0% {
-        left: -1rem;
-        transform: translateY(0rem) rotate(90deg);
+    /* Banner section */
+    .banner { /* section as a whole // welcome text and background image */
+        /* welcome text */
+        display: flex; 
+        flex-direction: column; /* Stack items vertically */
+        justify-content: center; /* Align items to the bottom */
+        align-items: center; 
+        text-align: center; 
+        color: rgb(255, 165, 0);
+        text-shadow: 3px 3px 7px rgb(70, 93, 24);
+        /* banner image */
+        position: relative;
+        background: url('/static/images/gymgym2.jpg') no-repeat center center/cover;
+        background-size: cover;
+        height: 60vh;
+        width: 100%;
+        overflow: hidden;
+        border-radius: 10px;
+        padding: 0;
     }
-    25% {
-        transform: translateY(1rem) rotate(100deg);
+    .banner::before { /* Dark overlay */
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(27, 18, 0, 0.5); /* Dark overlay with 50% opacity */
+        z-index: 1; /* Place it below the text */
     }
-    50% {
-        transform: translateY(-1rem) rotate(80deg);
+    .bug { /* Bug png crawling over the banner */
+        position: absolute;
+        bottom: 5rem; 
+        left: -1rem; /* Start offscreen */
+        height: 20%; 
+        width: 10%; 
+        pointer-events: none;
+        animation: crawl 10s linear infinite;
+        transform: rotate(90deg); /* Start rotated */
+        z-index: 1; /* Ensure it appears above the background */
     }
-    75% {
-        transform: translateY(1rem) rotate(100deg);
+    @keyframes crawl { /* Animation for the bug crawling across the screen */
+        0% {
+            left: -1rem;
+            transform: translateY(0rem) rotate(90deg);
+        }
+        25% {
+            transform: translateY(1rem) rotate(100deg);
+        }
+        50% {
+            transform: translateY(-1rem) rotate(80deg);
+        }
+        75% {
+            transform: translateY(1rem) rotate(100deg);
+        }
+        100% {
+            left: 100%;
+            transform: translateY(1rem) rotate(80deg);
+        }
     }
-    100% {
-        left: 100%;
-        transform: translateY(1rem) rotate(80deg);
+    .banner h1 { /* main header - welcome text */
+        font-size: 5rem;
+        font-weight: 900;
+        margin-bottom: 0.1rem;
+        position: relative;
+        z-index: 2; /* Place it above the overlay */
     }
-}
-.banner h1 { /* main header - welcome text */
-    font-size: 5rem;
-    font-weight: 900;
-    margin-bottom: 0.1rem;
-    position: relative;
-    z-index: 2; /* Place it above the overlay */
-}
-.banner p { /* subheading-style flavour text */
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin-top: 0.1rem; /* Add spacing below the header */
-    position: relative;
-    z-index: 2; /* Ensure it appears above the overlay */
-    color: rgb(255, 165, 0); /* Ensure good contrast with the overlay */
-}
+    .banner p { /* subheading-style flavour text */
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-top: 0.1rem; /* Add spacing below the header */
+        position: relative;
+        z-index: 2; /* Ensure it appears above the overlay */
+        color: rgb(255, 165, 0); /* Ensure good contrast with the overlay */
+    }
 
 
 
-/* flip-card section */
-.features { /* section as a whole // hides overlay overflow */
-    text-align: center;
-    margin: 3rem 4rem 3rem 4rem; /* extra bottom margin to separate sections */
-    padding-bottom: 0.5rem; 
-    position: relative; /* For absolute positioning of overlay */
-    border-radius: 7px;
-    overflow: hidden; /* Prevent overflow of the overlay */
-}
-.features::before { /* Dark overlay */
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 170, 0, 0.425); /* Dark overlay with 50% opacity */
-    border-radius: 7px;
-    /* Place it below the text */
-    z-index: 1; 
-}
-.features h2 { /* section header */
-    font-size: 2.5rem;
-    color: #8b4d01;
-    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    /* For absolute positioning of overlay */
-    position: relative;
-    z-index: 2; 
-}
-.flip-card-container { /* collection of flip cards */
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2rem;
-    padding: 1rem;
-    /* For absolute positioning of overlay */
-    position: relative; 
-    z-index: 2; 
-}
-.flip-card { /* card as a whole */
-    background-color: transparent;
-    width: 20rem;
-    height: 20rem;
-    perspective: 1000px; /* 3D perspective */
-}
-.flip-card-inner { /* inner part of the card - text and image*/
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d; /* 3D effect */
-    transition: transform 2s ease-in;
-}
-.flip-card.flipped .flip-card-inner { /* when flipped */
-    transform: rotateY(180deg);
-    transition: transform 0.6s ease-out; /* Slow flip back */
-}
-.flip-card-front,
-.flip-card-back { /* shared specs for front and back of the card */
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    border-radius: 10px;
-    box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.137);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    box-sizing: border-box;
-    overflow: hidden;
-}
-.flip-card-front { /* front of the card */
-    background: #fff8dc;
-    justify-content: flex-start; /* align from top for consistent layout */
-    font-size: 1.25rem;
-    font-weight: 800;
-}
-.flip-card-front img { /* image on front side of the card */
-    width: 100%;
-    height: 14rem;
-    object-fit: scale-down; /* fill space while maintaining ratio */
-    border-radius: 7px;
-    margin-bottom: 0.1rem;
-    flex-shrink: 0; /* prevents image from collapsing */
-}
-.flip-card-back { /* back of the card */
-    background: rgb(199, 129, 0);
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: whitesmoke;
-    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.4);
-    transform: rotateY(180deg);
-}
+    /* flip-card section */
+    .features { /* section as a whole // hides overlay overflow */
+        text-align: center;
+        margin: 3rem 4rem 3rem 4rem; /* extra bottom margin to separate sections */
+        padding-bottom: 0.5rem; 
+        position: relative; /* For absolute positioning of overlay */
+        border-radius: 7px;
+        overflow: hidden; /* Prevent overflow of the overlay */
+    }
+    .features::before { /* Dark overlay */
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 170, 0, 0.425); /* Dark overlay with 50% opacity */
+        border-radius: 7px;
+        /* Place it below the text */
+        z-index: 1; 
+    }
+    .features h2 { /* section header */
+        font-size: 2.5rem;
+        color: #8b4d01;
+        text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        /* For absolute positioning of overlay */
+        position: relative;
+        z-index: 2; 
+    }
+    .flip-card-container { /* collection of flip cards */
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 2rem;
+        padding: 1rem;
+        /* For absolute positioning of overlay */
+        position: relative; 
+        z-index: 2; 
+    }
+    .flip-card { /* card as a whole */
+        background-color: transparent;
+        width: 20rem;
+        height: 20rem;
+        perspective: 1000px; /* 3D perspective */
+    }
+    .flip-card-inner { /* inner part of the card - text and image*/
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform-style: preserve-3d; /* 3D effect */
+        transition: transform 2s ease-in;
+    }
+    .flip-card.flipped .flip-card-inner { /* when flipped */
+        transform: rotateY(180deg);
+        transition: transform 0.6s ease-out; /* Slow flip back */
+    }
+    .flip-card-front,
+    .flip-card-back { /* shared specs for front and back of the card */
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border-radius: 10px;
+        box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.137);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+    .flip-card-front { /* front of the card */
+        background: #fff8dc;
+        justify-content: flex-start; /* align from top for consistent layout */
+        font-size: 1.25rem;
+        font-weight: 800;
+    }
+    .flip-card-front img { /* image on front side of the card */
+        width: 100%;
+        height: 14rem;
+        object-fit: scale-down; /* fill space while maintaining ratio */
+        border-radius: 7px;
+        margin-bottom: 0.1rem;
+        flex-shrink: 0; /* prevents image from collapsing */
+    }
+    .flip-card-back { /* back of the card */
+        background: rgb(199, 129, 0);
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: whitesmoke;
+        text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.4);
+        transform: rotateY(180deg);
+    }
 
 
 
-/* wellness section */
-.wellness { /* section as a whole // includes background */
-    background-color: #fff8dc;
-    border-radius: 7px;
-    margin: 3rem 1.5rem 3rem 1.5rem;
-    padding: 20px;
-}
-.wellness-content { /* organisation of wellness section parts */
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    grid-template-rows: auto 1fr;
-    gap: 1rem;
-    align-items: start;
-}
-.wellness-image { /* section image */
-    grid-row: 1 / span 2;
-    max-width: 25rem;
-}
-.wellness-image img{ /* image specifications */
-    width: 100%;
-    height: auto;
-    border-radius: 7px;
-}
-.wellness-image:hover { /* image hover effect */
-    transform: scale(1.05); /* slightly enlarge on hover */
-    transition: transform 0.3s ease; 
-}
-.wellness-text { /* section text positioning */
-    grid-column: 2;
-    grid-row: 1;
-    align-self: start;
-}
-.wellness-text h2 { /* header */
-    text-align: left;
-    font-size: 2rem;
-    color: #6b8e23;
-    text-shadow: 1px 1px 2px rgba(48, 31, 0, 0.5);
-    margin-bottom: 0 0 0.5rem 0;
-}
-.wellness-text p { /* flavour text */
-    font-size: 1.2rem;
-    margin: 0 0 0.5rem 0;
-}
-.homepage_actions{ /* button positioning (RHS) */
-    grid-column: 3;
-    grid-row: 2;
-    align-self: end;
-    justify-self: end;
-    display: flex;
-}
+    /* wellness section */
+    .wellness { /* section as a whole // includes background */
+        background-color: #fff8dc;
+        border-radius: 7px;
+        margin: 3rem 1.5rem 3rem 1.5rem;
+        padding: 20px;
+    }
+    .wellness-content { /* organisation of wellness section parts */
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        grid-template-rows: auto 1fr;
+        gap: 1rem;
+        align-items: start;
+    }
+    .wellness-image { /* section image */
+        grid-row: 1 / span 2;
+        max-width: 25rem;
+    }
+    .wellness-image img{ /* image specifications */
+        width: 100%;
+        height: auto;
+        border-radius: 7px;
+    }
+    .wellness-image:hover { /* image hover effect */
+        transform: scale(1.05); /* slightly enlarge on hover */
+        transition: transform 0.3s ease; 
+    }
+    .wellness-text { /* section text positioning */
+        grid-column: 2;
+        grid-row: 1;
+        align-self: start;
+    }
+    .wellness-text h2 { /* header */
+        text-align: left;
+        font-size: 2rem;
+        color: #6b8e23;
+        text-shadow: 1px 1px 2px rgba(48, 31, 0, 0.5);
+        margin-bottom: 0 0 0.5rem 0;
+    }
+    .wellness-text p { /* flavour text */
+        font-size: 1.2rem;
+        margin: 0 0 0.5rem 0;
+    }
+    .homepage_actions{ /* button positioning (RHS) */
+        grid-column: 3;
+        grid-row: 2;
+        align-self: end;
+        justify-self: end;
+        display: flex;
+    }
 
 
 
-/* mobile compatibility section */
-.mobile-compatible { /* section as a whole // includes background */
-    text-align: center;
-    background-color: #8b4d01;
-    border-radius: 7px;
-    margin: 3rem 2.5rem 3rem 2.5rem;
-    padding: 0.1rem 1rem;
-    max-width: 100%;
-}
-.mobile-compatible h2 { /* mobile compatibility section header */
-    font-size: 2rem;
+    /* mobile compatibility section */
+    .mobile-compatible { /* section as a whole // includes background */
+        text-align: center;
+        background-color: #8b4d01;
+        border-radius: 7px;
+        margin: 3rem 2.5rem 3rem 2.5rem;
+        padding: 0.1rem 1rem;
+        max-width: 100%;
+    }
+    .mobile-compatible h2 { /* mobile compatibility section header */
+        font-size: 2rem;
+        color: #fff8dc;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        margin-top: 0.5rem;
+        margin-bottom: 0.7rem;
+    }
+    .mobile-card { /* collection of mobile card parts */
+        gap: 20px;
+    }
+    .mobile-card img { /* section image */
+        width: 100%;
+        border-radius: 10px;
+    }
+    .mobile-card p { /* subheading-style flavour text */
+        margin-top: 10px;
+        font-size: 1.5rem;
+        color: #fff8dc;
+    }
+
+
+
+    /* community feedback section */
+    .community { /* section as a whole // includes background */
+        text-align: center;
+        margin: 3rem 1rem 3rem 1rem;
+        background-color: rgba(255, 170, 0, 0.425);
+        border-radius: 7px;
+        padding: 1rem;
+    }
+    .community h2 { /* feedback section header */
+        font-size: 2rem;
+        font-weight: 900;
+        color: #8b4d01;
+        text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+        margin-top: 0;
+        margin-bottom: 1rem;
+    }
+    .community-feedback { /* collection of feedback cards */
+        font-size: 1.2rem;
+        font-weight: 700;
+        display: flex;
+        justify-content: center;
+        gap: 2.5rem;
+        margin-bottom: 20px;
+    }
+    .feedback-card { /* individual feedback card specs */
+        background: #fff8dc;
+        padding: 1rem;
+        border-radius: 7px;
+        width: 200px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 🌙 Dark Mode Theme */
+
+body.dark-mode {
+    background-color: #1a1a1a;
+    color: #f2f2f2;
+  }
+  
+  body.dark-mode a {
+    color: #3498db;
+  }
+  
+  body.dark-mode header,
+  body.dark-mode footer,
+  body.dark-mode nav {
+    background-color: #292929;
+    border-color: #444;
+  }
+  
+  body.dark-mode .card,
+  body.dark-mode .container,
+  body.dark-mode .box,
+  body.dark-mode .panel {
+    background-color: #292929;
+    color: #f2f2f2;
+    border-color: #444;
+  }
+  
+  body.dark-mode button,
+  body.dark-mode .btn {
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+  }
+  
+  body.dark-mode button:hover,
+  body.dark-mode .btn:hover {
+    background-color: #c0392b;
+  }
+  
+  body.dark-mode input,
+  body.dark-mode select,
+  body.dark-mode textarea {
+    background-color: #333;
+    color: #f2f2f2;
+    border: 1px solid #555;
+  }
+  
+  /* 🌙 Additional Dark Mode Styling for Home Page */
+
+body.dark-mode .banner::before {
+    background: rgba(0, 0, 0, 0.5); /* Dark overlay for banner */
+  }
+  
+  body.dark-mode .banner h1,
+  body.dark-mode .banner p {
+    color: #ffdd88;
+    text-shadow: 2px 2px 5px #000;
+  }
+  
+  body.dark-mode .flip-card-front {
+    background: #2f2f2f;
+    color: #f2f2f2;
+  }
+  
+  body.dark-mode .flip-card-back {
+    background: #8b0000;
     color: #fff8dc;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    margin-top: 0.5rem;
-    margin-bottom: 0.7rem;
-}
-.mobile-card { /* collection of mobile card parts */
-    gap: 20px;
-}
-.mobile-card img { /* section image */
-    width: 100%;
-    border-radius: 10px;
-}
-.mobile-card p { /* subheading-style flavour text */
-    margin-top: 10px;
-    font-size: 1.5rem;
-    color: #fff8dc;
-}
-
-
-
-/* community feedback section */
-.community { /* section as a whole // includes background */
-    text-align: center;
-    margin: 3rem 1rem 3rem 1rem;
-    background-color: rgba(255, 170, 0, 0.425);
-    border-radius: 7px;
-    padding: 1rem;
-}
-.community h2 { /* feedback section header */
-    font-size: 2rem;
-    font-weight: 900;
-    color: #8b4d01;
-    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
-    margin-top: 0;
-    margin-bottom: 1rem;
-}
-.community-feedback { /* collection of feedback cards */
-    font-size: 1.2rem;
-    font-weight: 700;
-    display: flex;
-    justify-content: center;
-    gap: 2.5rem;
-    margin-bottom: 20px;
-}
-.feedback-card { /* individual feedback card specs */
-    background: #fff8dc;
-    padding: 1rem;
-    border-radius: 7px;
-    width: 200px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+  }
+  
+  body.dark-mode .wellness {
+    background-color: #2c2c2c;
+  }
+  
+  body.dark-mode .wellness-text h2 {
+    color: #90ee90;
+    text-shadow: 1px 1px 2px #000;
+  }
+  
+  body.dark-mode .mobile-compatible {
+    background-color: #3b2a05;
+  }
+  
+  body.dark-mode .mobile-compatible h2,
+  body.dark-mode .mobile-compatible p {
+    color: #ffdd88;
+  }
+  
+  body.dark-mode .community {
+    background-color: #2c1a00;
+  }
+  
+  body.dark-mode .community h2 {
+    color: #f2f2f2;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  }
+  
+  body.dark-mode .feedback-card {
+    background-color: #333;
+    color: #f2f2f2;
+    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+  }
+  

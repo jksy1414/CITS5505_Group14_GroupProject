@@ -141,7 +141,7 @@ def account():
 
     for d in days:
         record = HealthData.query.filter_by(user_id=user.id, date=d).first()
-        
+
         if record:
             intake.append(record.calories_intake)
             burned.append(record.calories_burned)
@@ -221,15 +221,8 @@ def account():
             'avg_deficit': avg_deficit
         }
 
-
-    print("Last week dates:")
-    for d in last_week_data:
-        print(d.date)
-
-    print("This week dates:")
-    for d in week_data:
-        print(d.date)
-
+    # NEW: activity tab data (✅ required by user)
+    activity_data = HealthData.query.filter_by(user_id=user.id).order_by(HealthData.date.desc()).limit(15).all()
 
     return render_template(
         'account.html', 
@@ -248,9 +241,13 @@ def account():
         show_weekly_summary = show_weekly_summary,
         last_week_summary = last_week_summary,
         this_week_summary = this_week_summary,
-        )
+        activity_data = activity_data # ✅ include this to support Activity Log tab
+    )
 
 @auth.route('/upload_avatar', methods=['POST'])
+
+def upload_avatar():
+    pass # placeholder
 
 @auth.route('/logout')
 @login_required
@@ -259,7 +256,6 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'success')
     return redirect(url_for('auth.login'))
-
 
 @auth.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
@@ -275,19 +271,17 @@ def forgot_password():
 @login_required
 def update_profile():
     """Update user profile."""
-    username = request.form.get('username')
     age = request.form.get('age')
     height = request.form.get('height')
     weight = request.form.get('weight')
 
     # Validate input
-    if not all([username, age, height, weight]):
+    if not all([age, height, weight]):
         flash('All fields are required!', 'danger')
         return redirect(url_for('auth.account'))
 
     try:
         # Update user details
-        current_user.username = username
         current_user.age = int(age)
         current_user.height = float(height)
         current_user.weight = float(weight)
@@ -297,4 +291,29 @@ def update_profile():
     except ValueError:
         flash('Invalid input. Please provide valid numbers for age, height, and weight.', 'danger')
 
+    return redirect(url_for('auth.account'))
+
+# ✅ New route for changing password
+@auth.route('/change_password', methods=['POST'])
+@login_required
+def change_password():
+    current_password = request.form.get('current_password')
+    new_password = request.form.get('new_password')
+    confirm_password = request.form.get('confirm_password')
+
+    if not all([current_password, new_password, confirm_password]):
+        flash('Please fill in all password fields.', 'danger')
+        return redirect(url_for('auth.account'))
+
+    if not current_user.check_password(current_password):
+        flash('Current password is incorrect.', 'danger')
+        return redirect(url_for('auth.account'))
+
+    if new_password != confirm_password:
+        flash('New passwords do not match.', 'danger')
+        return redirect(url_for('auth.account'))
+
+    current_user.set_password(new_password)
+    db.session.commit()
+    flash('Password changed successfully!', 'success')
     return redirect(url_for('auth.account'))

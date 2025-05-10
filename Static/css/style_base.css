@@ -139,3 +139,106 @@ footer {
   font-family: 'Comic Sans MS', cursive, sans-serif;
   font-weight: bold;
 }
+
+/* 🌙 Dark Mode Theme */
+
+body.dark-mode {
+  background-color: #1a1a1a;
+  color: #f2f2f2;
+}
+
+body.dark-mode a {
+  color: #3498db;
+}
+
+body.dark-mode header,
+body.dark-mode footer,
+body.dark-mode nav {
+  background-color: #292929;
+  border-color: #444;
+}
+
+body.dark-mode nav a {
+  background-color: transparent !important; /* Remove block bg */
+  padding: 0 !important; /* Prevent blocky feel */
+  display: inline;       /* Avoid blocky stacking */
+  color: #f2f2f2;
+  font-weight: bold;
+  font-size: 1.8rem;
+  text-decoration: none;
+  margin: 0 1.5rem;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+body.dark-mode nav a:hover {
+  color: #ffcc66;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+body.dark-mode .card,
+body.dark-mode .container,
+body.dark-mode .box,
+body.dark-mode .panel {
+  background-color: #292929;
+  color: #f2f2f2;
+  border-color: #444;
+}
+
+body.dark-mode button,
+body.dark-mode .btn {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+}
+
+body.dark-mode button:hover,
+body.dark-mode .btn:hover {
+  background-color: #c0392b;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background-color: #333;
+  color: #f2f2f2;
+  border: 1px solid #555;
+}
+
+/* 🌙 Dark Mode Toggle Button Styling */
+.toggle-dark-mode {
+  background-color: transparent;
+  border: none;
+  font-size: 1.8rem;
+  margin-left: 10px;
+  cursor: pointer;
+  color: inherit;
+  transition: transform 0.2s ease;
+}
+
+.toggle-dark-mode:hover {
+  transform: scale(1.1);
+}
+
+/* 🌘 Additional Dark Mode Styling */
+
+body.dark-mode main {
+  background: linear-gradient(to bottom, #1e1e1e 0%, #121212 100%);
+}
+
+body.dark-mode footer {
+  background-color: #1a1a1a;
+  color: #f2f2f2;
+}
+
+body.dark-mode .flash-popup {
+  background-color: #333;
+  color: #ffdd88;
+  border-color: #666;
+}
+
+/* 🌙 Smooth Transitions */
+body,
+body * {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
