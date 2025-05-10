@@ -1,19 +1,16 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, session, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import User, HealthData
+from models import db, User, Chart, AnalysisHistory, ActivityLog, HealthData
 import random, string, time, re, os
-from flask import session
 from flask_mail import Message
-from extensions import db, mail
-from flask import current_app
-from flask_login import current_user
+from extensions import mail
 from werkzeug.utils import secure_filename
 from util import calculate_health_score, aggregate_week_data
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from flask_login import login_user, logout_user, login_required, current_user
-from models import db, User
 from urllib.parse import urlparse, urljoin
 import pandas as pd
+
 
 
 # Create auth blueprint
@@ -225,6 +222,8 @@ def account():
 
     # NEW: activity tab data (✅ required by user)
     activity_data = HealthData.query.filter_by(user_id=user.id).order_by(HealthData.date.desc()).limit(15).all()
+    history_records = AnalysisHistory.query.filter_by(user_id=user.id).order_by(AnalysisHistory.timestamp.desc()).all()
+    activity_logs = ActivityLog.query.filter_by(user_id=user.id).order_by(ActivityLog.timestamp.desc()).all()
 
     return render_template(
         'account.html', 
@@ -243,7 +242,9 @@ def account():
         show_weekly_summary = show_weekly_summary,
         last_week_summary = last_week_summary,
         this_week_summary = this_week_summary,
-        activity_data = activity_data # ✅ include this to support Activity Log tab
+        activity_data = activity_data,
+        history_records=history_records,
+        activity_logs=activity_logs # ✅ include this to support Activity Log tab
     )
 
 @auth.route('/upload_avatar', methods=['POST'])
@@ -326,7 +327,6 @@ def analyze_full():
     if request.method == 'POST':
         step = request.form.get('step')
 
-        # --- Step 1: Upload CSV ---
         if step == 'upload':
             file = request.files.get('fitnessFile')
             if not file:
@@ -337,12 +337,12 @@ def analyze_full():
                 df = pd.read_csv(file)
                 session['data'] = df.to_dict(orient='list')
                 session['columns'] = df.columns.tolist()
+                session['filename'] = secure_filename(file.filename)
                 return redirect(url_for('auth.analyze_full', step='columns'))
             except Exception as e:
                 flash(f"Error reading CSV: {e}", "danger")
                 return redirect(url_for('auth.analyze_full'))
 
-        # --- Step 2: Column Selection ---
         elif step == 'columns':
             selected = request.form.getlist('columns')
             if not selected:
@@ -351,7 +351,6 @@ def analyze_full():
             session['selected_columns'] = selected
             return redirect(url_for('auth.analyze_full', step='rename'))
 
-        # --- Step 3: Rename Headers ---
         elif step == 'rename':
             selected = session.get('selected_columns', [])
             new_headers = {}
@@ -361,17 +360,36 @@ def analyze_full():
                     mapped = request.form.get(f'custom_{i}', col)
                 new_headers[col] = mapped or col
             session['renamed_headers'] = new_headers
+
+            # ✅ Save history and activity log
+            csv_data = session.get('data')
+            filename = session.get('filename', 'UploadedData.csv')
+            csv_raw = pd.DataFrame(csv_data).to_csv(index=False)
+
+            history = AnalysisHistory(
+                user_id=current_user.id,
+                filename=filename,
+                raw_csv=csv_raw
+            )
+            db.session.add(history)
+
+            log = ActivityLog(
+                user_id=current_user.id,
+                selected_columns=", ".join(session.get('selected_columns', [])),
+                renamed_headers=str(session.get('renamed_headers', {})),
+                shared_images=''  # update later if sharing
+            )
+            db.session.add(log)
+            db.session.commit()
+
             return redirect(url_for('auth.analyze_full', step='results'))
 
-    # --- GET Request: Render Correct Step Page ---
     step_param = request.args.get('step', 'upload')
-
     data = session.get('data')
     columns = session.get('columns', [])
     selected_columns = session.get('selected_columns', [])
     renamed_headers = session.get('renamed_headers', {})
 
-    # Build chart data for results step
     values = {}
     labels = []
     if step_param == 'results' and data and selected_columns:
@@ -383,9 +401,10 @@ def analyze_full():
                 values[new_name] = []
 
         if values:
-            labels = list(range(len(next(iter(values.values()), []))))  # Use row count as x-axis
+            labels = list(range(len(next(iter(values.values()), []))))
 
     predefined_headers = ['Steps', 'Calories', 'Workout', 'Sleep']
+    csv_uploaded = bool(data)
 
     return render_template(
         'analyze_full.html',
@@ -395,5 +414,16 @@ def analyze_full():
         predefined_headers=predefined_headers,
         renamed_headers=renamed_headers,
         values=values,
-        labels=labels
+        labels=labels,
+        csv_uploaded=csv_uploaded
     )
+
+@auth.route('/download_history/<int:history_id>')
+@login_required
+def download_history(history_id):
+    record = AnalysisHistory.query.get_or_404(history_id)
+    if record.user_id != current_user.id:
+        abort(403)
+    response = current_app.response_class(record.raw_csv, mimetype='text/csv')
+    response.headers.set("Content-Disposition", "attachment", filename=record.filename)
+    return response

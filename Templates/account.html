@@ -50,29 +50,36 @@
     <!-- History Tab -->
     <div id="history" class="tab-section">
         <h4>Your Analysis History</h4>
-        <p class="text-muted">This section will display previous uploads, analysis summaries, and downloadable graphs (feature coming soon).</p>
+        <ul>
+        {% for h in history_records %}
+            <li>
+            <strong>{{ h.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</strong> - {{ h.filename }}
+            <form action="{{ url_for('auth.download_history', history_id=h.id) }}" method="get" style="display:inline;">
+                <button type="submit" class="btn btn-sm">Download CSV</button>
+            </form>
+            </li>
+        {% else %}
+            <li class="text-muted">No analysis history found.</li>
+        {% endfor %}
+        </ul>
     </div>
-
+  
     <!-- Activity Log Tab -->
     <div id="activity" class="tab-section">
-        <h4>Recent Health Activity</h4>
-        {% if activity_data %}
-            <ul>
-                {% for record in activity_data %}
-                <li>
-                    <strong>{{ record.date.strftime('%Y-%m-%d') }}</strong>: 
-                    Steps: {{ record.steps or 0 }}, 
-                    Workout: {{ record.workout_duration or 0 }} mins, 
-                    Sleep: {{ record.sleep_hours or 0 }} hrs, 
-                    Intake: {{ record.calories_intake or 0 }} kcal, 
-                    Burned: {{ record.calories_burned or 0 }} kcal
-                </li>
-                {% endfor %}
-            </ul>
+        <h4>Recent Activity Log</h4>
+        <ul>
+        {% for a in activity_logs %}
+            <li>
+            <strong>{{ a.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</strong><br>
+            Selected Columns: {{ a.selected_columns }}<br>
+            Renamed Headers: {{ a.renamed_headers }}
+            </li>
         {% else %}
-            <p class="text-muted">No recent activity available.</p>
-        {% endif %}
+            <li class="text-muted">No activity log found.</li>
+        {% endfor %}
+        </ul>
     </div>
+    
 
     <!-- Goals Tab -->
     <div id="goals" class="tab-section">
@@ -165,3 +172,4 @@ function toggleTheme(mode) {
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
 {% endblock %}
+
