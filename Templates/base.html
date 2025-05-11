@@ -36,7 +36,7 @@
                  alt="Profile Picture" 
                  class="profile-pic">
             </a> 
-          {% else %}-->
+          {% else %}
             <a href="/login">
                 <button class="login">Login</button>
             </a>
@@ -44,16 +44,17 @@
                 <button class="signup">Sign Up</button>
             </a>
           {% endif %}
+
+          <!-- 🌙 Dark Mode Toggle Button (Add This) -->
+            <button id="theme-toggle" class="toggle-dark-mode">🌙</button>
         </div>
     </header>
 
-  <!-- Flash messages -->
+  <!-- Flash messages (updated for popup) -->
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-      <div class="flashes">
-        {% for category, message in messages %}
-          <div class="alert alert-{{ category }}">{{ message }}</div>
-        {% endfor %}
+      <div id="flash-message" class="flash-popup">
+        {{ messages[0][1] }}
       </div>
     {% endif %}
   {% endwith %}
@@ -68,6 +69,35 @@
   <footer>
     <p>&copy; 2025 CITS5505 Group 14 – Fitness Tracker Project</p>
   </footer>
+
+  <!-- Flash popup script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const flash = document.getElementById("flash-message");
+      if (flash) {
+        setTimeout(() => {
+          flash.style.display = "none";
+        }, 3000);
+      }
+    });
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggleBtn = document.getElementById("theme-toggle");
+      const body = document.body;
+      const darkMode = localStorage.getItem("dark-mode");
+
+      if (darkMode === "enabled") {
+        body.classList.add("dark-mode");
+      }
+
+      toggleBtn?.addEventListener("click", () => {
+        body.classList.toggle("dark-mode");
+        localStorage.setItem("dark-mode", body.classList.contains("dark-mode") ? "enabled" : "disabled");
+      });
+    });
+  </script>
 
   <!-- Page-specific scripts (e.g., Chart.js, form handlers) -->
   {% block scripts %}

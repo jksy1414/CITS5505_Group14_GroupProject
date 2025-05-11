@@ -126,3 +126,86 @@ body {
     border: 2px solid #a94442;
   }
   
+  /* 🌙 Dark Mode Theme */
+
+body.dark-mode {
+  background-color: #1a1a1a;
+  color: #f2f2f2;
+}
+
+body.dark-mode a {
+  color: #3498db;
+}
+
+body.dark-mode header,
+body.dark-mode footer,
+body.dark-mode nav {
+  background-color: #292929;
+  border-color: #444;
+}
+
+body.dark-mode .card,
+body.dark-mode .container,
+body.dark-mode .box,
+body.dark-mode .panel {
+  background-color: #292929;
+  color: #f2f2f2;
+  border-color: #444;
+}
+
+body.dark-mode button,
+body.dark-mode .btn {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+}
+
+body.dark-mode button:hover,
+body.dark-mode .btn:hover {
+  background-color: #c0392b;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background-color: #333;
+  color: #f2f2f2;
+  border: 1px solid #555;
+}
+
+/* 🌙 Additional Dark Mode Overrides for Column Selection */
+
+body.dark-mode .container {
+  background-color: #292929;
+  border: 2px dashed #bb8866;
+}
+
+body.dark-mode .checkbox-group label {
+  background-color: #3a3a3a;
+  color: #f2f2f2;
+}
+
+body.dark-mode .checkbox-group label:hover {
+  background-color: #555;
+}
+
+body.dark-mode .btn-secondary {
+  background-color: #555;
+  color: #f2f2f2;
+}
+
+body.dark-mode .btn-secondary:hover {
+  background-color: #666;
+}
+
+body.dark-mode .alert-success {
+  background-color: #2f4f2f;
+  color: #ccffcc;
+  border-color: #66bb66;
+}
+
+body.dark-mode .alert-danger {
+  background-color: #5c1e1e;
+  color: #ffaaaa;
+  border-color: #dd6666;
+}

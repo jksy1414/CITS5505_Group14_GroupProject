@@ -39,3 +39,71 @@ body {
     border: 1px dashed #8b4513;
   }
   
+  /* 🌙 Dark Mode Theme */
+
+body.dark-mode {
+  background-color: #1a1a1a;
+  color: #f2f2f2;
+}
+
+body.dark-mode a {
+  color: #3498db;
+}
+
+body.dark-mode header,
+body.dark-mode footer,
+body.dark-mode nav {
+  background-color: #292929;
+  border-color: #444;
+}
+
+body.dark-mode .card,
+body.dark-mode .container,
+body.dark-mode .box,
+body.dark-mode .panel {
+  background-color: #292929;
+  color: #f2f2f2;
+  border-color: #444;
+}
+
+body.dark-mode button,
+body.dark-mode .btn {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+}
+
+body.dark-mode button:hover,
+body.dark-mode .btn:hover {
+  background-color: #c0392b;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background-color: #333;
+  color: #f2f2f2;
+  border: 1px solid #555;
+}
+
+/* 🌙 Additional Dark Mode Styling for Explore Page */
+
+body.dark-mode .container {
+  background-color: #292929;
+  border-color: #bb8866;
+}
+
+body.dark-mode .chart-card {
+  background-color: #2e2e2e;
+  border-color: #aa8866;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .chart-card h4,
+body.dark-mode h2 {
+  color: #f2f2f2;
+}
+
+body.dark-mode hr {
+  border: 1px dashed #888;
+}

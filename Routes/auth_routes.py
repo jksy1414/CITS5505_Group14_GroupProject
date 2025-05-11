@@ -1,21 +1,37 @@
+<<<<<<< HEAD
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+=======
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, session, current_app
+>>>>>>> ed68d60d869bd2a829c2a329d2b79543d9849143
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import User, HealthData
+from models import db, User, Chart, AnalysisHistory, ActivityLog, HealthData
 import random, string, time, re, os
-from flask import session
 from flask_mail import Message
+<<<<<<< HEAD
 from extensions import db, mail
 from flask import current_app
 from flask_login import current_user
+=======
+from extensions import mail
+from werkzeug.utils import secure_filename
+>>>>>>> ed68d60d869bd2a829c2a329d2b79543d9849143
 from util import calculate_health_score, aggregate_week_data
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from flask_login import login_user, logout_user, login_required, current_user
-from models import db, User
+from urllib.parse import urlparse, urljoin
+import pandas as pd
+
 
 
 # Create auth blueprint
 auth = Blueprint('auth', __name__)
 
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
+
+# Logging in with existing user credentials
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     """Login route for user authentication."""
@@ -34,11 +50,18 @@ def login():
         # Log in the user
         login_user(user)
         flash('Login successful!', 'success')
-        return redirect(url_for('auth.account'))  # Redirect to the account page after login
 
-    return render_template('login.html')
+        # Redirect to the original page or account page
+        next_page = request.args.get('next')
+        if next_page and not is_safe_url(next_page):
+            return abort(400)  # Bad Request
+        return redirect(next_page) if next_page else redirect(url_for('results'))
 
+    # Capture the `next` parameter and pass it to the login template
+    next_page = request.args.get('next')
+    return render_template('login.html', next=next_page)
 
+# Registering a new user
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     """Register route for creating a new user."""
@@ -97,7 +120,7 @@ def register():
 
     return render_template('register.html')
 
-
+# Account page with user details and health data
 @auth.route('/account', methods=['GET'])
 @login_required
 def account():
@@ -129,7 +152,7 @@ def account():
 
     for d in days:
         record = HealthData.query.filter_by(user_id=user.id, date=d).first()
-        
+
         if record:
             intake.append(record.calories_intake)
             burned.append(record.calories_burned)
@@ -209,6 +232,14 @@ def account():
             'avg_deficit': avg_deficit
         }
 
+<<<<<<< HEAD
+=======
+    # NEW: activity tab data (✅ required by user)
+    activity_data = HealthData.query.filter_by(user_id=user.id).order_by(HealthData.date.desc()).limit(15).all()
+    history_records = AnalysisHistory.query.filter_by(user_id=user.id).order_by(AnalysisHistory.timestamp.desc()).all()
+    activity_logs = ActivityLog.query.filter_by(user_id=user.id).order_by(ActivityLog.timestamp.desc()).all()
+
+>>>>>>> ed68d60d869bd2a829c2a329d2b79543d9849143
     return render_template(
         'account.html', 
         user=user, 
@@ -226,10 +257,18 @@ def account():
         show_weekly_summary = show_weekly_summary,
         last_week_summary = last_week_summary,
         this_week_summary = this_week_summary,
-        )
+        activity_data = activity_data,
+        history_records=history_records,
+        activity_logs=activity_logs # ✅ include this to support Activity Log tab
+    )
 
+# Upoad new avatar image for user
 @auth.route('/upload_avatar', methods=['POST'])
+@login_required
+def upload_avatar():
+    pass # placeholder
 
+# Logging out user
 @auth.route('/logout')
 @login_required
 def logout():
@@ -367,23 +406,22 @@ def reset_password():
 
     return render_template('reset_password.html')
 
+# Updating user profile details
 @auth.route('/update_profile', methods=['POST'])
 @login_required
 def update_profile():
     """Update user profile."""
-    username = request.form.get('username')
     age = request.form.get('age')
     height = request.form.get('height')
     weight = request.form.get('weight')
 
     # Validate input
-    if not all([username, age, height, weight]):
+    if not all([age, height, weight]):
         flash('All fields are required!', 'danger')
         return redirect(url_for('auth.account'))
 
     try:
         # Update user details
-        current_user.username = username
         current_user.age = int(age)
         current_user.height = float(height)
         current_user.weight = float(weight)
@@ -394,3 +432,140 @@ def update_profile():
         flash('Invalid input. Please provide valid numbers for age, height, and weight.', 'danger')
 
     return redirect(url_for('auth.account'))
+
+# ✅ New route for changing password
+@auth.route('/change_password', methods=['POST'])
+@login_required
+def change_password():
+    current_password = request.form.get('current_password')
+    new_password = request.form.get('new_password')
+    confirm_password = request.form.get('confirm_password')
+
+    if not all([current_password, new_password, confirm_password]):
+        flash('Please fill in all password fields.', 'danger')
+        return redirect(url_for('auth.account'))
+
+    if not current_user.check_password(current_password):
+        flash('Current password is incorrect.', 'danger')
+        return redirect(url_for('auth.account'))
+
+    if new_password != confirm_password:
+        flash('New passwords do not match.', 'danger')
+        return redirect(url_for('auth.account'))
+
+    current_user.set_password(new_password)
+    db.session.commit()
+    flash('Password changed successfully!', 'success')
+    return redirect(url_for('auth.account'))
+
+# New analysis page
+@auth.route('/analyze_full', methods=['GET', 'POST'])
+@login_required
+def analyze_full():
+    if request.method == 'POST':
+        step = request.form.get('step')
+
+        if step == 'upload':
+            file = request.files.get('fitnessFile')
+            if not file:
+                flash("No file uploaded!", "danger")
+                return redirect(url_for('auth.analyze_full'))
+
+            try:
+                df = pd.read_csv(file)
+                session['data'] = df.to_dict(orient='list')
+                session['columns'] = df.columns.tolist()
+                session['filename'] = secure_filename(file.filename)
+                return redirect(url_for('auth.analyze_full', step='columns'))
+            except Exception as e:
+                flash(f"Error reading CSV: {e}", "danger")
+                return redirect(url_for('auth.analyze_full'))
+
+        elif step == 'columns':
+            selected = request.form.getlist('columns')
+            if not selected:
+                flash("Please select at least one column.", "danger")
+                return redirect(url_for('auth.analyze_full', step='columns'))
+            session['selected_columns'] = selected
+            return redirect(url_for('auth.analyze_full', step='rename'))
+
+        elif step == 'rename':
+            selected = session.get('selected_columns', [])
+            new_headers = {}
+            for i, col in enumerate(selected):
+                mapped = request.form.get(f'header_map_{i}')
+                if mapped == 'custom':
+                    mapped = request.form.get(f'custom_{i}', col)
+                new_headers[col] = mapped or col
+            session['renamed_headers'] = new_headers
+
+            # ✅ Save history and activity log
+            csv_data = session.get('data')
+            filename = session.get('filename', 'UploadedData.csv')
+            csv_raw = pd.DataFrame(csv_data).to_csv(index=False)
+
+            history = AnalysisHistory(
+                user_id=current_user.id,
+                filename=filename,
+                raw_csv=csv_raw
+            )
+            db.session.add(history)
+
+            log = ActivityLog(
+                user_id=current_user.id,
+                selected_columns=", ".join(session.get('selected_columns', [])),
+                renamed_headers=str(session.get('renamed_headers', {})),
+                shared_images=''  # update later if sharing
+            )
+            db.session.add(log)
+            db.session.commit()
+
+            return redirect(url_for('auth.analyze_full', step='results'))
+
+    step_param = request.args.get('step', 'upload')
+    data = session.get('data')
+    columns = session.get('columns', [])
+    selected_columns = session.get('selected_columns', [])
+    renamed_headers = session.get('renamed_headers', {})
+
+    values = {}
+    labels = []
+    if step_param == 'results' and data and selected_columns:
+        for old_name in selected_columns:
+            new_name = renamed_headers.get(old_name, old_name)
+            try:
+                values[new_name] = [float(v) for v in data.get(old_name, []) if v not in [None, '', 'nan']]
+            except Exception:
+                values[new_name] = []
+
+        if values:
+            labels = list(range(len(next(iter(values.values()), []))))
+
+    print(f"DEBUG: Values: {values}")
+    print(f"DEBUG: Labels: {labels}")
+    print(f"DEBUG: Renamed Headers: {renamed_headers}")
+
+    predefined_headers = ['Steps', 'Calories', 'Workout', 'Sleep']
+    csv_uploaded = bool(data)
+
+    return render_template(
+        'analyze_full.html',
+        step=step_param,
+        columns=columns,
+        selected_columns=selected_columns,
+        predefined_headers=predefined_headers,
+        renamed_headers=renamed_headers,
+        values=values,
+        labels=labels,
+        csv_uploaded=csv_uploaded
+    )
+
+@auth.route('/download_history/<int:history_id>')
+@login_required
+def download_history(history_id):
+    record = AnalysisHistory.query.get_or_404(history_id)
+    if record.user_id != current_user.id:
+        abort(403)
+    response = current_app.response_class(record.raw_csv, mimetype='text/csv')
+    response.headers.set("Content-Disposition", "attachment", filename=record.filename)
+    return response

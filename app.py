@@ -1,11 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import pandas as pd  # for reading CSVs
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user, login_required
 from extensions import db, mail
 from Routes.auth_routes import auth
 from models import db, User, Chart
 import os
 from dotenv import load_dotenv
+import csv
+
 
 # Load environment variables
 load_dotenv()
@@ -56,34 +58,73 @@ def home():
 @app.route('/analyze', methods=['GET', 'POST'])
 def analyze():
     if request.method == 'POST':
+        # ✅ Clear any existing session data
+        #session.clear()
+        session.pop('column_choices', None)
+        session.pop('csv_data', None)
+        session.pop('labels', None)
+        session.pop('values', None)
+        session.pop('columns', None)
+
         file = request.files.get('fitnessFile')
 
-        # 🧾 Check for file presence
+        # Check for file presence
         if not file or file.filename == "":
             flash("Please upload a CSV file.", "danger")
             return redirect(url_for('analyze'))
 
         filename = file.filename.lower()
 
-        # 🚫 Reject non-CSV files
+        # Reject non-CSV files
         if not filename.endswith('.csv'):
-            flash("Only CSV files are allowed (save as UTF-8 encoded).", "danger")
+            flash("Only CSV files are allowed.", "danger")
             return redirect(url_for('analyze'))
 
-        # 🧪 Try reading as UTF-8 encoded CSV
         try:
-            df = pd.read_csv(file, encoding='utf-8-sig')  # 👈 UTF-8 CSV only
-            df.columns = [col.strip() for col in df.columns]  # 🧹 Clean headers
-        except Exception as e:
-            flash("Error reading the CSV file. Please ensure it is UTF-8 encoded.", "danger")
+            # Detect delimiter dynamically
+            sample = file.read(2048).decode('utf-8-sig')  # Increase sample size
+            file.seek(0)  # Reset file pointer after reading sample
+            dialect = csv.Sniffer().sniff(sample)
+            delimiter = dialect.delimiter
+            print(f"DEBUG: Detected delimiter: {delimiter}")  # Debug log
+        except csv.Error:
+            # Fallback to default delimiter if detection fails
+            delimiter = ','
+            flash("Could not determine delimiter. Using default delimiter (comma).", "warning")
+            print("DEBUG: Could not determine delimiter. Using default delimiter (comma).")  # Debug log
+
+        try:
+            # Read the CSV file with the detected or default delimiter
+            df = pd.read_csv(file, encoding='utf-8-sig', delimiter=delimiter)
+        except UnicodeDecodeError:
+            try:
+                file.seek(0)  # Reset file pointer
+                df = pd.read_csv(file, encoding='latin1', delimiter=delimiter)
+                flash("File read successfully with fallback encoding (latin1).", "info")
+            except Exception as e:
+                flash("Error reading the CSV file. Please ensure it is a valid CSV.", "danger")
+                print(f"DEBUG: Error reading file: {e}")  # Debug log
+                return redirect(url_for('analyze'))
+
+        # Clean headers
+        df.columns = [col.strip() for col in df.columns]
+        print(f"DEBUG: Headers: {df.columns.tolist()}")  # Debug log
+
+        # Validate headers
+        if df.columns.duplicated().any():
+            flash("Duplicate column names detected. Please check your CSV file.", "danger")
+            print("DEBUG: Duplicate column names detected.")  # Debug log
             return redirect(url_for('analyze'))
 
-        # ✅ Store for next page
+        # Store for next page
         session['column_choices'] = df.columns.tolist()
         session['csv_data'] = df.to_dict(orient='records')
+        print(f"DEBUG: First few rows: {df.head()}")  # Debug log
 
+        flash("File uploaded successfully!", "success")
         return redirect(url_for('select_columns'))
 
+    # Initial GET request shows the upload form
     return render_template('input_analyze.html')
 
 # Route for column selection (Step 2: Pick columns to analyze)
@@ -100,7 +141,6 @@ def select_columns():
             flash("Please select at least one column.", "danger")
             return redirect(url_for('select_columns'))
 
-        import pandas as pd
         df = pd.DataFrame(session['csv_data'])
         selected_data = df[selected_columns]
 
@@ -142,7 +182,37 @@ def results():
 @app.route('/set_visibility', methods=['POST'])
 def set_visibility():
     visibility = request.form.get('visibility')
-    session['visibility'] = visibility  # store in session
+    session['visibility'] = visibility  # Store in session
+
+    # Require login only if visibility is "public"
+    if visibility == "public" and not current_user.is_authenticated:
+        flash("You must be logged in to set visibility to public.", "danger")
+        return redirect(url_for('auth.login', next=request.url))
+
+    # Save chart data to the database if visibility is "public"
+    if visibility == "public":
+        labels = session.get("labels")
+        values = session.get("values")
+        columns = session.get("columns")
+
+        if not labels or not values or not columns:
+            flash("Missing data for saving the chart.", "danger")
+            return redirect(url_for('results'))
+
+        # Save each column as a separate chart
+        for column in columns:
+            chart = Chart(
+                user_id=current_user.id if current_user.is_authenticated else None,  # Use the logged-in user's ID
+                title=f"Chart for {column}",
+                labels=labels,
+                values=values[column],
+                column_name=column,
+                visibility=visibility
+            )
+            db.session.add(chart)
+
+        db.session.commit()
+
     flash("Sharing option updated!", "success")
     return redirect(url_for('results'))
 
