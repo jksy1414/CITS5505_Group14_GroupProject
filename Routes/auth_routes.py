@@ -1,9 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, session, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, jsonify,session, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Chart, AnalysisHistory, ActivityLog, HealthData, Friend
 import random, string, time, re, os
 from flask_mail import Message
-from extensions import mail
+from extensions import db, mail
+from flask import current_app
+from flask_login import current_user
 from werkzeug.utils import secure_filename
 from util import calculate_health_score, aggregate_week_data
 from datetime import date, timedelta, datetime
@@ -267,13 +269,132 @@ def logout():
 
 @auth.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
-    """Placeholder for forgot password functionality."""
     if request.method == 'POST':
-        # Logic for handling password reset can be added here
-        flash('Password reset instructions have been sent to your email.', 'info')
-        return redirect(url_for('auth.login'))
+        email = request.form.get('email')
+        if not email:
+            flash('Please enter your email.', 'danger')
+            return redirect(url_for('auth.forgot_password'))
 
-    return render_template('forgot_password.html')  # Create a corresponding template if needed
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            flash('No account found with that email.', 'danger')
+            return redirect(url_for('auth.forgot_password'))
+
+        code = ''.join(random.choices(string.digits, k=6))
+        session['reset_code'] = code
+        session['reset_email'] = email
+        session['code_time'] = int(time.time())
+        session['fail_attempts'] = 0
+
+        msg = Message('Password Reset Code',
+                      sender=current_app.config['MAIL_USERNAME'],
+                      recipients=[email])
+        msg.body = f"Your password reset code is: {code}"
+
+        try:
+            mail.send(msg)
+            flash('Verification code sent to your email.', 'info')
+            return redirect(url_for('auth.forgot_password'))
+        except Exception as e:
+            flash('Error sending email: ' + str(e), 'danger')
+            return redirect(url_for('auth.forgot_password'))
+
+    return render_template('forgot_password.html')
+
+@auth.route('/send_code', methods=['POST'])
+def send_code():
+    data = request.get_json()
+    email = data.get('email')
+
+    if not email:
+        return jsonify({'success': False, 'error': 'Email is required'}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({'success': False, 'error': 'No account found'}), 404
+
+    code = ''.join(random.choices(string.digits, k=6))
+    session['reset_code'] = code
+    session['reset_email'] = email
+    session['code_time'] = int(time.time())
+    session['fail_attempts'] = 0
+
+    try:
+        msg = Message("Password Reset Code",
+                      sender=current_app.config['MAIL_USERNAME'],
+                      recipients=[email])
+        msg.body = f"Your password reset code is: {code}"
+        mail.send(msg)
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@auth.route('/verify_code', methods=['POST'])
+def verify_code():
+    entered_code = request.form.get('code')
+    stored_code = session.get('reset_code')
+    stored_time = session.get('code_time')
+    fail_attempts = session.get('fail_attempts', 0)
+
+    if not stored_code or not stored_time:
+        flash('Please request a code first.')
+        return redirect(url_for('auth.forgot_password'))
+
+    if time.time() - stored_time > 300:
+        flash('Verification code expired. Please request a new one.')
+        session.clear()
+        return redirect(url_for('auth.forgot_password'))
+
+    if entered_code == stored_code:
+        flash('Code verified! Please reset your password.')
+        return redirect(url_for('auth.reset_password'))
+    else:
+        fail_attempts += 1
+        session['fail_attempts'] = fail_attempts
+        if fail_attempts >= 5:
+            flash('Too many failed attempts. Please request a new code.')
+            session.clear()
+        else:
+            flash(f"Incorrect code. You have {5 - fail_attempts} attempts left.")
+        return redirect(url_for('auth.forgot_password'))
+
+@auth.route('/reset_password', methods=['GET', 'POST'])
+def reset_password():
+    if request.method == 'POST':
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+        email = session.get('reset_email')
+
+        if not email:
+            flash('Session expired. Please restart the reset process.')
+            return redirect(url_for('auth.forgot_password'))
+
+        if not new_password or not confirm_password:
+            flash('Please fill out both password fields.')
+            return redirect(url_for('auth.reset_password'))
+
+        if new_password != confirm_password:
+            flash('Passwords do not match.')
+            return redirect(url_for('auth.reset_password'))
+
+        if len(new_password) < 8 or not re.search(r'[A-Z]', new_password) \
+            or not re.search(r'[a-z]', new_password) or not re.search(r'\d', new_password):
+            flash('Password must be at least 8 characters and include uppercase, lowercase, and a number.')
+            return redirect(url_for('auth.reset_password'))
+
+        user = User.query.filter_by(email=email).first()
+        if user:
+            user.password_hash = generate_password_hash(new_password)
+            db.session.commit()
+            session.clear()
+            flash('Password reset successful! Please log in.')
+            return redirect(url_for('auth.login'))
+        else:
+            flash('User not found.')
+            return redirect(url_for('auth.forgot_password'))
+
+    return render_template('reset_password.html')
 
 # Updating user profile details
 @auth.route('/update_profile', methods=['POST'])
