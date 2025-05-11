@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, session, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, Chart, AnalysisHistory, ActivityLog, HealthData
+from models import db, User, Chart, AnalysisHistory, ActivityLog, HealthData, Friend
 import random, string, time, re, os
 from flask_mail import Message
 from extensions import mail
@@ -10,7 +10,6 @@ from datetime import date, timedelta, datetime
 from flask_login import login_user, logout_user, login_required, current_user
 from urllib.parse import urlparse, urljoin
 import pandas as pd
-
 
 
 # Create auth blueprint
@@ -230,6 +229,8 @@ def account():
     return render_template(
         'account.html', 
         user=user, 
+        Friend=Friend,
+        User=User,
         bmi=bmi, 
         health_score = radar_score, 
         health_metrics = radar_breakdown,
@@ -437,3 +438,105 @@ def download_history(history_id):
     response = current_app.response_class(record.raw_csv, mimetype='text/csv')
     response.headers.set("Content-Disposition", "attachment", filename=record.filename)
     return response
+
+@auth.route('/add_friend', methods=['POST'])
+@login_required
+def add_friend():
+    username = request.form.get('username')
+    if not username:
+        flash("Enter a username.", "warning")
+        return redirect(url_for('auth.account'))
+
+    if username == current_user.username:
+        flash("You cannot add yourself.", "danger")
+        return redirect(url_for('auth.account'))
+
+    user_to_add = User.query.filter_by(username=username).first()
+    if not user_to_add:
+        flash("User not found.", "danger")
+        return redirect(url_for('auth.account'))
+
+    # Check if request already exists (forward or reverse)
+    existing = Friend.query.filter_by(user_id=current_user.id, friend_id=user_to_add.id).first()
+    reverse = Friend.query.filter_by(user_id=user_to_add.id, friend_id=current_user.id).first()
+    if existing or reverse:
+        flash("Friend request already exists or you are already friends.", "info")
+        return redirect(url_for('auth.account'))
+
+    new_request = Friend(user_id=current_user.id, friend_id=user_to_add.id, status='pending')
+    db.session.add(new_request)
+    db.session.commit()
+
+    flash("Friend request sent!", "success")
+    return redirect(url_for('auth.account'))
+
+
+@auth.route('/accept_friend/<int:request_id>')
+@login_required
+def accept_friend(request_id):
+    request_record = Friend.query.get_or_404(request_id)
+    if request_record.friend_id != current_user.id:
+        abort(403)
+
+    request_record.status = 'accepted'
+    db.session.commit()
+
+    flash("Friend request accepted!", "success")
+    return redirect(url_for('auth.account'))
+
+@auth.route('/cancel_friend/<int:request_id>')
+@login_required
+def cancel_friend(request_id):
+    friend_request = Friend.query.get_or_404(request_id)
+
+    # Either the sender or receiver can cancel/reject the request
+    if friend_request.user_id != current_user.id and friend_request.friend_id != current_user.id:
+        abort(403)
+
+    db.session.delete(friend_request)
+    db.session.commit()
+    flash("Friend request cancelled or rejected.", "info")
+    return redirect(url_for('auth.account'))
+
+@auth.route('/remove_friend/<int:friend_id>')
+@login_required
+def remove_friend(friend_id):
+    # Find either direction of friendship
+    record = Friend.query.filter(
+        ((Friend.user_id == current_user.id) & (Friend.friend_id == friend_id)) |
+        ((Friend.user_id == friend_id) & (Friend.friend_id == current_user.id))
+    ).filter_by(status='accepted').first()
+
+    if not record:
+        flash("You are not friends with this user.", "warning")
+        return redirect(url_for('auth.account'))
+
+    db.session.delete(record)
+    db.session.commit()
+    flash("Friend removed successfully.", "info")
+    return redirect(url_for('auth.account'))
+
+@auth.route('/explore')
+@login_required
+def explore():
+    # Get all accepted friends
+    friend_links = Friend.query.filter(
+        ((Friend.user_id == current_user.id) | (Friend.friend_id == current_user.id)) &
+        (Friend.status == 'accepted')
+    ).all()
+
+    # Extract friend user IDs
+    friend_ids = set()
+    for link in friend_links:
+        if link.user_id == current_user.id:
+            friend_ids.add(link.friend_id)
+        else:
+            friend_ids.add(link.user_id)
+
+    # Query charts: public + friend-shared by friends
+    charts = Chart.query.filter(
+        (Chart.visibility == 'public') |
+        ((Chart.visibility == 'friends') & (Chart.user_id.in_(friend_ids)))
+    ).order_by(Chart.created_at.desc()).all()
+
+    return render_template('explore.html', charts=charts)

@@ -63,7 +63,6 @@ class AnalysisHistory(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    run_timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     filename = db.Column(db.String(255))
     raw_csv = db.Column(db.Text)  # Store entire CSV content as plain text
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
@@ -75,9 +74,17 @@ class ActivityLog(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     selected_columns = db.Column(db.Text)
     renamed_headers = db.Column(db.Text)
     shared_images = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
 
+# Friend model – to support friend requests and accepted friendships
+class Friend(db.Model):
+    __tablename__ = 'friends'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)      # requester
+    friend_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)    # receiver
+    status = db.Column(db.String(20), default='pending')  # 'pending', 'accepted'
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
