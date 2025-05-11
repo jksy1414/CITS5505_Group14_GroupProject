@@ -1,20 +1,12 @@
-<<<<<<< HEAD
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
-=======
-from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, session, current_app
->>>>>>> ed68d60d869bd2a829c2a329d2b79543d9849143
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, jsonify,session, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Chart, AnalysisHistory, ActivityLog, HealthData
 import random, string, time, re, os
 from flask_mail import Message
-<<<<<<< HEAD
 from extensions import db, mail
 from flask import current_app
 from flask_login import current_user
-=======
-from extensions import mail
 from werkzeug.utils import secure_filename
->>>>>>> ed68d60d869bd2a829c2a329d2b79543d9849143
 from util import calculate_health_score, aggregate_week_data
 from datetime import date, timedelta, datetime
 from flask_login import login_user, logout_user, login_required, current_user
@@ -232,14 +224,11 @@ def account():
             'avg_deficit': avg_deficit
         }
 
-<<<<<<< HEAD
-=======
     # NEW: activity tab data (✅ required by user)
     activity_data = HealthData.query.filter_by(user_id=user.id).order_by(HealthData.date.desc()).limit(15).all()
     history_records = AnalysisHistory.query.filter_by(user_id=user.id).order_by(AnalysisHistory.timestamp.desc()).all()
     activity_logs = ActivityLog.query.filter_by(user_id=user.id).order_by(ActivityLog.timestamp.desc()).all()
 
->>>>>>> ed68d60d869bd2a829c2a329d2b79543d9849143
     return render_template(
         'account.html', 
         user=user, 
