@@ -210,10 +210,17 @@
     const bgColor = document.getElementById('bgColor').value;
     const label = selectedCol || document.getElementById('selectedColumnLabel').innerText;
 
-    if (!label || !Object.values(renamedHeaders).includes(label)) return;
+    // Ensure the label exists in the renamed headers
+    if (!label || !Object.values(renamedHeaders).includes(label)) {
+        console.error("DEBUG: Invalid label or column not found in values.");
+        return;
+    }
 
-    const originalCol = Object.keys(renamedHeaders).find(k => renamedHeaders[k] === label);
-    const data = values[originalCol] || [];
+
+    const data = values[label];
+
+    console.log("DEBUG: Selected Label:", label);
+    console.log("DEBUG: Data for Column:", data);
 
     const ctx = document.getElementById('dynamicChart').getContext('2d');
     if (dynamicChart) dynamicChart.destroy();
@@ -221,27 +228,27 @@
     document.getElementById('selectedColumnLabel').innerText = label;
 
     dynamicChart = new Chart(ctx, {
-      type: type,
-      data: {
-        labels: labels,
-        datasets: [{
-          label: label,
-          data: data,
-          backgroundColor: 'rgba(75,192,192,0.4)',
-          borderColor: 'rgba(75,192,192,1)',
-          borderWidth: 2,
-          fill: ['line', 'radar'].includes(type),
-          showLine: type !== 'scatter'
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: true } },
-        scales: ['pie', 'doughnut'].includes(type) ? {} : {
-          y: { beginAtZero: true },
-          x: { ticks: { autoSkip: true } }
+        type: type,
+        data: {
+            labels: labels,
+            datasets: [{
+                label: label,
+                data: data,
+                backgroundColor: 'rgba(75,192,192,0.4)',
+                borderColor: 'rgba(75,192,192,1)',
+                borderWidth: 2,
+                fill: ['line', 'radar'].includes(type),
+                showLine: type !== 'scatter'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: true } },
+            scales: ['pie', 'doughnut'].includes(type) ? {} : {
+                y: { beginAtZero: true },
+                x: { ticks: { autoSkip: true } }
+            }
         }
-      }
     });
 
     ctx.canvas.parentElement.style.backgroundColor = bgColor;
@@ -249,9 +256,9 @@
     const stats = document.getElementById('statSummary');
     stats.innerHTML = '';
     if (data.length > 0) {
-      stats.innerHTML += `<li><strong>Average:</strong> ${average(data)}</li>`;
-      stats.innerHTML += `<li><strong>Max:</strong> ${Math.max(...data)}</li>`;
-      stats.innerHTML += `<li><strong>Min:</strong> ${Math.min(...data)}</li>`;
+        stats.innerHTML += `<li><strong>Average:</strong> ${average(data)}</li>`;
+        stats.innerHTML += `<li><strong>Max:</strong> ${Math.max(...data)}</li>`;
+        stats.innerHTML += `<li><strong>Min:</strong> ${Math.min(...data)}</li>`;
     }
   }
 

@@ -21,6 +21,7 @@ def is_safe_url(target):
     test_url = urlparse(urljoin(request.host_url, target))
     return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
 
+# Logging in with existing user credentials
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     """Login route for user authentication."""
@@ -50,6 +51,7 @@ def login():
     next_page = request.args.get('next')
     return render_template('login.html', next=next_page)
 
+# Registering a new user
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     """Register route for creating a new user."""
@@ -108,7 +110,7 @@ def register():
 
     return render_template('register.html')
 
-
+# Account page with user details and health data
 @auth.route('/account', methods=['GET'])
 @login_required
 def account():
@@ -247,11 +249,13 @@ def account():
         activity_logs=activity_logs # ✅ include this to support Activity Log tab
     )
 
+# Upoad new avatar image for user
 @auth.route('/upload_avatar', methods=['POST'])
-
+@login_required
 def upload_avatar():
     pass # placeholder
 
+# Logging out user
 @auth.route('/logout')
 @login_required
 def logout():
@@ -270,6 +274,7 @@ def forgot_password():
 
     return render_template('forgot_password.html')  # Create a corresponding template if needed
 
+# Updating user profile details
 @auth.route('/update_profile', methods=['POST'])
 @login_required
 def update_profile():
@@ -321,6 +326,7 @@ def change_password():
     flash('Password changed successfully!', 'success')
     return redirect(url_for('auth.account'))
 
+# New analysis page
 @auth.route('/analyze_full', methods=['GET', 'POST'])
 @login_required
 def analyze_full():
@@ -402,6 +408,10 @@ def analyze_full():
 
         if values:
             labels = list(range(len(next(iter(values.values()), []))))
+
+    print(f"DEBUG: Values: {values}")
+    print(f"DEBUG: Labels: {labels}")
+    print(f"DEBUG: Renamed Headers: {renamed_headers}")
 
     predefined_headers = ['Steps', 'Calories', 'Workout', 'Sleep']
     csv_uploaded = bool(data)
