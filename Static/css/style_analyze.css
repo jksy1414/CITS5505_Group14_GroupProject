@@ -1,0 +1,243 @@
+/* FitBug - Unified CSS Theme */
+
+/* Page Basics */
+body {
+    background-color: #fff8dc;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    color: #333;
+  }
+  
+  /* Headings */
+  h2, h4 {
+    color: #6b8e23;
+    margin-bottom: 20px;
+  }
+  
+  /* Container Styling */
+  .container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #fff8dc;
+    border: 2px dashed #8b4513;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    background-image: url('/static/images/Cornifer.webp');
+    background-repeat: no-repeat;
+    background-position: bottom left;
+    background-size: 200px;
+    animation: fadeInContainer 0.5s ease-in-out;
+  }
+  
+  /* Tabs */
+  .tab-section {
+    display: none;
+    animation: fadeTab 0.4s ease-in-out;
+  }
+  .tab-section.active {
+    display: block;
+  }
+  
+  @keyframes fadeTab {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Step Navigation */
+  .step-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+  }
+  .step-indicator div {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    border-bottom: 4px solid #ccc;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .step-indicator .active {
+    font-weight: bold;
+    border-color: #5a3e1b;
+    background-color: #f5f5dc;
+  }
+  
+  /* Forms */
+  label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+    color: #8b4513;
+  }
+  input[type="file"],
+  input[type="text"],
+  input[type="color"],
+  select,
+  textarea {
+    margin-bottom: 15px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #8b4513;
+    background-color: #fff;
+    width: 80%;
+  }
+  select:hover {
+    border-color: #6b8e23;
+  }
+  
+  /* Buttons */
+  button, .btn {
+    background-color: #6b8e23;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 10px 5px;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+  button:hover, .btn:hover {
+    background-color: #556b2f;
+    transform: scale(1.05);
+  }
+  .btn-secondary {
+    background-color: #ccc;
+    color: #333;
+  }
+  .btn-secondary:hover {
+    background-color: #bbb;
+  }
+  
+  /* Chart Area - Only when active */
+  #step-3.tab-section.active {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  
+  /* Column Selector List */
+  #columnList {
+    list-style: none;
+    padding: 0;
+  }
+  #columnList button {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  /* Chart Area Extras */
+  #selectedColumnLabel {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  #statSummary {
+    margin-top: 10px;
+    padding-left: 20px;
+    list-style-type: disc;
+    color: #5a3e1b;
+  }
+  
+  /* Canvas Chart Styling */
+  canvas {
+    margin-top: 20px;
+    background-color: #fefefe;
+    border: 1px dashed #ccc;
+    padding: 10px;
+    border-radius: 8px;
+    display: block;
+    max-width: 100%;
+    animation: popIn 0.3s ease;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  
+  /* Checkbox Area */
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 20px;
+  }
+  .checkbox-group label {
+    margin: 8px 0;
+    background-color: #f5f5dc;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+  }
+  .checkbox-group label:hover {
+    background-color: #eee8aa;
+  }
+  
+  /* Flash Alerts */
+  .alert {
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin: 20px auto;
+    width: 90%;
+    font-weight: bold;
+    text-align: center;
+  }
+  .alert-success {
+    background-color: #e6f9e6;
+    color: #3c763d;
+    border: 2px solid #3c763d;
+  }
+  .alert-danger {
+    background-color: #fdd;
+    color: #a94442;
+    border: 2px solid #a94442;
+  }
+  .alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 2px solid #ffeeba;
+  }
+  
+  .step-indicator .disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  .step-indicator .disabled:hover {
+    background-color: inherit;
+    border-color: #ccc;
+  }
+  
+  /* Dark Mode Support */
+  body.dark-mode {
+    background-color: #1a1a1a;
+    color: #f2f2f2;
+  }
+  body.dark-mode .container {
+    background-color: #292929;
+    color: #f2f2f2;
+    border-color: #aa8866;
+  }
+  body.dark-mode .step-indicator div {
+    border-color: #444;
+  }
+  body.dark-mode .step-indicator .active {
+    background-color: #3a3a3a;
+  }
+  body.dark-mode canvas {
+    background-color: #1e1e1e;
+    border-color: #666;
+  }
+  body.dark-mode input,
+  body.dark-mode select,
+  body.dark-mode textarea {
+    background-color: #333;
+    color: #f2f2f2;
+    border: 1px solid #555;
+  }
+  
