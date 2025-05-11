@@ -19,6 +19,7 @@
         <button class="tab-btn" onclick="showTab('activity')">Activity Log</button>
         <button class="tab-btn" onclick="showTab('goals')">Goals</button>
         <button class="tab-btn" onclick="showTab('profile')">Profile</button>
+        <button class="tab-btn" onclick="showTab('friends')">Friends</button>
         <button class="tab-btn" onclick="showTab('settings')">Settings</button>
     </div>
 
@@ -53,33 +54,32 @@
         <ul>
         {% for h in history_records %}
             <li>
-            <strong>{{ h.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</strong> - {{ h.filename }}
-            <form action="{{ url_for('auth.download_history', history_id=h.id) }}" method="get" style="display:inline;">
-                <button type="submit" class="btn btn-sm">Download CSV</button>
-            </form>
+                <strong>{{ h.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</strong> - {{ h.filename }}
+                <form action="{{ url_for('auth.download_history', history_id=h.id) }}" method="get" style="display:inline;">
+                    <button type="submit" class="btn btn-sm">Download CSV</button>
+                </form>
             </li>
         {% else %}
             <li class="text-muted">No analysis history found.</li>
         {% endfor %}
         </ul>
     </div>
-  
+
     <!-- Activity Log Tab -->
     <div id="activity" class="tab-section">
         <h4>Recent Activity Log</h4>
         <ul>
         {% for a in activity_logs %}
             <li>
-            <strong>{{ a.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</strong><br>
-            Selected Columns: {{ a.selected_columns }}<br>
-            Renamed Headers: {{ a.renamed_headers }}
+                <strong>{{ a.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</strong><br>
+                Selected Columns: {{ a.selected_columns }}<br>
+                Renamed Headers: {{ a.renamed_headers }}
             </li>
         {% else %}
             <li class="text-muted">No activity log found.</li>
         {% endfor %}
         </ul>
     </div>
-    
 
     <!-- Goals Tab -->
     <div id="goals" class="tab-section">
@@ -104,21 +104,72 @@
                     <h4 class="mb-3">Edit Profile</h4>
                     <label>Age:</label>
                     <input type="text" name="age" class="form-control" value="{{ user.age }}" required>
-
                     <label>Height (cm):</label>
                     <input type="text" name="height" class="form-control" value="{{ user.height }}" required>
-
                     <label>Weight (kg):</label>
                     <input type="text" name="weight" class="form-control" value="{{ user.weight }}" required>
-
                     <label>BMI:</label>
                     <input type="text" class="form-control" value="{{ bmi }}" readonly>
-
                     <button type="submit" class="btn btn-success">Save Changes</button>
                     <button type="button" class="btn btn-outline-danger" onclick="toggleEdit(false)">Cancel</button>
                 </div>
             </form>
         </div>
+    </div>
+
+    <!-- Friends Tab -->
+    <div id="friends" class="tab-section">
+        <h4>Add Friend by Username</h4>
+        <form method="POST" action="{{ url_for('auth.add_friend') }}">
+            <input type="text" name="username" placeholder="Enter username" required>
+            <button type="submit" class="btn">Send Request</button>
+        </form>
+
+        <hr>
+
+        <h4>Pending Friend Requests</h4>
+        <ul>
+        {% for fr in Friend.query.filter_by(friend_id=current_user.id, status='pending').all() %}
+            <li>
+                {{ User.query.get(fr.user_id).username }}
+                <a class="btn btn-sm btn-success" href="{{ url_for('auth.accept_friend', request_id=fr.id) }}">Accept</a>
+                <a class="btn btn-sm btn-outline-danger" href="{{ url_for('auth.cancel_friend', request_id=fr.id) }}" onclick="return confirm('Reject this friend request?')">Reject</a>
+            </li>
+        {% else %}
+            <li class="text-muted">No pending requests.</li>
+        {% endfor %}
+        </ul>
+
+        <h4>Requests You Sent</h4>
+        <ul>
+        {% for fr in Friend.query.filter_by(user_id=current_user.id, status='pending').all() %}
+            <li>
+                {{ User.query.get(fr.friend_id).username }}
+                <a class="btn btn-sm btn-outline-danger" href="{{ url_for('auth.cancel_friend', request_id=fr.id) }}" onclick="return confirm('Cancel this friend request?')">Cancel</a>
+            </li>
+        {% else %}
+            <li class="text-muted">No outgoing requests.</li>
+        {% endfor %}
+        </ul>
+
+        <hr>
+
+        <h4>Your Friends</h4>
+        <ul>
+            {% set friend_ids = [] %}
+            {% for f in Friend.query.filter_by(user_id=current_user.id, status='accepted').all() %}
+                {% set friend_ids = friend_ids + [f.friend_id] %}
+            {% endfor %}
+            {% for f in Friend.query.filter_by(friend_id=current_user.id, status='accepted').all() %}
+                {% set friend_ids = friend_ids + [f.user_id] %}
+            {% endfor %}
+            {% for fid in friend_ids %}
+                <li>
+                    {{ User.query.get(fid).username }}
+                    <a class="btn btn-sm btn-outline-danger" href="{{ url_for('auth.remove_friend', friend_id=fid) }}" onclick="return confirm('Are you sure you want to unfriend this user?')">Unfriend</a>
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 
     <!-- Settings Tab -->
@@ -168,8 +219,6 @@ function toggleTheme(mode) {
     }
 }
 </script>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
 {% endblock %}
-

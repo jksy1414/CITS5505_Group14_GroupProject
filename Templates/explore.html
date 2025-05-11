@@ -20,7 +20,15 @@
       {% for chart in charts %}
         <div class="chart-card">
           <h4>{{ chart.title }}</h4>
-          <p><strong>User:</strong> {{ chart.user.username }} | <strong>Shared as:</strong> {{ chart.visibility }}</p>
+          <p>
+            <strong>User:</strong> {{ chart.user.username }} |
+            <strong>Shared as:</strong>
+            {% if chart.visibility == 'public' %}
+              <span class="badge badge-success">🌐 Public</span>
+            {% elif chart.visibility == 'friends' %}
+              <span class="badge badge-info">👥 Friends Only</span>
+            {% endif %}
+          </p>
           <canvas id="chart-{{ chart.id }}" width="600" height="300"></canvas>
         </div>
         <hr>

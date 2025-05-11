@@ -107,3 +107,30 @@ body.dark-mode h2 {
 body.dark-mode hr {
   border: 1px dashed #888;
 }
+
+.badge {
+  display: inline-block;
+  padding: 0.2em 0.6em;
+  font-size: 0.75em;
+  font-weight: bold;
+  border-radius: 10px;
+  color: white;
+  margin-left: 5px;
+}
+
+.badge-success {
+  background-color: #4CAF50; /* green */
+}
+
+.badge-info {
+  background-color: #1E90FF; /* blue */
+}
+
+/* Optional: dark mode styles */
+body.dark-mode .badge-success {
+  background-color: #66bb6a;
+}
+
+body.dark-mode .badge-info {
+  background-color: #42a5f5;
+}
