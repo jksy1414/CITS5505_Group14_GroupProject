@@ -341,11 +341,21 @@ def analyze_full():
                 return redirect(url_for('auth.analyze_full'))
 
             try:
-                df = pd.read_csv(file)
-                session['data'] = df.to_dict(orient='list')
+                # Save uploaded file
+                filename = secure_filename(file.filename)
+                filepath = os.path.join('temp_uploads', filename)
+                file.save(filepath)
+
+                # Read once to get headers
+                df = pd.read_csv(filepath)
+
+                # Save metadata to session
+                session['csv_path'] = filepath
                 session['columns'] = df.columns.tolist()
-                session['filename'] = secure_filename(file.filename)
+                session['filename'] = filename
+
                 return redirect(url_for('auth.analyze_full', step='columns'))
+
             except Exception as e:
                 flash(f"Error reading CSV: {e}", "danger")
                 return redirect(url_for('auth.analyze_full'))
@@ -355,67 +365,85 @@ def analyze_full():
             if not selected:
                 flash("Please select at least one column.", "danger")
                 return redirect(url_for('auth.analyze_full', step='columns'))
+
             session['selected_columns'] = selected
             return redirect(url_for('auth.analyze_full', step='rename'))
 
         elif step == 'rename':
             selected = session.get('selected_columns', [])
             new_headers = {}
+
             for i, col in enumerate(selected):
                 mapped = request.form.get(f'header_map_{i}')
                 if mapped == 'custom':
                     mapped = request.form.get(f'custom_{i}', col)
                 new_headers[col] = mapped or col
+
             session['renamed_headers'] = new_headers
 
-            # ✅ Save history and activity log
-            csv_data = session.get('data')
-            filename = session.get('filename', 'UploadedData.csv')
-            csv_raw = pd.DataFrame(csv_data).to_csv(index=False)
+            # Re-read file for logging
+            filepath = session.get('csv_path')
+            try:
+                df = pd.read_csv(filepath)
+                csv_raw = df.to_csv(index=False)
+            except Exception:
+                csv_raw = ""
 
             history = AnalysisHistory(
                 user_id=current_user.id,
-                filename=filename,
+                filename=session.get('filename', 'UploadedData.csv'),
                 raw_csv=csv_raw
             )
             db.session.add(history)
 
             log = ActivityLog(
                 user_id=current_user.id,
-                selected_columns=", ".join(session.get('selected_columns', [])),
-                renamed_headers=str(session.get('renamed_headers', {})),
-                shared_images=''  # update later if sharing
+                selected_columns=", ".join(selected),
+                renamed_headers=str(new_headers),
+                shared_images=''
             )
             db.session.add(log)
             db.session.commit()
 
             return redirect(url_for('auth.analyze_full', step='results'))
 
+    # ----- GET Request Handling -----
+
     step_param = request.args.get('step', 'upload')
-    data = session.get('data')
+    filepath = session.get('csv_path')
     columns = session.get('columns', [])
     selected_columns = session.get('selected_columns', [])
     renamed_headers = session.get('renamed_headers', {})
 
     values = {}
     labels = []
-    if step_param == 'results' and data and selected_columns:
-        for old_name in selected_columns:
-            new_name = renamed_headers.get(old_name, old_name)
-            try:
-                values[new_name] = [float(v) for v in data.get(old_name, []) if v not in [None, '', 'nan']]
-            except Exception:
-                values[new_name] = []
 
-        if values:
-            labels = list(range(len(next(iter(values.values()), []))))
+    if step_param == 'results' and filepath and selected_columns:
+        try:
+            df = pd.read_csv(filepath)
+            for old_name in selected_columns:
+                new_name = renamed_headers.get(old_name, old_name)
+                try:
+                    cleaned = pd.to_numeric(df[old_name], errors='coerce').dropna()
+                    values[new_name] = cleaned.tolist()
+                except Exception as e:
+                    print(f"Error processing column '{old_name}': {e}")
+                    values[new_name] = []
 
-    print(f"DEBUG: Values: {values}")
-    print(f"DEBUG: Labels: {labels}")
-    print(f"DEBUG: Renamed Headers: {renamed_headers}")
+            if values:
+                labels = list(range(len(next(iter(values.values()), []))))
+
+        except Exception as e:
+            flash(f"Error reading CSV for analysis: {e}", "danger")
+
+    print("=== DEBUG: analyze_full ===")
+    print("Selected Columns:", selected_columns)
+    print("Renamed Headers:", renamed_headers)
+    print("Values (sample):", {k: v[:5] for k, v in values.items()})
+    print("Labels:", labels[:5])
 
     predefined_headers = ['Steps', 'Calories', 'Workout', 'Sleep']
-    csv_uploaded = bool(data)
+    csv_uploaded = bool(filepath)
 
     return render_template(
         'analyze_full.html',
@@ -428,115 +456,3 @@ def analyze_full():
         labels=labels,
         csv_uploaded=csv_uploaded
     )
-
-@auth.route('/download_history/<int:history_id>')
-@login_required
-def download_history(history_id):
-    record = AnalysisHistory.query.get_or_404(history_id)
-    if record.user_id != current_user.id:
-        abort(403)
-    response = current_app.response_class(record.raw_csv, mimetype='text/csv')
-    response.headers.set("Content-Disposition", "attachment", filename=record.filename)
-    return response
-
-@auth.route('/add_friend', methods=['POST'])
-@login_required
-def add_friend():
-    username = request.form.get('username')
-    if not username:
-        flash("Enter a username.", "warning")
-        return redirect(url_for('auth.account'))
-
-    if username == current_user.username:
-        flash("You cannot add yourself.", "danger")
-        return redirect(url_for('auth.account'))
-
-    user_to_add = User.query.filter_by(username=username).first()
-    if not user_to_add:
-        flash("User not found.", "danger")
-        return redirect(url_for('auth.account'))
-
-    # Check if request already exists (forward or reverse)
-    existing = Friend.query.filter_by(user_id=current_user.id, friend_id=user_to_add.id).first()
-    reverse = Friend.query.filter_by(user_id=user_to_add.id, friend_id=current_user.id).first()
-    if existing or reverse:
-        flash("Friend request already exists or you are already friends.", "info")
-        return redirect(url_for('auth.account'))
-
-    new_request = Friend(user_id=current_user.id, friend_id=user_to_add.id, status='pending')
-    db.session.add(new_request)
-    db.session.commit()
-
-    flash("Friend request sent!", "success")
-    return redirect(url_for('auth.account'))
-
-
-@auth.route('/accept_friend/<int:request_id>')
-@login_required
-def accept_friend(request_id):
-    request_record = Friend.query.get_or_404(request_id)
-    if request_record.friend_id != current_user.id:
-        abort(403)
-
-    request_record.status = 'accepted'
-    db.session.commit()
-
-    flash("Friend request accepted!", "success")
-    return redirect(url_for('auth.account'))
-
-@auth.route('/cancel_friend/<int:request_id>')
-@login_required
-def cancel_friend(request_id):
-    friend_request = Friend.query.get_or_404(request_id)
-
-    # Either the sender or receiver can cancel/reject the request
-    if friend_request.user_id != current_user.id and friend_request.friend_id != current_user.id:
-        abort(403)
-
-    db.session.delete(friend_request)
-    db.session.commit()
-    flash("Friend request cancelled or rejected.", "info")
-    return redirect(url_for('auth.account'))
-
-@auth.route('/remove_friend/<int:friend_id>')
-@login_required
-def remove_friend(friend_id):
-    # Find either direction of friendship
-    record = Friend.query.filter(
-        ((Friend.user_id == current_user.id) & (Friend.friend_id == friend_id)) |
-        ((Friend.user_id == friend_id) & (Friend.friend_id == current_user.id))
-    ).filter_by(status='accepted').first()
-
-    if not record:
-        flash("You are not friends with this user.", "warning")
-        return redirect(url_for('auth.account'))
-
-    db.session.delete(record)
-    db.session.commit()
-    flash("Friend removed successfully.", "info")
-    return redirect(url_for('auth.account'))
-
-@auth.route('/explore')
-@login_required
-def explore():
-    # Get all accepted friends
-    friend_links = Friend.query.filter(
-        ((Friend.user_id == current_user.id) | (Friend.friend_id == current_user.id)) &
-        (Friend.status == 'accepted')
-    ).all()
-
-    # Extract friend user IDs
-    friend_ids = set()
-    for link in friend_links:
-        if link.user_id == current_user.id:
-            friend_ids.add(link.friend_id)
-        else:
-            friend_ids.add(link.user_id)
-
-    # Query charts: public + friend-shared by friends
-    charts = Chart.query.filter(
-        (Chart.visibility == 'public') |
-        ((Chart.visibility == 'friends') & (Chart.user_id.in_(friend_ids)))
-    ).order_by(Chart.created_at.desc()).all()
-
-    return render_template('explore.html', charts=charts)
