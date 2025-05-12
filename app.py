@@ -178,7 +178,6 @@ def results():
         visibility=visibility
     )
 
-# Route for setting visibility of charts
 @app.route('/set_visibility', methods=['POST'])
 def set_visibility():
     visibility = request.form.get('visibility')
@@ -215,6 +214,58 @@ def set_visibility():
 
     flash("Sharing option updated!", "success")
     return redirect(url_for('results'))
+
+# New Route for setting visibility of charts
+@app.route('/set_visibility_2', methods=['POST'])
+def set_visibility_2():
+    visibility = request.form.get('visibility_2')
+    selected_column = request.form.get('selected_column_2')  # Get the selected column from the form
+    session['visibility_2'] = visibility  # Store in session
+
+    # Require login only if visibility is "public"
+    if visibility == "public_2" and not current_user.is_authenticated:
+        flash("You must be logged in to set visibility to public.", "danger")
+        return redirect(url_for('auth.login', next=request.url))
+
+    # Save chart data to the database if visibility is "public"
+    if visibility == "public_2":
+        labels = session.get("labels_2")
+        values = session.get("values_2")
+        renamed_headers = session.get("renamed_headers_2", {})
+        columns = session.get("columns_2")
+
+        if not labels or not values or not columns:
+            flash("Missing data for saving the chart.", "danger")
+            return redirect(url_for('results'))
+
+        # Map the selected column to its original name
+        original_column = next((k for k, v in renamed_headers.items() if v == selected_column), selected_column)
+
+        if original_column not in values:
+            flash("Invalid column selected for saving.", "danger")
+            return redirect(url_for('results'))
+
+        chart_data = values.get(original_column, [])
+
+        if not chart_data:
+            flash("Selected column has no data to save as a public chart.", "danger")
+            return redirect(url_for('results'))
+
+
+        # Save the chart for the selected column
+        chart = Chart(
+            user_id=current_user.id if current_user.is_authenticated else None,  # Use the logged-in user's ID
+            title=f"Chart for {selected_column}",
+            labels=labels,
+            values=chart_data,
+            column_name=selected_column,
+            visibility=visibility
+        )
+        db.session.add(chart)
+        db.session.commit()
+
+    flash("Sharing option updated!", "success")
+    return redirect(url_for('auth.analyze_full'))
 
 # Route for exploring public charts
 @app.route('/explore')

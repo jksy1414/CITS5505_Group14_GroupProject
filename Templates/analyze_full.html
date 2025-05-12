@@ -153,7 +153,17 @@
       <h4 id="selectedColumnLabel"></h4>
       <canvas id="dynamicChart" width="700" height="300"></canvas>
       <ul id="statSummary"></ul>
-      <button onclick="downloadChart()" class="btn">Download</button>
+      <button onclick="downloadChart()" class="btn">Download .png</button>
+      <form method="POST" action="{{ url_for('set_visibility_2') }}" style="margin-top: 20px;">
+        <input type="hidden" id="selectedColumnInput" name="selected_column_2" value="">
+        <label for="visibility_2">Change Sharing Option:</label>
+        <select name="visibility_2">
+          <option value="friends_2" {% if visibility == 'private' %}selected{% endif %}>Private</option>
+          <option value="public_2" {% if visibility == 'public' %}selected{% endif %}>Public</option>
+          <option value="friends_2" {% if visibility == 'friends' %}selected{% endif %}>Friends</option>
+        </select>
+        <button type="submit" class="btn">Save Sharing Setting</button>
+      </form>
 
       <div class="step-buttons">
         <button type="button" onclick="switchStep(2)" class="btn btn-secondary">← Back</button>
@@ -202,6 +212,7 @@
   }
 
   function selectColumn(col) {
+    document.getElementById('selectedColumnInput').value = col;  // Update the hidden input field
     renderChart(col);
   }
 
