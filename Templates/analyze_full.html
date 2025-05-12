@@ -269,10 +269,23 @@
 
   function downloadChart() {
     const canvas = document.getElementById('dynamicChart');
+    const ctx = canvas.getContext('2d');
+    const originalImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const bgColor = document.getElementById('bgColor').value || '#ffffff';
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'destination-over';
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+
+    const image = canvas.toDataURL('image/png')
     const link = document.createElement('a');
-    link.href = canvas.toDataURL();
+    link.href = image;
     link.download = 'chart.png';
     link.click();
+
+    ctx.putImageData(originalImage, 0, 0)
   }
 
   document.addEventListener("DOMContentLoaded", () => {

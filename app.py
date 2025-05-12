@@ -3,7 +3,7 @@ import pandas as pd  # for reading CSVs
 from flask_login import LoginManager, current_user, login_required
 from extensions import db, mail
 from Routes.auth_routes import auth
-from models import db, User, Chart
+from models import User, Chart
 import os
 from dotenv import load_dotenv
 import csv
