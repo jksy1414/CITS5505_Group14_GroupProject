@@ -2,9 +2,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from datetime import date, datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from extensions import db
 
-# Initialize the SQLAlchemy object
-db = SQLAlchemy()
 
 # User model
 class User(UserMixin, db.Model):
