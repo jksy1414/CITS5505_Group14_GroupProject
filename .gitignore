@@ -23,3 +23,7 @@ env/
 
 #Ingore shell
 shell.py
+
+#ignore temp_uploads
+temp_uploads/*
+!temp_uploads/.gitkeep
