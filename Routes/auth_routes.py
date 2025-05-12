@@ -456,3 +456,44 @@ def analyze_full():
         labels=labels,
         csv_uploaded=csv_uploaded
     )
+
+@auth.route('/download_history/<int:history_id>')
+@login_required
+def download_history(history_id):
+    record = AnalysisHistory.query.get_or_404(history_id)
+    if record.user_id != current_user.id:
+        abort(403)
+    response = current_app.response_class(record.raw_csv, mimetype='text/csv')
+    response.headers.set("Content-Disposition", "attachment", filename=record.filename)
+    return response
+
+@auth.route('/add_friend', methods=['POST'])
+@login_required
+def add_friend():
+    username = request.form.get('username')
+    if not username:
+        flash("Enter a username.", "warning")
+        return redirect(url_for('auth.account'))
+
+    if username == current_user.username:
+        flash("You cannot add yourself.", "danger")
+        return redirect(url_for('auth.account'))
+
+    user_to_add = User.query.filter_by(username=username).first()
+    if not user_to_add:
+        flash("User not found.", "danger")
+        return redirect(url_for('auth.account'))
+
+    # Check if request already exists (forward or reverse)
+    existing = Friend.query.filter_by(user_id=current_user.id, friend_id=user_to_add.id).first()
+    reverse = Friend.query.filter_by(user_id=user_to_add.id, friend_id=current_user.id).first()
+    if existing or reverse:
+        flash("Friend request already exists or you are already friends.", "info")
+        return redirect(url_for('auth.account'))
+
+    new_request = Friend(user_id=current_user.id, friend_id=user_to_add.id, status='pending')
+    db.session.add(new_request)
+    db.session.commit()
+
+    flash("Friend request sent!", "success")
+    return redirect(url_for('auth.account'))
