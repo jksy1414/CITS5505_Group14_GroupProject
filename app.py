@@ -219,8 +219,14 @@ def set_visibility():
 @app.route('/set_visibility_2', methods=['POST'])
 def set_visibility_2():
     visibility = request.form.get('visibility_2')
-    selected_column = request.form.get('selected_column_2')  # Get the selected column from the form
+    selected_column = request.form.get('selected_column')  # Get the selected column from the form
     session['visibility_2'] = visibility  # Store in session
+
+    print(f"DEBUG: visibility_2 = {visibility}")
+    print(f"DEBUG: selected_column = {selected_column}")
+    print(f"DEBUG: labels = {session.get('labels')}")
+    print(f"DEBUG: values = {session.get('values[labels]')}")
+    print(f"DEBUG: columns = {session.get('columnList')}")
 
     # Require login only if visibility is "public"
     if visibility == "public_2" and not current_user.is_authenticated:
@@ -229,28 +235,27 @@ def set_visibility_2():
 
     # Save chart data to the database if visibility is "public"
     if visibility == "public_2":
-        labels = session.get("labels_2")
+        labels = session.get("labels")
         values = session.get("values_2")
-        renamed_headers = session.get("renamed_headers_2", {})
-        columns = session.get("columns_2")
+        renamed_headers = session.get("renamed_headers", {})
+        columns = session.get("columns")
 
         if not labels or not values or not columns:
             flash("Missing data for saving the chart.", "danger")
-            return redirect(url_for('results'))
+            return redirect(url_for('auth.analyze_full'))
 
         # Map the selected column to its original name
         original_column = next((k for k, v in renamed_headers.items() if v == selected_column), selected_column)
 
         if original_column not in values:
             flash("Invalid column selected for saving.", "danger")
-            return redirect(url_for('results'))
+            return redirect(url_for('auth.analyze_full'))
 
         chart_data = values.get(original_column, [])
 
         if not chart_data:
             flash("Selected column has no data to save as a public chart.", "danger")
-            return redirect(url_for('results'))
-
+            return redirect(url_for('auth.analyze_full'))
 
         # Save the chart for the selected column
         chart = Chart(

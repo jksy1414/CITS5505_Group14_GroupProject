@@ -155,12 +155,11 @@
       <ul id="statSummary"></ul>
       <button onclick="downloadChart()" class="btn">Download .png</button>
       <form method="POST" action="{{ url_for('set_visibility_2') }}" style="margin-top: 20px;">
-        <input type="hidden" id="selectedColumnInput" name="selected_column_2" value="">
-        <label for="visibility_2">Change Sharing Option:</label>
-        <select name="visibility_2">
-          <option value="friends_2" {% if visibility == 'private' %}selected{% endif %}>Private</option>
-          <option value="public_2" {% if visibility == 'public' %}selected{% endif %}>Public</option>
-          <option value="friends_2" {% if visibility == 'friends' %}selected{% endif %}>Friends</option>
+        <input type="hidden" id="selectedColumnInput" name="selected_column" value="">
+        <label for="visibility">Change Sharing Option:</label>
+        <select name="visibility">
+          <option value="public" {% if visibility == 'public' %}selected{% endif %}>Public</option>
+          <option value="friends" {% if visibility == 'friends' %}selected{% endif %}>Friends</option>
         </select>
         <button type="submit" class="btn">Save Sharing Setting</button>
       </form>
@@ -309,5 +308,15 @@
       });
     }
   });
+
+  document.querySelector('form').addEventListener('set_visibility_2', function(e) {
+  const selected = document.getElementById('selectedColumnInput').value;
+  console.log("DEBUG: Selected Label:", selected);
+
+  if (!selected) {
+    e.preventDefault();
+    alert("Please select a column before saving sharing settings.");
+  }
+});
 </script>
 {% endblock %}
