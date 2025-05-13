@@ -133,7 +133,9 @@
             <li>
                 {{ User.query.get(fr.user_id).username }}
                 <a class="btn btn-sm btn-success" href="{{ url_for('auth.accept_friend', request_id=fr.id) }}">Accept</a>
-                <a class="btn btn-sm btn-outline-danger" href="{{ url_for('auth.cancel_friend', request_id=fr.id) }}" onclick="return confirm('Reject this friend request?')">Reject</a>
+                <form action="{{ url_for('auth.cancel_friend', request_id=fr.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Reject this friend request?')">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Reject</button>
+                </form>
             </li>
         {% else %}
             <li class="text-muted">No pending requests.</li>
@@ -145,8 +147,9 @@
         {% for fr in Friend.query.filter_by(user_id=current_user.id, status='pending').all() %}
             <li>
                 {{ User.query.get(fr.friend_id).username }}
-                <a class="btn btn-sm btn-outline-danger" href="{{ url_for('auth.cancel_friend', request_id=fr.id) }}" onclick="return confirm('Cancel this friend request?')">Cancel</a>
-            </li>
+                <form action="{{ url_for('auth.cancel_friend', request_id=fr.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Cancel this friend request?')">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+                </form>
         {% else %}
             <li class="text-muted">No outgoing requests.</li>
         {% endfor %}
