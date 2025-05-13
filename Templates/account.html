@@ -129,7 +129,7 @@
 
         <h4>Pending Friend Requests</h4>
         <ul>
-        {% for fr in Friend.query.filter_by(friend_id=current_user.id, status='pending').all() %}
+        {% for fr, sender in pending_received_users %}
             <li>
                 {{ User.query.get(fr.user_id).username }}
                 <a class="btn btn-sm btn-success" href="{{ url_for('auth.accept_friend', request_id=fr.id) }}">Accept</a>
@@ -144,7 +144,7 @@
 
         <h4>Requests You Sent</h4>
         <ul>
-        {% for fr in Friend.query.filter_by(user_id=current_user.id, status='pending').all() %}
+            {% for fr, receiver in pending_sent_users %}
             <li>
                 {{ User.query.get(fr.friend_id).username }}
                 <form action="{{ url_for('auth.cancel_friend', request_id=fr.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Cancel this friend request?')">
@@ -159,19 +159,14 @@
 
         <h4>Your Friends</h4>
         <ul>
-            {% set friend_ids = [] %}
-            {% for f in Friend.query.filter_by(user_id=current_user.id, status='accepted').all() %}
-                {% set friend_ids = friend_ids + [f.friend_id] %}
-            {% endfor %}
-            {% for f in Friend.query.filter_by(friend_id=current_user.id, status='accepted').all() %}
-                {% set friend_ids = friend_ids + [f.user_id] %}
-            {% endfor %}
-            {% for fid in friend_ids %}
-                <li>
-                    {{ User.query.get(fid).username }}
-                    <a class="btn btn-sm btn-outline-danger" href="{{ url_for('auth.remove_friend', friend_id=fid) }}" onclick="return confirm('Are you sure you want to unfriend this user?')">Unfriend</a>
-                </li>
-            {% endfor %}
+          {% for friend in friends %}
+            <li>
+              {{ friend.username }}
+              <a class="btn btn-sm btn-outline-danger" href="{{ url_for('auth.remove_friend', friend_id=friend.id) }}" onclick="return confirm('Are you sure you want to unfriend this user?')">Unfriend</a>
+            </li>
+          {% else %}
+            <li class="text-muted">No friends yet.</li>
+          {% endfor %}
         </ul>
     </div>
 

@@ -222,6 +222,20 @@ def account():
             'avg_deficit': avg_deficit
         }
 
+    # Fetch all accepted friend relationships
+    friendships_sent = Friend.query.filter_by(user_id=current_user.id, status='accepted').all()
+    friendships_received = Friend.query.filter_by(friend_id=current_user.id, status='accepted').all()
+
+    friend_ids = [f.friend_id for f in friendships_sent] + [f.user_id for f in friendships_received]
+    friends = User.query.filter(User.id.in_(friend_ids)).all()
+
+    # Fetch pending requests
+    pending_received = Friend.query.filter_by(friend_id=user.id, status='pending').all()
+    pending_sent = Friend.query.filter_by(user_id=user.id, status='pending').all()
+
+    pending_received_users = [(fr, User.query.get(fr.user_id)) for fr in pending_received]
+    pending_sent_users = [(fr, User.query.get(fr.friend_id)) for fr in pending_sent]
+
     # NEW: activity tab data (✅ required by user)
     activity_data = HealthData.query.filter_by(user_id=user.id).order_by(HealthData.date.desc()).limit(15).all()
     history_records = AnalysisHistory.query.filter_by(user_id=user.id).order_by(AnalysisHistory.timestamp.desc()).all()
@@ -230,7 +244,7 @@ def account():
     return render_template(
         'account.html', 
         user=user, 
-        Friend=Friend,
+        friends=friends,
         User=User,
         bmi=bmi, 
         health_score = radar_score, 
@@ -248,7 +262,10 @@ def account():
         this_week_summary = this_week_summary,
         activity_data = activity_data,
         history_records=history_records,
-        activity_logs=activity_logs # ✅ include this to support Activity Log tab
+        activity_logs=activity_logs, # ✅ include this to support Activity Log tab
+        pending_received_users=pending_received_users,
+        pending_sent_users=pending_sent_users,
+
     )
 
 # Upoad new avatar image for user
@@ -617,3 +634,51 @@ def add_friend():
 
     flash("Friend request sent!", "success")
     return redirect(url_for('auth.account'))
+
+@auth.route('/cancel_friend/<int:request_id>', methods=['POST'])
+@login_required
+def cancel_friend(request_id):
+    """Cancel a pending friend request sent by the current user."""
+    friend_request = Friend.query.get_or_404(request_id)
+
+    # Only allow the user who sent the request to cancel it
+    if friend_request.user_id != current_user.id:
+        abort(403)  # Forbidden action
+
+    db.session.delete(friend_request)
+    db.session.commit()
+    flash("Friend request cancelled.", "info")
+    return redirect(url_for('auth.account'))
+
+@auth.route('/accept_friend/<int:request_id>', methods=['GET'])
+@login_required
+def accept_friend(request_id):
+    friend_request = Friend.query.get_or_404(request_id)
+
+    # Only the receiver (current user) can accept
+    if friend_request.friend_id != current_user.id:
+        abort(403)
+
+    friend_request.status = 'accepted'
+    db.session.commit()
+    flash("Friend request accepted!", "success")
+    return redirect(url_for('auth.account'))
+
+@auth.route('/remove_friend/<int:friend_id>', methods=['GET'])
+@login_required
+def remove_friend(friend_id):
+    """Remove an accepted friend connection."""
+    friend_link = Friend.query.filter(
+        ((Friend.user_id == current_user.id) & (Friend.friend_id == friend_id)) |
+        ((Friend.user_id == friend_id) & (Friend.friend_id == current_user.id))
+    ).first()
+
+    if not friend_link:
+        flash("Friend not found or already removed.", "warning")
+        return redirect(url_for('auth.account'))
+
+    db.session.delete(friend_link)
+    db.session.commit()
+    flash("Friend removed successfully.", "info")
+    return redirect(url_for('auth.account'))
+
