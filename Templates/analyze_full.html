@@ -154,15 +154,18 @@
       <canvas id="dynamicChart" width="700" height="300"></canvas>
       <ul id="statSummary"></ul>
       <button onclick="downloadChart()" class="btn">Download .png</button>
-      <form id="visibilityform" method="POST" action="{{ url_for('set_visibility_2') }}" style="margin-top: 20px;">
-        <input type="hidden" id="selectedColumnInput" name="selected_column" value="">
-        <label for="visibility">Change Sharing Option:</label>
-        <select name="visibility">
-          <option value="public" {% if visibility == 'public' %}selected{% endif %}>Public</option>
-          <option value="friends" {% if visibility == 'friends' %}selected{% endif %}>Friends</option>
-        </select>
-        <button type="submit" class="btn">Save Sharing Setting</button>
-      </form>
+        <!-- Add the "Share Now" button under the Change Sharing Option form -->
+        <form id="visibilityform" method="POST" action="{{ url_for('set_visibility_2') }}" style="margin-top: 20px;">
+          <input type="hidden" id="selectedColumnInput" name="selected_column" value="">
+          <label for="visibility">Change Sharing Option:</label>
+          <select name="visibility">
+            <option value="public" {% if visibility == 'public' %}selected{% endif %}>Public</option>
+            <option value="friends" {% if visibility == 'friends' %}selected{% endif %}>Friends</option>
+          </select>
+          <button type="submit" class="btn">Save Sharing Setting</button>
+          <!-- Updated "Share Now" button -->
+          <button type="submit" name="share_now" value="true" class="btn btn-primary">Share Now</button>
+        </form>
 
       <div class="step-buttons">
         <button type="button" onclick="switchStep(2)" class="btn btn-secondary">← Back</button>
