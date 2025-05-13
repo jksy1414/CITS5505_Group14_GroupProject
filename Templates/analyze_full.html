@@ -154,7 +154,7 @@
       <canvas id="dynamicChart" width="700" height="300"></canvas>
       <ul id="statSummary"></ul>
       <button onclick="downloadChart()" class="btn">Download .png</button>
-      <form method="POST" action="{{ url_for('set_visibility_2') }}" style="margin-top: 20px;">
+      <form id="visibilityform" method="POST" action="{{ url_for('set_visibility_2') }}" style="margin-top: 20px;">
         <input type="hidden" id="selectedColumnInput" name="selected_column" value="">
         <label for="visibility">Change Sharing Option:</label>
         <select name="visibility">
@@ -309,7 +309,7 @@
     }
   });
 
-  document.querySelector('form').addEventListener('set_visibility_2', function(e) {
+document.querySelector('#visibilityForm button[type="submit"]').addEventListener('click', function(e) {
   const selected = document.getElementById('selectedColumnInput').value;
   console.log("DEBUG: Selected Label:", selected);
 
