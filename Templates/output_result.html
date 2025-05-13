@@ -44,7 +44,6 @@
       <canvas id="chart-{{ loop.index0 }}" class="chart-canvas" width="600" height="300"></canvas>
 
       <ul style="list-style: none; padding-left: 0;">
-        <li><strong>Average:</strong> {{ (values[column] | sum / values[column] | length) | round(2) }}</li>
         <li><strong>Maximum:</strong> {{ values[column] | max }}</li>
         <li><strong>Minimum:</strong> {{ values[column] | min }}</li>
       </ul>

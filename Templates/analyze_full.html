@@ -153,7 +153,16 @@
       <h4 id="selectedColumnLabel"></h4>
       <canvas id="dynamicChart" width="700" height="300"></canvas>
       <ul id="statSummary"></ul>
-      <button onclick="downloadChart()" class="btn">Download</button>
+      <button onclick="downloadChart()" class="btn">Download .png</button>
+      <form id="visibilityform" method="POST" action="{{ url_for('set_visibility_2') }}" style="margin-top: 20px;">
+        <input type="hidden" id="selectedColumnInput" name="selected_column" value="">
+        <label for="visibility">Change Sharing Option:</label>
+        <select name="visibility">
+          <option value="public" {% if visibility == 'public' %}selected{% endif %}>Public</option>
+          <option value="friends" {% if visibility == 'friends' %}selected{% endif %}>Friends</option>
+        </select>
+        <button type="submit" class="btn">Save Sharing Setting</button>
+      </form>
 
       <div class="step-buttons">
         <button type="button" onclick="switchStep(2)" class="btn btn-secondary">← Back</button>
@@ -202,6 +211,7 @@
   }
 
   function selectColumn(col) {
+    document.getElementById('selectedColumnInput').value = col;  // Update the hidden input field
     renderChart(col);
   }
 
@@ -298,5 +308,15 @@
       });
     }
   });
+
+document.querySelector('#visibilityForm button[type="submit"]').addEventListener('click', function(e) {
+  const selected = document.getElementById('selectedColumnInput').value;
+  console.log("DEBUG: Selected Label:", selected);
+
+  if (!selected) {
+    e.preventDefault();
+    alert("Please select a column before saving sharing settings.");
+  }
+});
 </script>
 {% endblock %}

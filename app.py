@@ -178,7 +178,6 @@ def results():
         visibility=visibility
     )
 
-# Route for setting visibility of charts
 @app.route('/set_visibility', methods=['POST'])
 def set_visibility():
     visibility = request.form.get('visibility')
@@ -215,6 +214,86 @@ def set_visibility():
 
     flash("Sharing option updated!", "success")
     return redirect(url_for('results'))
+
+
+# New Route for setting visibility of charts
+@app.route('/set_visibility_2', methods=['POST'])
+def set_visibility_2():
+    visibility = request.form.get('visibility')  # Correct name from form
+    selected_column = request.form.get('selected_column')  # Get selected column from hidden input
+    session['visibility'] = visibility  # Store in session
+
+    # Debug checks to confirm session state
+    print(f"DEBUG: visibility = {visibility}")
+    print(f"DEBUG: selected_column = {selected_column}")
+    print(f"DEBUG: session['csv_path'] = {session.get('csv_path')}")
+    print(f"DEBUG: session['selected_columns'] = {session.get('selected_columns')}")
+    print(f"DEBUG: session['renamed_headers'] = {session.get('renamed_headers')}")
+
+    # Ensure session data is retained
+    session['csv_path'] = session.get('csv_path')
+    session['selected_columns'] = session.get('selected_columns')
+    session['renamed_headers'] = session.get('renamed_headers')
+
+    # Require login only if visibility is "public"
+    if visibility == "public" and not current_user.is_authenticated:
+        flash("You must be logged in to set visibility to public.", "danger")
+        return redirect(url_for('auth.login', next=request.url))
+
+    # Save chart data if public
+    if visibility == "public":
+        # Recalculate data from CSV file
+        filepath = session.get('csv_path')
+        selected_columns = session.get('selected_columns', [])
+        renamed_headers = session.get('renamed_headers', {})
+
+        if not filepath or not selected_columns:
+            flash("Missing data for saving the chart.", "danger")
+            return redirect(url_for('auth.analyze_full', step='results'))
+
+        try:
+            df = pd.read_csv(filepath)
+        except Exception as e:
+            flash(f"Failed to read uploaded data: {e}", "danger")
+            return redirect(url_for('auth.analyze_full', step='results'))
+
+        # Build values dict and labels
+        values = {}
+        for old_name in selected_columns:
+            new_name = renamed_headers.get(old_name, old_name)
+            try:
+                cleaned = pd.to_numeric(df[old_name], errors='coerce').dropna()
+                values[new_name] = cleaned.tolist()
+            except Exception as e:
+                print(f"DEBUG: Error processing {old_name} - {e}")
+                values[new_name] = []
+
+        labels = list(range(len(next(iter(values.values()), []))))
+
+        if selected_column not in values:
+            flash("Invalid column selected for saving.", "danger")
+            return redirect(url_for('auth.analyze_full', step='results'))
+
+        chart_data = values[selected_column]
+        if not chart_data:
+            flash("Selected column has no data to save as a public chart.", "danger")
+            return redirect(url_for('auth.analyze_full', step='results'))
+
+        # Save chart
+        chart = Chart(
+            user_id=current_user.id if current_user.is_authenticated else None,
+            title=f"Chart for {selected_column}",
+            labels=labels,
+            values=chart_data,
+            column_name=selected_column,
+            visibility=visibility
+        )
+        db.session.add(chart)
+        db.session.commit()
+
+    flash("Sharing option updated!", "success")
+    return redirect(url_for('auth.analyze_full', step='results'))
+
 
 # Route for exploring public charts
 @app.route('/explore')
