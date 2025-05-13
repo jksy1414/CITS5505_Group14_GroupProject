@@ -10,13 +10,31 @@ body {
 
 /* Header container */
 header {
-  background: linear-gradient(to bottom, #3b2a05 0%, #412e05 100%);
   display: grid;
-  grid-template-columns: 1fr auto 1fr; /* Left | Center | Right */
-  justify-content: space-between;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   padding: 0.5rem 1.5rem;
-  background-color: #4b3102;
+  background: linear-gradient(to bottom, #3b2a05 0%, #412e05 100%);
+}
+
+.left-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.toggle-dark-mode {
+  all: unset;
+  font-size: 1.8rem;
+  cursor: pointer;
+  line-height: 1;
+  display: inline;
+  color: inherit;
+  transition: transform 0.2s ease;
+}
+
+.toggle-dark-mode:hover {
+  transform: scale(1.1);
 }
 
 
@@ -42,6 +60,7 @@ header nav { /* positioning (center) */
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 1rem;
 }
 header nav a { /* link text */
   font-weight: bold;
@@ -62,7 +81,8 @@ header nav a:hover {
 .actions { /* button positioning (RHS) */
   justify-self: end;
   display: flex;
-  gap: 0.45rem;
+  align-items: center;
+  gap: 1rem;
 }
 .actions button { /* general button specifications */
   font-family: 'Comic Sans MS', cursive, sans-serif;
@@ -154,26 +174,33 @@ body.dark-mode a {
 body.dark-mode header,
 body.dark-mode footer,
 body.dark-mode nav {
-  background-color: #292929;
-  border-color: #444;
+  background-color: transparent !important;
+  /* border-color: #444; */
 }
 
 body.dark-mode nav a {
-  background-color: transparent !important; /* Remove block bg */
-  padding: 0 !important; /* Prevent blocky feel */
-  display: inline;       /* Avoid blocky stacking */
-  color: #f2f2f2;
-  font-weight: bold;
-  font-size: 1.8rem;
-  text-decoration: none;
-  margin: 0 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #f2e6d8;
+  background-color: #292929;
+  padding: 10px 18px;
+  min-width: 100px;
+  height: 45px;
+  border-radius: 10px;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  margin: 0 0.5rem;
 }
 
 body.dark-mode nav a:hover {
+  background-color: #7e513c;
+  transform: scale(1.05);
   color: #ffcc66;
-  text-decoration: underline;
-  text-underline-offset: 4px;
 }
 
 body.dark-mode .card,
@@ -205,20 +232,42 @@ body.dark-mode textarea {
   border: 1px solid #555;
 }
 
+
+body.dark-mode .logout {
+  background-color: #292929 !important;
+  color: #f2e6d8 !important;
+  border: none !important;
+}
+
+body.dark-mode .logout:hover {
+  background-color: #7e513c !important;
+}
+
+
 /* 🌙 Dark Mode Toggle Button Styling */
-.toggle-dark-mode {
-  background-color: transparent;
-  border: none;
+.actions .toggle-dark-mode {
+  all: unset;
   font-size: 1.8rem;
-  margin-left: 10px;
   cursor: pointer;
+  line-height: 1;
+  display: inline;
   color: inherit;
   transition: transform 0.2s ease;
 }
 
-.toggle-dark-mode:hover {
+.actions .toggle-dark-mode:hover {
   transform: scale(1.1);
 }
+
+body.dark-mode .toggle-dark-mode {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+  width: auto;
+  height: auto;
+}
+
 
 /* 🌘 Additional Dark Mode Styling */
 
@@ -241,4 +290,27 @@ body.dark-mode .flash-popup {
 body,
 body * {
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.logout {
+  background-color: #FFF8DC;
+  color: #8b4d01;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  font-size: 1.3rem;
+  font-weight: bold;
+  border: none;
+  padding: 10px 18px;
+  min-width: 100px;
+  height: 45px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logout:hover{
+  background: #567fa3;
+  color: white;
 }

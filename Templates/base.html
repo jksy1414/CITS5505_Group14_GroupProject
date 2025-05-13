@@ -16,7 +16,11 @@
 
 <body>
     <header>
-        <div class="logo">FitBug</div>
+        <div class="left-group">
+          <div class="logo">FitBug</div>
+          <!-- 🌙 Dark Mode Toggle Button (Add This) -->
+          <button id="theme-toggle" class="toggle-dark-mode">🌙</button>
+        </div>
         <nav>
             <a href="/">Home</a>
             <a href="/analyze">Data Analysis</a>
@@ -36,6 +40,10 @@
                  alt="Profile Picture" 
                  class="profile-pic">
             </a> 
+            
+            <a href = "{{ url_for('auth.logout')}}">
+              <button class="logout">Logout</button>
+            </a>
           {% else %}
             <a href="/login">
                 <button class="login">Login</button>
@@ -44,9 +52,6 @@
                 <button class="signup">Sign Up</button>
             </a>
           {% endif %}
-
-          <!-- 🌙 Dark Mode Toggle Button (Add This) -->
-            <button id="theme-toggle" class="toggle-dark-mode">🌙</button>
         </div>
     </header>
 
@@ -88,13 +93,34 @@
       const body = document.body;
       const darkMode = localStorage.getItem("dark-mode");
 
-      if (darkMode === "enabled") {
-        body.classList.add("dark-mode");
+      const savedMode = localStorage.getItem("dark-mode");
+
+      function isNightTime() {
+        const hour = new Date().getHours();
+        return hour < 6 || hour >= 18;
       }
 
-      toggleBtn?.addEventListener("click", () => {
-        body.classList.toggle("dark-mode");
-        localStorage.setItem("dark-mode", body.classList.contains("dark-mode") ? "enabled" : "disabled");
+      function applyMode(mode) {
+        if (mode === "dark") {
+          body.classList.add("dark-mode");
+          toggleBtn.textContent = "🌙";
+          localStorage.setItem("dark-mode", "dark");
+        } else {
+          body.classList.remove("dark-mode");
+          toggleBtn.textContent = "☀️";
+          localStorage.setItem("dark-mode", "light");
+        }
+      }
+
+      if (savedMode) {
+        applyMode(savedMode);
+      } else {
+        applyMode(isNightTime() ? "dark" : "light");
+      }
+
+      toggleBtn.addEventListener("click", () => {
+        const isDark = body.classList.contains("dark-mode");
+        applyMode(isDark ? "light" : "dark");
       });
     });
   </script>
