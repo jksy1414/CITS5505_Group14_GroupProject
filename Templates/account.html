@@ -89,7 +89,8 @@
 
     <!-- Profile Tab -->
     <div id="profile" class="tab-section">
-        <div id="profile-view">
+        <div id="profile-view" class="profile-container">
+        <div class="profile-info">
             <p><strong>Username:</strong> {{ user.username }}</p>
             <p><strong>Age:</strong> {{ user.age }}</p>
             <p><strong>Height (cm):</strong> {{ user.height }}</p>
@@ -97,25 +98,35 @@
             <p><strong>BMI:</strong> {{ bmi }}</p>
             <button class="btn btn-success" onclick="toggleEdit(true)">Edit Profile</button>
         </div>
-
+    
+        <div class="avatar-box">
+            <img id="profile-avatar"
+                src="{{ url_for('static', filename=user.avatar or 'images/buggohome.jpg') }}"
+                alt="Avatar"><br>
+            <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+            <button class="btn btn-success" onclick="triggerAvatarUpload()">Upload Avatar</button>
+        </div>
+        </div>
+    
         <div id="profile-edit" style="display: none;">
-            <form method="POST" action="{{ url_for('auth.update_profile') }}">
-                <div class="card">
-                    <h4 class="mb-3">Edit Profile</h4>
-                    <label>Age:</label>
-                    <input type="text" name="age" class="form-control" value="{{ user.age }}" required>
-                    <label>Height (cm):</label>
-                    <input type="text" name="height" class="form-control" value="{{ user.height }}" required>
-                    <label>Weight (kg):</label>
-                    <input type="text" name="weight" class="form-control" value="{{ user.weight }}" required>
-                    <label>BMI:</label>
-                    <input type="text" class="form-control" value="{{ bmi }}" readonly>
-                    <button type="submit" class="btn btn-success">Save Changes</button>
-                    <button type="button" class="btn btn-outline-danger" onclick="toggleEdit(false)">Cancel</button>
-                </div>
-            </form>
+        <form method="POST" action="{{ url_for('auth.update_profile') }}">
+            <div class="card">
+            <h4 class="mb-3">Edit Profile</h4>
+            <label>Age:</label>
+            <input type="text" name="age" class="form-control" value="{{ user.age }}" required>
+            <label>Height (cm):</label>
+            <input type="text" name="height" class="form-control" value="{{ user.height }}" required>
+            <label>Weight (kg):</label>
+            <input type="text" name="weight" class="form-control" value="{{ user.weight }}" required>
+            <label>BMI:</label>
+            <input type="text" class="form-control" value="{{ bmi }}" readonly>
+            <button type="submit" class="btn btn-success">Save Changes</button>
+            <button type="button" class="btn btn-outline-danger" onclick="toggleEdit(false)">Cancel</button>
+            </div>
+        </form>
         </div>
     </div>
+  
 
     <!-- Friends Tab -->
     <div id="friends" class="tab-section">
@@ -217,6 +228,46 @@ function toggleTheme(mode) {
     }
 }
 </script>
+
+<script>
+    function triggerAvatarUpload() {
+        document.getElementById('avatarInput').click();
+    }
+    
+    document.getElementById('avatarInput').addEventListener('change', function() {
+        const file = this.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        fetch('{{ url_for("auth.upload_avatar") }}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                const avatarUrl = data.avatar_url + '?t=' + new Date().getTime();
+
+                const avatarImg = document.getElementById('profile-avatar');
+                if (avatarImg) avatarImg.src = avatarUrl;
+
+                const navAvatar = document.querySelector('.profile-pic');
+                if (navAvatar) navAvatar.src = avatarUrl;
+            } else {
+                alert("Upload failed: " + data.message);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Upload error!");
+        });
+    });
+
+    </script>
+    
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
 {% endblock %}
