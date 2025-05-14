@@ -705,3 +705,78 @@ def remove_friend(friend_id):
     flash("Friend removed successfully.", "info")
     return redirect(url_for('auth.account'))
 
+@auth.route('/explore', methods=['GET'])
+@login_required
+def explore():
+    user = current_user
+
+    # Query public charts
+    public_charts = Chart.query.filter_by(visibility='public').all()
+
+    # Query friends-only charts shared by friends
+    friendships_sent = Friend.query.filter_by(user_id=user.id, status='accepted').all()
+    friendships_received = Friend.query.filter_by(friend_id=user.id, status='accepted').all()
+
+    friend_ids = [f.friend_id for f in friendships_sent] + [f.user_id for f in friendships_received]
+    friends_charts = Chart.query.filter(Chart.visibility == 'friends', Chart.user_id.in_(friend_ids)).all()
+
+    # Include user's own charts (both public and friends-only)
+    user_charts = Chart.query.filter(
+        (Chart.user_id == user.id) & (Chart.visibility.in_(['public', 'friends']))
+    ).all()
+
+    # Combine public, friends-only, and user's own charts
+    charts = public_charts + friends_charts + user_charts
+
+    # Remove duplicates (if any) by converting the list to a set
+    charts = list(set(charts))
+
+    return render_template('explore.html', charts=charts)
+
+@auth.route('/set_visibility_2', methods=['POST'])
+@login_required
+def set_visibility():
+    selected_column = request.form.get('selected_column')
+    visibility = request.form.get('visibility')  # 'public' or 'friends'
+    share_now = request.form.get('share_now')  # Check if "Share Now" was clicked
+
+    # Validate the selected column
+    if not selected_column:
+        flash("No column selected for sharing.", "danger")
+        return redirect(url_for('auth.analyze_full', step='results'))
+
+    # Prepare chart data for saving
+    labels = session.get("labels")
+    values = session.get("values")
+    renamed_headers = session.get("renamed_headers")
+
+    if not labels or not values or not renamed_headers:
+        flash("Missing data for sharing the chart.", "danger")
+        return redirect(url_for('auth.analyze_full', step='results'))
+
+    # Retrieve chart data for the selected column
+    chart_data = values.get(selected_column)
+    if not chart_data:
+        flash("Selected column has no data to share.", "danger")
+        return redirect(url_for('auth.analyze_full', step='results'))
+
+    # Save the chart to the database
+    chart = Chart(
+        user_id=current_user.id,
+        title=f"Chart for {selected_column}",
+        labels=labels,
+        values=chart_data,
+        column_name=selected_column,
+        visibility=visibility,
+    )
+    db.session.add(chart)
+    db.session.commit()
+
+    flash("Chart shared successfully!", "success")
+
+    # Redirect to explore.html if "Share Now" was clicked
+    if share_now:
+        return redirect(url_for('auth.explore'))
+
+    # Default redirect back to results page
+    return redirect(url_for('auth.analyze_full', step='results'))
