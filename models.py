@@ -37,6 +37,7 @@ class Chart(db.Model):
     labels = db.Column(db.PickleType)
     values = db.Column(db.PickleType)
     column_name = db.Column(db.String(120))
+    chart_type = db.Column(db.String(20), default='bar')
     visibility = db.Column(db.String(20), default='private')
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 

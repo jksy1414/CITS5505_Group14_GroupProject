@@ -45,7 +45,7 @@ def login():
         next_page = request.args.get('next')
         if next_page and not is_safe_url(next_page):
             return abort(400)  # Bad Request
-        return redirect(next_page) if next_page else redirect(url_for('results'))
+        return redirect(next_page) if next_page else redirect(url_for('home'))
 
     # Capture the `next` parameter and pass it to the login template
     next_page = request.args.get('next')
@@ -514,6 +514,7 @@ def analyze_full():
                 mapped = request.form.get(f'header_map_{i}')
                 if mapped == 'custom':
                     mapped = request.form.get(f'custom_{i}', col)
+                    # predefined_headers.append()
                 new_headers[col] = mapped or col
 
             session['renamed_headers'] = new_headers
@@ -572,6 +573,9 @@ def analyze_full():
 
         except Exception as e:
             flash(f"Error reading CSV for analysis: {e}", "danger")
+    
+    session['values'] = values
+    session['labels'] = labels
 
     print("=== DEBUG: analyze_full ===")
     print("Selected Columns:", selected_columns)

@@ -109,7 +109,7 @@
             </select>
           </td>
           <td>
-            <input type="text" name="custom_{{ loop.index0 }}" id="custom_{{ loop.index0 }}" style="display:none;" placeholder="e.g., Steps_Week1">
+            <input type="text" name="custom_{{ loop.index0 }}" id="custom_{{ loop.index0 }}" style="display:none;" placeholder="e.g. Distance">
           </td>
         </tr>
         {% endfor %}
@@ -138,8 +138,8 @@
       <div style="display: flex; gap: 20px; align-items: center;">
         <label>Chart Type:</label>
         <select id="chartType" onchange="renderChart()">
+          <option value="bar" selected>Bar</option>
           <option value="line">Line</option>
-          <option value="bar">Bar</option>
           <option value="pie">Pie</option>
           <option value="doughnut">Doughnut</option>
           <option value="radar">Radar</option>
@@ -156,12 +156,13 @@
       <button onclick="downloadChart()" class="btn">Download .png</button>
       <form id="visibilityform" method="POST" action="{{ url_for('set_visibility_2') }}" style="margin-top: 20px;">
         <input type="hidden" id="selectedColumnInput" name="selected_column" value="">
-        <label for="visibility">Change Sharing Option:</label>
+        <input type="hidden" id="chartTypeInput" name="chart_type" value="">
+        <label for="visibility">Sharing Option:</label>
         <select name="visibility">
           <option value="public" {% if visibility == 'public' %}selected{% endif %}>Public</option>
-          <option value="friends" {% if visibility == 'friends' %}selected{% endif %}>Friends</option>
+          <option value="friends" {% if visibility == 'friends' %}selected{% endif %}>Friends only</option>
         </select>
-        <button type="submit" class="btn">Save Sharing Setting</button>
+        <button type="submit" class="btn">Share Graph</button>
       </form>
 
       <div class="step-buttons">
@@ -214,6 +215,19 @@
     document.getElementById('selectedColumnInput').value = col;  // Update the hidden input field
     renderChart(col);
   }
+
+  // Passes chart type selection to the set visibility form 
+  document.addEventListener("DOMContentLoaded", function () {
+    const chartTypeSelect = document.getElementById("chartType");
+    const chartTypeInput = document.getElementById("chartTypeInput");
+
+    // Initialize with default selected chart type
+    chartTypeInput.value = chartTypeSelect.value;
+
+    chartTypeSelect.addEventListener("change", function () {
+      chartTypeInput.value = this.value;
+    });
+  });
 
   function renderChart(selectedCol = null) {
     const type = document.getElementById('chartType').value;
@@ -309,14 +323,15 @@
     }
   });
 
-document.querySelector('#visibilityForm button[type="submit"]').addEventListener('click', function(e) {
-  const selected = document.getElementById('selectedColumnInput').value;
-  console.log("DEBUG: Selected Label:", selected);
+  document.querySelector('#visibilityForm button[type="submit"]').addEventListener('click', function(e) {
+    const selected = document.getElementById('selectedColumnInput').value;
+    console.log("DEBUG: Selected Label:", selected);
 
-  if (!selected) {
-    e.preventDefault();
-    alert("Please select a column before saving sharing settings.");
-  }
-});
+    if (!selected) {
+      e.preventDefault();
+      alert("Please select a column before saving sharing settings.");
+    }
+  });
+
 </script>
 {% endblock %}
