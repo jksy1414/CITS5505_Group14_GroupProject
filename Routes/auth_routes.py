@@ -268,11 +268,30 @@ def account():
 
     )
 
-# Upoad new avatar image for user
+
+UPLOAD_FOLDER = 'static/uploads/avatars'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Upload new avatar image for user
 @auth.route('/upload_avatar', methods=['POST'])
 @login_required
 def upload_avatar():
-    pass # placeholder
+    file = request.files.get('avatar')
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        rel_path = f"uploads/avatars/user_{current_user.id}_{filename}"
+        abs_path = os.path.join('static', rel_path)
+        file.save(abs_path)
+
+        user = User.query.get(current_user.id)
+        user.avatar = rel_path
+        db.session.commit()
+
+        return jsonify(success=True, avatar_url=url_for('static', filename=f"uploads/avatars/user_{current_user.id}_{filename}"))
+    return jsonify(success=False, message="Invalid file.")
 
 # Logging out user
 @auth.route('/logout')

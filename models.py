@@ -17,6 +17,9 @@ class User(UserMixin, db.Model):
     weight = db.Column(db.Float, nullable=False)
     age = db.Column(db.Integer, nullable=False)
 
+    avatar = db.Column(db.String(255), default='images/buggohome.jpg')
+
+
     charts = db.relationship('Chart', backref='user', lazy=True)
     analysis_histories = db.relationship('AnalysisHistory', backref='user', lazy=True)
     activity_logs = db.relationship('ActivityLog', backref='user', lazy=True)

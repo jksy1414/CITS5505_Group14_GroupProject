@@ -27,3 +27,6 @@ shell.py
 #ignore temp_uploads
 temp_uploads/*
 !temp_uploads/.gitkeep
+
+# Ignore temp_pictures
+Static/uploads/

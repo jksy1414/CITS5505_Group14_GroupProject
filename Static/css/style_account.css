@@ -150,3 +150,46 @@ body.dark-mode .contain {
     color: #f2f2f2;
   }
   
+  /* left and right layouts */
+.profile-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+  margin-bottom: 30px;
+}
+
+/* info area */
+.profile-info {
+  flex: 1;
+}
+
+/* avatar area */
+.avatar-box {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.avatar-box img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border: 3px solid #ff8888;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.btn {
+  background-color: #688e26;
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn:hover {
+  background-color: #4e6d1b;
+}
