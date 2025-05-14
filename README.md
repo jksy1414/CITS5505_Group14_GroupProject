@@ -2,6 +2,9 @@
 ## Group Members
 Maryam Saeed (23123154) 
 - Mars-Martiny
+Tharuki Silva (24327701)
+- TharuSilva
+
 
 ## Website outline 
 **FitBug**: fitness tracker data analysis and sharing, allows user to upload their data and recieve statistics about their exercise habits. These stats are can selectively be chosen to be shared (multiple style templates available for personalisation) within the website, to all other users with an account, or only with those within their personal circle within the website (i.e. friends/followers). The Sharable visual can also be saved locally on their device to share externally (outside of the website). The act of sharing is non-mandatory and all statistics viewable within the accounts' history, only accessible to user (inclusion of account page implemented after other).
