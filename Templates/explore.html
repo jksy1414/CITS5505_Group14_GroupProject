@@ -47,7 +47,7 @@
   <script>
     {% for chart in charts %}
       new Chart(document.getElementById('chart-{{ chart.id }}').getContext('2d'), {
-        type: 'bar',
+        type: '{{ chart.chart_type or "bar" }}',
         data: {
           labels: {{ chart.labels|tojson }},
           datasets: [{

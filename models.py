@@ -17,6 +17,9 @@ class User(UserMixin, db.Model):
     weight = db.Column(db.Float, nullable=False)
     age = db.Column(db.Integer, nullable=False)
 
+    avatar = db.Column(db.String(255), default='images/buggohome.jpg')
+
+
     charts = db.relationship('Chart', backref='user', lazy=True)
     analysis_histories = db.relationship('AnalysisHistory', backref='user', lazy=True)
     activity_logs = db.relationship('ActivityLog', backref='user', lazy=True)
@@ -37,6 +40,7 @@ class Chart(db.Model):
     labels = db.Column(db.PickleType)
     values = db.Column(db.PickleType)
     column_name = db.Column(db.String(120))
+    chart_type = db.Column(db.String(20), default='bar')
     visibility = db.Column(db.String(20), default='private')
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 

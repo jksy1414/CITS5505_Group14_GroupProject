@@ -45,7 +45,7 @@ def login():
         next_page = request.args.get('next')
         if next_page and not is_safe_url(next_page):
             return abort(400)  # Bad Request
-        return redirect(next_page) if next_page else redirect(url_for('results'))
+        return redirect(next_page) if next_page else redirect(url_for('home'))
 
     # Capture the `next` parameter and pass it to the login template
     next_page = request.args.get('next')
@@ -268,11 +268,30 @@ def account():
 
     )
 
-# Upoad new avatar image for user
+
+UPLOAD_FOLDER = 'static/uploads/avatars'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Upload new avatar image for user
 @auth.route('/upload_avatar', methods=['POST'])
 @login_required
 def upload_avatar():
-    pass # placeholder
+    file = request.files.get('avatar')
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        rel_path = f"uploads/avatars/user_{current_user.id}_{filename}"
+        abs_path = os.path.join('static', rel_path)
+        file.save(abs_path)
+
+        user = User.query.get(current_user.id)
+        user.avatar = rel_path
+        db.session.commit()
+
+        return jsonify(success=True, avatar_url=url_for('static', filename=f"uploads/avatars/user_{current_user.id}_{filename}"))
+    return jsonify(success=False, message="Invalid file.")
 
 # Logging out user
 @auth.route('/logout')
@@ -514,6 +533,7 @@ def analyze_full():
                 mapped = request.form.get(f'header_map_{i}')
                 if mapped == 'custom':
                     mapped = request.form.get(f'custom_{i}', col)
+                    # predefined_headers.append()
                 new_headers[col] = mapped or col
 
             session['renamed_headers'] = new_headers
@@ -572,6 +592,9 @@ def analyze_full():
 
         except Exception as e:
             flash(f"Error reading CSV for analysis: {e}", "danger")
+    
+    session['values'] = values
+    session['labels'] = labels
 
     print("=== DEBUG: analyze_full ===")
     print("Selected Columns:", selected_columns)
