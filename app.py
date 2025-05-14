@@ -1,12 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import pandas as pd  # for reading CSVs
-from flask_login import LoginManager, current_user, login_required
+from flask_login import current_user
+from extensions import login_manager
 from extensions import db, mail
 from Routes.auth_routes import auth
 from models import User, Chart
 import os
 from dotenv import load_dotenv
 import csv
+from extensions import migrate
 
 
 # Load environment variables
@@ -32,8 +34,10 @@ app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 db.init_app(app)
 mail.init_app(app)
 
+# Initialize Flask-Migrate here
+migrate.init_app(app, db)
+
 # Login management
-login_manager = LoginManager()
 login_manager.login_view = 'auth.login'  # Redirect to login if not authenticated
 login_manager.init_app(app)
 
@@ -221,36 +225,40 @@ def set_visibility():
 def set_visibility_2():
     visibility = request.form.get('visibility')  # Correct name from form
     selected_column = request.form.get('selected_column')  # Get selected column from hidden input
-    session['visibility'] = visibility  # Store in session
-
-    # Debug checks to confirm session state
-    print(f"DEBUG: visibility = {visibility}")
-    print(f"DEBUG: selected_column = {selected_column}")
-    print(f"DEBUG: session['csv_path'] = {session.get('csv_path')}")
-    print(f"DEBUG: session['selected_columns'] = {session.get('selected_columns')}")
-    print(f"DEBUG: session['renamed_headers'] = {session.get('renamed_headers')}")
+    chart_type = request.form.get('chart_type')
 
     # Ensure session data is retained
     session['csv_path'] = session.get('csv_path')
     session['selected_columns'] = session.get('selected_columns')
     session['renamed_headers'] = session.get('renamed_headers')
 
+    session['visibility'] = visibility  # Store in session
+
+    # Recalculate data from CSV file
+    filepath = session.get('csv_path')
+    selected_columns = session.get('selected_columns', [])
+    renamed_headers = session.get('renamed_headers', {})
+
+    # Debug checks to confirm session state
+    print(f"DEBUG: visibility = {visibility}")
+    print(f"DEBUG: session['csv_path'] = {filepath}")
+    print(f"DEBUG: session['selected_columns'] = {selected_columns}")
+    print(f"DEBUG: session['renamed_headers'] = {renamed_headers}")
+    print(f"DEBUG: selected_column = {selected_column}")
+    print(f"DEBUG: chart_type = {chart_type}")
+
+
     # Require login only if visibility is "public"
-    if visibility == "public" and not current_user.is_authenticated:
-        flash("You must be logged in to set visibility to public.", "danger")
+    if not current_user.is_authenticated:
+        flash("You must be logged in to set visibility share graphs.", "danger")
         return redirect(url_for('auth.login', next=request.url))
-
-    # Save chart data if public
-    if visibility == "public":
-        # Recalculate data from CSV file
-        filepath = session.get('csv_path')
-        selected_columns = session.get('selected_columns', [])
-        renamed_headers = session.get('renamed_headers', {})
-
-        if not filepath or not selected_columns:
+    
+    if not filepath or not selected_columns:
             flash("Missing data for saving the chart.", "danger")
             return redirect(url_for('auth.analyze_full', step='results'))
 
+    # Save chart data if public
+    if visibility == "public":
         try:
             df = pd.read_csv(filepath)
         except Exception as e:
@@ -282,11 +290,12 @@ def set_visibility_2():
         # Save chart
         chart = Chart(
             user_id=current_user.id if current_user.is_authenticated else None,
-            title=f"Chart for {selected_column}",
+            title=f"Chart: {selected_column}",
             labels=labels,
             values=chart_data,
             column_name=selected_column,
-            visibility=visibility
+            visibility=visibility,
+            chart_type=chart_type 
         )
         db.session.add(chart)
         db.session.commit()
