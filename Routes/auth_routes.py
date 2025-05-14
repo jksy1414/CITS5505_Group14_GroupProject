@@ -284,8 +284,8 @@ def upload_avatar():
         filename = secure_filename(file.filename)
         rel_path = f"uploads/avatars/user_{current_user.id}_{filename}"
         abs_path = os.path.join('static', rel_path)
+        os.makedirs(os.path.dirname(abs_path), exist_ok=True)
         file.save(abs_path)
-
         user = User.query.get(current_user.id)
         user.avatar = rel_path
         db.session.commit()
