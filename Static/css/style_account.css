@@ -60,8 +60,9 @@
   
   /* Form Styling */
   .card {
+    position: relative;
     background: #fdf5e6;
-    padding: 1.5rem;
+    padding: 60px 30px 60px 30px;
     border-radius: 10px;
     border: 1px solid #deb887;
     margin-bottom: 2rem;
@@ -195,4 +196,33 @@ body.dark-mode .contain {
 
 .btn:hover {
   background-color: #4e6d1b;
+}
+/*animation location*/
+.login-card {
+  position: relative;       
+  max-width: 450px;
+  margin: 60px auto;
+  padding: 60px 30px 60px 30px;
+  background: #fdf5e6;
+  border-radius: 10px;
+  border: 1px solid #deb887;
+  overflow: hidden;       
+}
+
+.corner-img {
+  position: absolute;
+  width: 60px;
+  height: auto;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.top-left {
+  top: 10px;
+  left: 10px;
+}
+
+.bottom-right {
+  bottom: 10px;
+  right: 10px;
 }
