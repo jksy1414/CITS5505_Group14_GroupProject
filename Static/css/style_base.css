@@ -147,18 +147,33 @@ footer {
 /* Flash popup style (for temporary success/error messages) */
 .flash-popup {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 5rem;
+  left: 50%; 
+  transform: translateX(-50%);
   background-color: #fff3cd;
   color: #856404;
   padding: 10px 20px;
   border: 1px solid #ffeeba;
   border-radius: 5px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); /* default shadow */
   z-index: 1000;
   font-family: 'Comic Sans MS', cursive, sans-serif;
   font-weight: bold;
 }
+/* category specisifc style - shadows */
+.alert-danger {
+  box-shadow: 0 2px 8px rgba(255, 0, 0, 0.3);
+}
+.alert-warning {
+  box-shadow: 0 2px 8px rgba(255, 153, 0, 0.3);
+}
+.alert-success {
+  box-shadow: 0 2px 8px rgba(60, 255, 0, 0.3);
+}
+/* .alert-info {
+  box-shadow: 0 2px 8px rgba(255, 0, 0, 0.3);
+} */
+
 
 /* 🌙 Dark Mode Theme */
 

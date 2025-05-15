@@ -58,7 +58,7 @@
   <!-- Flash messages (updated for popup) -->
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-      <div id="flash-message" class="flash-popup">
+      <div id="flash-message" class="flash-popup alert-{{ messages[0][0] }}">
         {{ messages[0][1] }}
       </div>
     {% endif %}

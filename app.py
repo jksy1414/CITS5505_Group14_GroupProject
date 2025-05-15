@@ -1,15 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-import pandas as pd  # for reading CSVs
 from flask_login import current_user
-from extensions import login_manager
-from extensions import db, mail
+from extensions import login_manager, db, mail, migrate
 from Routes.auth_routes import auth
 from models import User, Chart
-import os
 from dotenv import load_dotenv
+import os
 import csv
-from extensions import migrate
+import pandas as pd  # for reading CSVs
 from flask_wtf.csrf import CSRFProtect # CSRF Protect
+
 
 
 # Load environment variables
