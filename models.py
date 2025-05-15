@@ -43,6 +43,9 @@ class Chart(db.Model):
     chart_type = db.Column(db.String(20), default='bar')
     visibility = db.Column(db.String(20), default='private')
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    color = db.Column(db.String(20), nullable=True)
+    fill_color = db.Column(db.String(10), default="#4bc0c0")
+    border_color = db.Column(db.String(10), default="#007b7b")
 
 # HealthData model
 class HealthData(db.Model):

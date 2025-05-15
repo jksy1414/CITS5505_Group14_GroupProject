@@ -147,7 +147,14 @@
         </select>
 
         <label>Background:</label>
-        <input type="color" id="bgColor" value="#ffffff" onchange="renderChart()">
+        <input type="color" id="bgColor" value="#ffffff" onchange="renderChart(); syncColor()">
+
+        <label>Fill Color:</label>
+        <input type="color" id="fillColor" value="#4bc0c0" onchange="renderChart(); syncColors()">
+
+        <label>Border Color:</label>
+        <input type="color" id="borderColor" value="#4bc0c0" onchange="renderChart(); syncColors()">
+
       </div>
 
       <h4 id="selectedColumnLabel"></h4>
@@ -156,8 +163,12 @@
       <button onclick="downloadChart()" class="btn">Download .png</button>
 
         <!-- Add the "Share Now" button under the Change Sharing Option form -->
-        <form id="visibilityform" method="POST" action="{{ url_for('set_visibility_2') }}" style="margin-top: 20px;">
+        <form id="visibilityForm" method="POST" action="{{ url_for('set_visibility_2') }}" style="margin-top: 20px;">
           <input type="hidden" id="selectedColumnInput" name="selected_column" value="">
+          <input type="hidden" id="colorInput" name="color" value="#ffffff">
+          <input type="hidden" id="fillInput" name="fill_color" value="#4bc0c0">
+          <input type="hidden" id="borderInput" name="border_color" value="#4bc0c0">
+
           <label for="visibility">Change Sharing Option:</label>
           <select name="visibility">
             <option value="public" {% if visibility == 'public' %}selected{% endif %}>Public</option>
@@ -236,6 +247,9 @@
     const type = document.getElementById('chartType').value;
     const bgColor = document.getElementById('bgColor').value;
     const label = selectedCol || document.getElementById('selectedColumnLabel').innerText;
+    const fillColor = document.getElementById('fillColor').value;
+    const borderColor = document.getElementById('borderColor').value;
+
 
     // Ensure the label exists in the renamed headers
     if (!label || !Object.values(renamedHeaders).includes(label)) {
@@ -261,8 +275,8 @@
             datasets: [{
                 label: label,
                 data: data,
-                backgroundColor: 'rgba(75,192,192,0.4)',
-                borderColor: 'rgba(75,192,192,1)',
+                backgroundColor: fillColor,
+                borderColor: borderColor,
                 borderWidth: 2,
                 fill: ['line', 'radar'].includes(type),
                 showLine: type !== 'scatter'
@@ -287,6 +301,8 @@
         stats.innerHTML += `<li><strong>Max:</strong> ${Math.max(...data)}</li>`;
         stats.innerHTML += `<li><strong>Min:</strong> ${Math.min(...data)}</li>`;
     }
+    console.log("Current chart bgColor:", document.getElementById("bgColor").value);
+    console.log("Hidden input color:", document.getElementById("colorInput").value);
   }
 
   function average(arr) {
@@ -326,7 +342,7 @@
     }
   });
 
-  document.querySelector('#visibilityForm button[type="submit"]').addEventListener('click', function(e) {
+  document.querySelector('#visibilityform button[type="submit"]').addEventListener('click', function(e) {
     const selected = document.getElementById('selectedColumnInput').value;
     console.log("DEBUG: Selected Label:", selected);
 
@@ -335,6 +351,20 @@
       alert("Please select a column before saving sharing settings.");
     }
   });
+
+  function syncColors() {
+    const bg = document.getElementById("bgColor");
+    const fill = document.getElementById('fillColor');
+    const border = document.getElementById('borderColor');
+    
+    const bgHidden = document.getElementById('colorInput');
+    const fillHidden = document.getElementById('fillInput');
+    const borderHidden = document.getElementById('borderInput');
+
+    if (bg && bgHidden) bgHidden.value = bg.value;
+    if (fill && fillHidden) fillHidden.value = fill.value;
+    if (border && borderHidden) borderHidden.value = border.value;
+  }
 
 </script>
 {% endblock %}
