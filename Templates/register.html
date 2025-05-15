@@ -12,7 +12,6 @@
 <div class="card" style="max-width: 500px; margin: 60px auto; padding: 30px;">
     <h3 class="mb-4 text-center">Register your new account!</h3>
 
-
     <!-- Flash messages -->
     {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -20,53 +19,55 @@
                 {% for msg in messages %}
                     {{ msg }}
                 {% endfor %}
-
             </div>
         {% endif %}
     {% endwith %}
 
-    <!-- Register form -->
-    <form method="POST" action="/register">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <!-- Flask-WTF Registration Form -->
+    <form method="POST" action="{{ url_for('auth.register') }}">
+        {{ form.hidden_tag() }}
+
         <div class="mb-3">
-            <label>Username</label>
-            <input type="text" class="form-control" name="username" required>
+            {{ form.username.label }}<br>
+            {{ form.username(class="form-control") }}
         </div>
 
         <div class="mb-3">
-            <label>Password</label>
-            <input type="password" class="form-control" id="new_password" name="password" required>
+            {{ form.password.label }}<br>
+            {{ form.password(class="form-control", id="new_password") }}
             <div id="strength-indicator" class="form-text fw-bold"></div>
         </div>
 
         <div class="mb-3">
-            <label>Confirm Password</label>
-            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+            {{ form.confirm_password.label }}<br>
+            {{ form.confirm_password(class="form-control", id="confirm_password") }}
         </div>
 
         <div id="error-message" class="text-danger fw-bold mb-2"></div>
 
         <div class="mb-3">
-            <label>Email</label>
-            <input type="email" class="form-control" name="email" required>
+            {{ form.email.label }}<br>
+            {{ form.email(class="form-control") }}
         </div>
 
         <div class="mb-3">
-            <label>Height (cm)</label>
-            <input type="number" class="form-control" name="height" required>
+            {{ form.height.label }}<br>
+            {{ form.height(class="form-control") }}
         </div>
 
         <div class="mb-3">
-            <label>Weight (kg)</label>
-            <input type="number" class="form-control" name="weight" required>
+            {{ form.weight.label }}<br>
+            {{ form.weight(class="form-control") }}
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Date of Birth</label>
-            <input type="date" class="form-control" name="dob" required>
+            {{ form.dob.label }}<br>
+            {{ form.dob(class="form-control") }}
         </div>
-          
-        <button type="submit" id="submitBtn" class="btn btn-success w-100">Submit</button>
+
+        <div class="mb-3">
+            {{ form.submit(class="btn btn-success w-100") }}
+        </div>
     </form>
 
     <p class="mt-3 text-center">Already have an account? <a href="{{ url_for('auth.login') }}">Go to login</a></p>
