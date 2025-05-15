@@ -9,6 +9,7 @@ import os
 from dotenv import load_dotenv
 import csv
 from extensions import migrate
+from flask_wtf.csrf import CSRFProtect # CSRF Protect
 
 
 # Load environment variables
@@ -327,3 +328,10 @@ def explore():
 # Run the app
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+#CSRF Protect
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your_secret_key'
+csrf = CSRFProtect(app)
