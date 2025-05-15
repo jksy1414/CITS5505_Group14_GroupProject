@@ -55,6 +55,7 @@ document.addEventListener('DOMContentLoaded', function(){
         if(errorMsg !== ""){
             errorDiv.textContent = errorMsg;
             errorDiv.style.display = "block";
+            errorDiv.style.color = "red";
             password.style.border = "2px solid red";
             if (confirmPassword) confirmPassword.style.border = "2px solid red";
             submitBtn.disabled = true;
