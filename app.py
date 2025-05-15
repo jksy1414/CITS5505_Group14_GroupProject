@@ -8,12 +8,16 @@ import os
 import csv
 import pandas as pd  # for reading CSVs
 from flask_wtf.csrf import CSRFProtect # CSRF Protect
+from pathlib import Path
+from dotenv import load_dotenv
+
 
 
 
 # Load environment variables
-from pathlib import Path
-load_dotenv(dotenv_path=Path('.') / '.env')
+env_path = Path('.') / 'named.env'
+load_dotenv(dotenv_path=env_path)
+
 
 # Create Flask app instance
 app = Flask(__name__)
