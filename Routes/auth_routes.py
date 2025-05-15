@@ -61,10 +61,20 @@ def register():
         confirm_password = request.form.get('confirm_password')
         height = request.form.get('height')
         weight = request.form.get('weight')
-        age = request.form.get('age')
+        dob_str = request.form.get('dob') #date of birth
+
+        try:
+            dob = datetime.strptime(dob_str, "%Y-%m-%d").date()
+            today = date.today()
+            if dob > today:
+                flash("Date of birth cannot be in the future.", "danger")
+                return redirect(url_for('auth.register'))
+        except ValueError:
+            flash('Invalid date format for date of birth.', 'danger')
+            return redirect(url_for('auth.register'))
 
         # Validate that all required fields are provided
-        if not all([username, email, password, confirm_password, height, weight, age]):
+        if not all([username, email, password, confirm_password, height, weight, dob_str]):
             flash('All fields are required!', 'danger')
             return redirect(url_for('auth.register'))
 
@@ -86,7 +96,7 @@ def register():
                 email=email,
                 height=float(height),
                 weight=float(weight),
-                age=int(age)
+                dob=dob
             )
             new_user.set_password(password)  # Hash the password
             db.session.add(new_user)
@@ -435,18 +445,19 @@ def reset_password():
 @login_required
 def update_profile():
     """Update user profile."""
-    age = request.form.get('age')
+    dob_str = request.form.get('dob')
     height = request.form.get('height')
     weight = request.form.get('weight')
 
     # Validate input
-    if not all([age, height, weight]):
+    if not all([dob_str, height, weight]):
         flash('All fields are required!', 'danger')
         return redirect(url_for('auth.account'))
 
     try:
+        dob = datetime.strptime(dob_str, "%Y-%m-%d").date()
         # Update user details
-        current_user.age = int(age)
+        current_user.dob = dob
         current_user.height = float(height)
         current_user.weight = float(weight)
         db.session.commit()
@@ -455,7 +466,7 @@ def update_profile():
     except ValueError:
         flash('Invalid input. Please provide valid numbers for age, height, and weight.', 'danger')
 
-    return redirect(url_for('auth.account'))
+    return redirect(url_for('auth.account') + '#profile')
 
 # ✅ New route for changing password
 @auth.route('/change_password', methods=['POST'])

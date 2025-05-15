@@ -330,7 +330,5 @@ if __name__ == '__main__':
 
 
 #CSRF Protect
-
-app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 csrf = CSRFProtect(app)

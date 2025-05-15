@@ -93,6 +93,7 @@
         <div class="profile-info">
             <p><strong>Username:</strong> {{ user.username }}</p>
             <p><strong>Age:</strong> {{ user.age }}</p>
+            <p><strong>Date of Birth:</strong> {{ user.dob.strftime('%Y-%m-%d') }}</p>
             <p><strong>Height (cm):</strong> {{ user.height }}</p>
             <p><strong>Weight (kg):</strong> {{ user.weight }}</p>
             <p><strong>BMI:</strong> {{ bmi }}</p>
@@ -112,14 +113,12 @@
         <form method="POST" action="{{ url_for('auth.update_profile') }}">
             <div class="card">
             <h4 class="mb-3">Edit Profile</h4>
-            <label>Age:</label>
-            <input type="text" name="age" class="form-control" value="{{ user.age }}" required>
+            <label>Date of Birth:</label>
+            <input type="date" name="dob" class="form-control" value="{{ user.dob }}" required>
             <label>Height (cm):</label>
             <input type="text" name="height" class="form-control" value="{{ user.height }}" required>
             <label>Weight (kg):</label>
             <input type="text" name="weight" class="form-control" value="{{ user.weight }}" required>
-            <label>BMI:</label>
-            <input type="text" class="form-control" value="{{ bmi }}" readonly>
             <button type="submit" class="btn btn-success">Save Changes</button>
             <button type="button" class="btn btn-outline-danger" onclick="toggleEdit(false)">Cancel</button>
             </div>
@@ -216,8 +215,16 @@ function showTab(tabId) {
 }
 
 function toggleEdit(showEdit) {
-    document.getElementById('profile-view').style.display = showEdit ? 'none' : 'block';
-    document.getElementById('profile-edit').style.display = showEdit ? 'block' : 'none';
+    const view = document.getElementById('profile-view');
+    const edit = document.getElementById('profile-edit');
+
+    if (showEdit) {
+        view.style.display = 'none';
+        edit.style.display = 'block';
+    } else {
+        edit.style.display = 'none';
+        view.style.display = 'flex';
+    }
 }
 
 function toggleTheme(mode) {
@@ -263,6 +270,21 @@ function toggleTheme(mode) {
             console.error(err);
             alert("Upload error!");
         });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const hash = window.location.hash.substring(1);  // remove #
+        if (hash) {
+            const targetTab = document.getElementById(hash);
+            const targetBtn = Array.from(document.querySelectorAll('.tab-btn'))
+                .find(btn => btn.getAttribute('onclick')?.includes(hash));
+            if (targetTab && targetBtn) {
+                document.querySelectorAll('.tab-section').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                targetTab.classList.add('active');
+                targetBtn.classList.add('active');
+            }
+        }
     });
 
     </script>

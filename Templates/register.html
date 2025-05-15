@@ -33,12 +33,15 @@
         <div class="mb-3">
             <label>Password</label>
             <input type="password" class="form-control" id="new_password" name="password" required>
+            <div id="strength-indicator" class="form-text fw-bold"></div>
         </div>
 
         <div class="mb-3">
             <label>Confirm Password</label>
             <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
         </div>
+
+        <div id="error-message" class="text-danger fw-bold mb-2"></div>
 
         <div class="mb-3">
             <label>Email</label>
@@ -56,13 +59,10 @@
         </div>
 
         <div class="mb-3">
-            <label>Age (years)</label>
-            <input type="number" class="form-control" name="age" required>
+            <label class="form-label">Date of Birth</label>
+            <input type="date" class="form-control" name="dob" required>
         </div>
-
-        <div id="error-message" class="text-danger mb-2"></div>
-        <div id="strength-indicator" class="fw-bold mb-3"></div>
-
+          
         <button type="submit" id="submitBtn" class="btn btn-success w-100">Submit</button>
     </form>
 
