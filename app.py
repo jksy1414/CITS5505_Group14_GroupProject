@@ -8,11 +8,20 @@ import os
 import csv
 import pandas as pd  # for reading CSVs
 from flask_wtf.csrf import CSRFProtect # CSRF Protect
+from pathlib import Path
+from dotenv import load_dotenv
+
 
 
 
 # Load environment variables
-load_dotenv()
+env_path = Path('.') / 'named.env'
+load_dotenv(dotenv_path=env_path)
+
+
+# Load environment variables
+from pathlib import Path
+load_dotenv(dotenv_path=Path('.') / '.env')
 
 # Create Flask app instance
 app = Flask(__name__)
@@ -20,7 +29,7 @@ app = Flask(__name__)
 # Protect cookie/session #csrf protection
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', '342ws-ij67f-uhn-oiuyt-68')  # Load from .env
 # Save SQLite DB location
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')  # Load from .env or use default
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')    # Load from .env or use default
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
 
 # Configure Flask email for resetting passwords
@@ -331,8 +340,4 @@ def explore():
 if __name__ == '__main__':
     app.run(debug=True)
 
-
-#CSRF Protect
-app.config['SECRET_KEY'] = 'your_secret_key'
-csrf = CSRFProtect(app)
 
