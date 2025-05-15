@@ -1,16 +1,15 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, jsonify,session, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort, jsonify, session , current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, Chart, AnalysisHistory, ActivityLog, HealthData, Friend
-import random, string, time, re, os
 from flask_mail import Message
 from extensions import db, mail
-from flask import current_app
 from werkzeug.utils import secure_filename
 from util import calculate_health_score, aggregate_week_data
 from datetime import date, timedelta, datetime
 from flask_login import login_user, logout_user, login_required, current_user
 from urllib.parse import urlparse, urljoin
 import pandas as pd
+import random, string, time, re, os
 
 
 # Create auth blueprint
