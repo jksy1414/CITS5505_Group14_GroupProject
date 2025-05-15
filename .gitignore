@@ -30,3 +30,8 @@ temp_uploads/*
 
 # Ignore temp_pictures
 Static/uploads/
+
+#Ignore CSRF secret key
+.env
+instance/
+app.db

@@ -12,6 +12,7 @@
 <div class="card" style="max-width: 500px; margin: 60px auto; padding: 30px;">
     <h3 class="mb-4 text-center">Register your new account!</h3>
 
+
     <!-- Flash messages -->
     {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -19,12 +20,14 @@
                 {% for msg in messages %}
                     {{ msg }}
                 {% endfor %}
+
             </div>
         {% endif %}
     {% endwith %}
 
     <!-- Register form -->
     <form method="POST" action="/register">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <div class="mb-3">
             <label>Username</label>
             <input type="text" class="form-control" name="username" required>

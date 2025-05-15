@@ -9,6 +9,7 @@
     <h3 class="mb-4 text-center">Login</h3>
 
     <form method="POST" action="{{ url_for('auth.login', next=request.args.get('next')) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <input type="hidden" name="next" value="{{ next }}">
 
         <div class="mb-3">
