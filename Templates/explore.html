@@ -46,15 +46,16 @@
   <!-- Render all charts -->
   <script>
     {% for chart in charts %}
-      new Chart(document.getElementById('chart-{{ chart.id }}').getContext('2d'), {
+    const ctx{{ chart.id }} = document.getElementById('chart-{{ chart.id }}').getContext('2d');
+      new Chart(ctx{{ chart.id }}, {
         type: '{{ chart.chart_type or "bar" }}',
         data: {
-          labels: {{ chart.labels|tojson }},
+          labels: {{ chart.labels | tojson }},
           datasets: [{
             label: '{{ chart.column_name }}',
-            data: {{ chart.values|tojson }},
-            backgroundColor: 'rgba(75, 192, 192, 0.3)',
-            borderColor: 'rgba(75, 192, 192, 1)',
+            data: {{ chart.values | tojson }},
+            backgroundColor: '{{ chart.fill_color or "rgba(75, 192, 192, 0.4)" }}',
+            borderColor: '{{ chart.border_color or "rgba(75, 192, 192, 1)" }}',
             borderWidth: 1
           }]
         },
@@ -64,6 +65,8 @@
           scales: { y: { beginAtZero: true } }
         }
       });
+
+      document.getElementById('chart-{{ chart.id }}').parentElement.style.backgroundColor = '{{ chart.color or "#ffffff" }}';
     {% endfor %}
   </script>
 {% endblock %}

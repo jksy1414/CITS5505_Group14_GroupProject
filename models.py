@@ -15,10 +15,8 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(150), nullable=False)
     height = db.Column(db.Float, nullable=False)
     weight = db.Column(db.Float, nullable=False)
-    age = db.Column(db.Integer, nullable=False)
-
+    dob = db.Column(db.Date, nullable=False)
     avatar = db.Column(db.String(255), default='images/buggohome.jpg')
-
 
     charts = db.relationship('Chart', backref='user', lazy=True)
     analysis_histories = db.relationship('AnalysisHistory', backref='user', lazy=True)
@@ -29,7 +27,11 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-
+    @property
+    def age(self):
+        today = date.today()
+        return today.year - self.dob.year - ((today.month, today.day) < (self.dob.month, self.dob.day))
+    
 # Chart model
 class Chart(db.Model):
     __tablename__ = 'charts'
@@ -43,6 +45,9 @@ class Chart(db.Model):
     chart_type = db.Column(db.String(20), default='bar')
     visibility = db.Column(db.String(20), default='private')
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    color = db.Column(db.String(20), nullable=True)
+    fill_color = db.Column(db.String(10), default="#4bc0c0")
+    border_color = db.Column(db.String(10), default="#007b7b")
 
 # HealthData model
 class HealthData(db.Model):

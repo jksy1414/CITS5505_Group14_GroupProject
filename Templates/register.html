@@ -5,72 +5,72 @@
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_register.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_account.css') }}">
 {% endblock %}
 
 {% block content %}    
-    <div class="container mt-5">
-        <h2 class="mb-4">Register your new account!</h2>
+<div class="card" style="max-width: 500px; margin: 60px auto; padding: 30px;">
+    <h3 class="mb-4 text-center">Register your new account!</h3>
 
-        <!-- show backend flash hints-->
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="alert alert-warning">
-                    {% for msg in messages %}
-                        {{msg}}
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
-        <!--form data-->     
-        <form method="POST" action="/register">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <div class="mb-3">
-                <label class="form-lable">Username</label>
-                <input type="text" class="form-control" name="username" required>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-warning">
+                {% for msg in messages %}
+                    {{ msg }}
+                {% endfor %}
+
             </div>
+        {% endif %}
+    {% endwith %}
 
-            <div class="mb-3">
-                <label class="form-lable">Password</label>
-                <input type="password" id="new_password" class="form-control" name="password" required>
-            </div>
+    <!-- Register form -->
+    <form method="POST" action="/register">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="mb-3">
+            <label>Username</label>
+            <input type="text" class="form-control" name="username" required>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-label">Confirm password</label>
-                <input type="password" id="confirm_password" class="form-control" name="confirm_password" required>
-            </div>
+        <div class="mb-3">
+            <label>Password</label>
+            <input type="password" class="form-control" id="new_password" name="password" required>
+            <div id="strength-indicator" class="form-text fw-bold"></div>
+        </div>
 
-            <div class="mb-3">
-                <label class="form-lable">Email</label>
-                <input type="email" class="form-control" name="email" required>
-            </div>
+        <div class="mb-3">
+            <label>Confirm Password</label>
+            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+        </div>
 
-            <div class="mb-3">
-                <lable class="form-label">Height (cm)</lable>
-                <input type="number" class="form-control" name="height" required>
-            </div>
+        <div id="error-message" class="text-danger fw-bold mb-2"></div>
 
-            <div class="mb-3">
-                <lable class="form-label">Weight (kg)</lable>
-                <input type="number" class="form-control" name="weight" required>
-            </div>
+        <div class="mb-3">
+            <label>Email</label>
+            <input type="email" class="form-control" name="email" required>
+        </div>
 
-            <div class="mb-3">
-                <lable class="form-label">Age (years)</lable>
-                <input type="number" class="form-control" name="age" required>
-            </div>
+        <div class="mb-3">
+            <label>Height (cm)</label>
+            <input type="number" class="form-control" name="height" required>
+        </div>
 
-            <div id="error-message" style="color: red; margin-top: 10px;"></div>
+        <div class="mb-3">
+            <label>Weight (kg)</label>
+            <input type="number" class="form-control" name="weight" required>
+        </div>
 
-            <div id="strength-indicator" style="margin-top: 10px; font-weight: bold;"></div>
+        <div class="mb-3">
+            <label class="form-label">Date of Birth</label>
+            <input type="date" class="form-control" name="dob" required>
+        </div>
+          
+        <button type="submit" id="submitBtn" class="btn btn-success w-100">Submit</button>
+    </form>
 
-            <!-- submit button-->
-            <button type="submit" id="submitBtn" class="btn btn-primary">Submit</button>
-        </form>
-
-        <!--lead to login-->
-        <p class="mt-3">Already have an account? <a href="/login">Go to login</a></p>
-    </div>
+    <p class="mt-3 text-center">Already have an account? <a href="{{ url_for('auth.login') }}">Go to login</a></p>
+</div>
 {% endblock %}
 
 {% block scripts %}
