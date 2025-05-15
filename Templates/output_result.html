@@ -62,6 +62,7 @@
   {# 🌍 Sharing visibility form (POST to /set_visibility) #}
 
   <form method="POST" action="{{ url_for('set_visibility') }}" style="margin-top: 20px;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label for="visibility">Change Sharing Option:</label>
     <select name="visibility">
       <option value="private" {% if visibility == 'private' %}selected{% endif %}>Private</option>

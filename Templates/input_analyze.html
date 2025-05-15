@@ -31,6 +31,7 @@
     <!-- Form to upload CSV file (Step 1) -->
     <div class="container">
       <form method="POST" enctype="multipart/form-data" action="{{ url_for('analyze') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label for="fileUpload">Choose CSV file (UTF-8 only):</label><br>
         <input type="file" id="fileUpload" name="fitnessFile" accept=".csv" required><br>
     

@@ -18,10 +18,10 @@ load_dotenv()
 # Create Flask app instance
 app = Flask(__name__)
 
-# Protect cookie/session
-app.config['SECRET_KEY'] = 'your-secret-key'
+# Protect cookie/session #csrf protection
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', '342ws-ij67f-uhn-oiuyt-68')  # Load from .env
 # Save SQLite DB location
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')  # Load from .env or use default
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
 
 # Configure Flask email for resetting passwords
@@ -30,6 +30,9 @@ app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
 app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS') == 'True'
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+
+# Initialize CSRF Protection
+csrf = CSRFProtect(app)
 
 # Bind SQLAlchemy and Mail with Flask
 db.init_app(app)
@@ -330,8 +333,5 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 
-#CSRF Protect
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key'
-csrf = CSRFProtect(app)
+

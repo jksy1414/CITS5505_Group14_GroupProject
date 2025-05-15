@@ -62,6 +62,7 @@
 
     <div class="container">
       <form method="POST" action="{{ url_for('select_columns') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label>Select the data column you want to analyze:</label><br>
 
         <div class="checkbox-group">

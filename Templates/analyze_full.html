@@ -58,6 +58,7 @@
 <!-- Step 1: Upload CSV -->
 <div class="tab-section {% if step == 'upload' %}active{% endif %}" id="step-0">
   <form method="POST" enctype="multipart/form-data" action="{{ url_for('auth.analyze_full') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="hidden" name="step" value="upload">
     <label for="fileUpload">Choose CSV file (UTF-8 only):</label><br>
     <input type="file" id="fileUpload" name="fitnessFile" accept=".csv" required><br>
@@ -73,6 +74,7 @@
 <!-- Step 2: Select Columns -->
 <div class="tab-section {% if step == 'columns' %}active{% endif %}" id="step-1">
   <form method="POST" action="{{ url_for('auth.analyze_full') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="hidden" name="step" value="columns">
     <label>Select the data column(s) to analyze:</label><br>
     <div class="checkbox-group">
@@ -90,6 +92,7 @@
 <!-- Step 3: Rename Headers -->
 <div class="tab-section {% if step == 'rename' %}active{% endif %}" id="step-2">
   <form method="POST" action="{{ url_for('auth.analyze_full') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="hidden" name="step" value="rename">
     <label>Rename headers for selected columns:</label>
     <table>
@@ -157,6 +160,7 @@
 
         <!-- Add the "Share Now" button under the Change Sharing Option form -->
         <form id="visibilityform" method="POST" action="{{ url_for('set_visibility_2') }}" style="margin-top: 20px;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <input type="hidden" id="selectedColumnInput" name="selected_column" value="">
           <label for="visibility">Change Sharing Option:</label>
           <select name="visibility">

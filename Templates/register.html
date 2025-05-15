@@ -24,6 +24,7 @@
         {% endwith %}
         <!--form data-->     
         <form method="POST" action="/register">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="mb-3">
                 <label class="form-lable">Username</label>
                 <input type="text" class="form-control" name="username" required>

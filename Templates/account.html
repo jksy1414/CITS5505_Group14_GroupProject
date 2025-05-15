@@ -56,6 +56,7 @@
             <li>
                 <strong>{{ h.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</strong> - {{ h.filename }}
                 <form action="{{ url_for('auth.download_history', history_id=h.id) }}" method="get" style="display:inline;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="btn btn-sm">Download CSV</button>
                 </form>
             </li>
@@ -110,6 +111,7 @@
     
         <div id="profile-edit" style="display: none;">
         <form method="POST" action="{{ url_for('auth.update_profile') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="card">
             <h4 class="mb-3">Edit Profile</h4>
             <label>Age:</label>
@@ -132,6 +134,7 @@
     <div id="friends" class="tab-section">
         <h4>Add Friend by Username</h4>
         <form method="POST" action="{{ url_for('auth.add_friend') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="text" name="username" placeholder="Enter username" required>
             <button type="submit" class="btn">Send Request</button>
         </form>
@@ -145,6 +148,7 @@
                 {{ User.query.get(fr.user_id).username }}
                 <a class="btn btn-sm btn-success" href="{{ url_for('auth.accept_friend', request_id=fr.id) }}">Accept</a>
                 <form action="{{ url_for('auth.cancel_friend', request_id=fr.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Reject this friend request?')">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="btn btn-sm btn-outline-danger">Reject</button>
                 </form>
             </li>
@@ -159,6 +163,7 @@
             <li>
                 {{ User.query.get(fr.friend_id).username }}
                 <form action="{{ url_for('auth.cancel_friend', request_id=fr.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Cancel this friend request?')">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
                 </form>
         {% else %}
@@ -185,6 +190,7 @@
     <div id="settings" class="tab-section">
         <h4>Settings</h4>
         <form method="POST" action="{{ url_for('auth.change_password') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="card">
                 <label>Current Password:</label>
                 <input type="password" name="current_password" class="form-control" required>

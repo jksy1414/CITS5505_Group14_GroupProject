@@ -21,9 +21,13 @@ def is_safe_url(target):
     test_url = urlparse(urljoin(request.host_url, target))
     return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
 
+
 # Logging in with existing user credentials
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        print("CSRF Token received:", request.form.get('csrf_token'))
+        # Other login logic...
     """Login route for user authentication."""
     if request.method == 'POST':
         email = request.form.get('email')
