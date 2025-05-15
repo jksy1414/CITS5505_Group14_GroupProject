@@ -738,7 +738,9 @@ def set_visibility():
     selected_column = request.form.get('selected_column')
     visibility = request.form.get('visibility')  # 'public' or 'friends'
     share_now = request.form.get('share_now')  # Check if "Share Now" was clicked
-
+    color = request.form.get('color') or '#ffffff' #get chosen color or default white color
+    fill_color = request.form.get("fill_color", "#4bc0c0")
+    border_color = request.form.get("border_color", "#007b7b")
     # Validate the selected column
     if not selected_column:
         flash("No column selected for sharing.", "danger")
@@ -767,6 +769,9 @@ def set_visibility():
         values=chart_data,
         column_name=selected_column,
         visibility=visibility,
+        color=color,
+        fill_color=fill_color,
+        border_color=border_color
     )
     db.session.add(chart)
     db.session.commit()
