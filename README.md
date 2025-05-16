@@ -1,90 +1,78 @@
-﻿# CITS5505_Group14_GroupProject - FitBug - Fitness Tracker & Data Visualization Web App
+# FitBug – Fitness Tracker & Data Visualization Web App  
+_CITS5505 Group 14 – The University of Western Australia_
 
-## Group Members
+---
+
+##  Group Members
 
 | Name                    | UWA Student ID | GitHub Username |
 |-------------------------|----------------|------------------|
 | Tharuki Dunyasha Silva  | 24327701       | TharuSilva       |
-| John Koh                | 23845086       | jksy1414          |
-| Maryam Saeed            | 23121354       | Mars-Martiny      |
-| Qidi Cai                | 24053566       | QidiC             |
+| John Koh                | 23845086       | jksy1414         |
+| Maryam Saeed            | 23121354       | Mars-Martiny     |
+| Qidi Cai                | 24053566       | QidiC            |
 
 ---
 
-## Purpose of the Application
+##  Project Overview
 
-FitBug is a web-based fitness data analysis platform developed as part of the CITS5505 Web Programming course at The University of Western Australia.
+**FitBug** is a fitness data analysis platform developed using Flask for the CITS5505 Web Programming unit. Users can upload personal fitness data (e.g., from smartwatches or mobile apps), generate customizable visual reports, and manage personal statistics securely.
 
-The goal of FitBug is to provide a user-friendly system where individuals can upload their personal fitness data (e.g., from smartwatches or health apps), analyze it for patterns and progress, and visualize the results using customizable charts. FitBug is designed with a focus on usability, privacy, and social sharing.
-
-Key features include:
-
-- User registration and login with secure authentication.
-- Upload of fitness tracking data in CSV format.
-- Column selection and header renaming for flexibility in analysis.
-- Statistical summaries (average, minimum, maximum) per metric.
-- Interactive visualizations (line, bar, pie, radar, etc.) using Chart.js.
-- Sharing options: private, friends-only, or public.
-- History tracking of past analyses per user account.
-- Friend system for inviting and accepting other users.
+###  Key Features
+- User registration, login, and profile management
+- CSV file upload with dynamic column selection
+- Editable headers before visualization
+- Chart options: Line, Bar, Pie, Radar (via Chart.js)
+- Statistical summaries: min, max, average
+- Sharing: Private, Friends-only, or Public
+- Analysis history and activity log per user
+- Friend system: invite, accept, reject
 
 ---
 
-## Website Outline
+##  Application Flow
 
-**FitBug** allows users to upload fitness data and receive personalized statistics about their physical activity. These stats can optionally be shared with other users either publicly or with friends/followers only. The visuals can also be downloaded for external sharing. The user retains complete control over what is shared. Personal history is saved in the user’s account and remains private unless shared.
-
-- **Input** – Fitness tracker data (CSV from smartwatch or app)
-- **Output** – Graphical statistics and summary
-- **Sharing (Output)** – Internal (public or friend-only); External (download)
-- **Account** – Username, Password, Profile, History (Output records)
-
-### Main Pages
-
-1. Home / Welcome page
-2. Login / Registration
-3. Data Upload and Selection
-4. Analysis and Output Visualization
-5. Account Page (history and profile features)
+| Step | Page                       | Functionality                                       |
+|------|----------------------------|----------------------------------------------------|
+| 1️⃣   | Home / Welcome             | Intro to FitBug                                    |
+| 2️⃣   | Login / Register           | Secure access                                      |
+| 3️⃣   | Data Upload                | Upload fitness CSVs                                |
+| 4️⃣   | Column Selection + Rename | Choose and rename headers for graphs               |
+| 5️⃣   | Analysis & Visualization   | View interactive graphs and summary statistics     |
+| 6️⃣   | Output Sharing             | Share results: private, friends, public, download  |
+| 7️⃣   | Account Page               | Profile, history, goal tracker, friend system      |
 
 ---
 
-## How to Launch the Application
+##  Getting Started
 
-### Prerequisites
-
-- Python 3.8 or later
+###  Prerequisites
+- Python 3.8+
 - pip
 - Git
 
-### Setup Instructions
-
-1. **Clone the repository**
+###  Setup Instructions
 
 ```bash
+# 1. Clone repository
 git clone https://github.com/jksy1414/CITS5505_Group14_GroupProject.git
 cd CITS5505_Group14_GroupProject
-```
 
-2. **Create and activate a virtual environment (optional)**
-
-```bash
+# 2. Create virtual environment (recommended)
 python -m venv venv
-source venv/bin/activate       # On macOS/Linux
-venv\Scripts\activate        # On Windows
-```
+source venv/bin/activate        # macOS/Linux
+venv\Scripts\activate           # Windows
 
-3. **Install required packages**
-
-```bash
+# 3. Install dependencies
 pip install -r requirements.txt
+
+# 4. Create .env file
+touch .env  # or use any text editor
 ```
 
-4. **Configure environment variables**
+#### Example `.env` file:
 
-Create a `.env` file with the following:
-
-```
+```env
 SECRET_KEY=your-secret-key
 FLASK_APP=app.py
 FLASK_ENV=development
@@ -94,7 +82,7 @@ MAIL_USERNAME=your-email@example.com
 MAIL_PASSWORD=your-email-password
 ```
 
-5. **Initialize the database**
+###  Database Initialization
 
 ```bash
 flask db init
@@ -102,93 +90,105 @@ flask db migrate -m "Initial migration"
 flask db upgrade
 ```
 
-6. **Run the application**
+###  Launch the App
 
 ```bash
 flask run
 ```
 
-Then open your browser and go to `http://127.0.0.1:5000`
+Visit: [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
 ---
 
-## How to Run the Tests
+##  Testing Instructions
 
-### Unit Tests
+###  Unit Tests
 
 ```bash
 pytest tests/
 ```
 
-### Selenium System Tests
+###  Selenium System Tests
 
-1. Make sure the app is running.
-2. In a new terminal:
+1. Ensure the Flask app is running (`flask run`)
+2. In a separate terminal:
+
 
 ```bash
 pytest tests/selenium/
 ```
 
-If needed:
+_If needed:_
 
 ```bash
 pip install selenium chromedriver_autoinstaller
 ```
 
+
+**Note:** Before running any Selenium tests that involve login, make sure to first run:
+
+```bash
+python tests/selenium/test_register_success.py
+This script generates a test account and saves the credentials in a file named last_test_account.txt
+located at tests/selenium/test_files/last_test_account.txt.
+Any Selenium test that requires login (such as test_login_success.py, test_chart.py, etc.) depends on the credentials stored in this file.
+```
+
 ---
 
-## Figma UI Designs
+##  UI Design
 
-We also designed a mockup UI in Figma to help guide development and styling.  
-[View Figma Prototype](https://www.figma.com/file/EXAMPLELINK/fitbug-design)  
-(*replace with your actual link*)
+Figma-based prototype is available at:  
+ [FitBug Figma Design](https://www.figma.com/file/EXAMPLELINK/fitbug-design)  
+(_Replace with actual Figma URL_)
 
 ---
 
-## Folder Structure
+##  Project Structure
 
 ```plaintext
 CITS5505_Group14_GroupProject/
 ├── app.py
 ├── models.py
 ├── auth_routes.py
-├── templates/
-├── static/
-├── migrations/
-├── tests/
+├── templates/               # All HTML templates
+├── static/                  # CSS, JS, images
+├── tests/                   # Unit + Selenium test scripts
+├── migrations/              # Database schema history
 ├── requirements.txt
-├── .env
 ├── README.md
+├── .env                     # Your environment variables (not committed)
 ```
 
 ---
 
-## References
+## 📸 Media Credits
 
-### Home Page Visuals:
-- https://dribbble.com/shots/7884095-Fitness-Icons
-- https://hollowknight.fandom.com/wiki/Hollow_Knight_Kickstarter?file=Kickstarter_voice.png
-- https://hollowknight.fandom.com/wiki/Cornifer?file=Npc_mapper.png
-- https://hollowknight.fandom.com/wiki/Nailsmith?file=Nailsmith+2.png
+### Home Page:
+- [Fitness Icons - Dribbble](https://dribbble.com/shots/7884095-Fitness-Icons)
+- [Cornifer](https://hollowknight.fandom.com/wiki/Npc_mapper.png)
+- [Nailsmith](https://hollowknight.fandom.com/wiki/Nailsmith?file=Nailsmith+2.png)
 
-### Data Input Page:
-- https://hollowknight.fandom.com/wiki/Cornifer?file=Cornifer.png
+### Input Page:
+- [Cornifer Input](https://hollowknight.fandom.com/wiki/Cornifer?file=Cornifer.png)
 
-### Data Output Page:
-- https://hollowknight.fandom.com/wiki/Sheo?file=NailmasterSheo.png
+### Output Page:
+- [Sheo Art](https://hollowknight.fandom.com/wiki/Sheo?file=NailmasterSheo.png)
 
-### Default Profile Picture:
-- "Artful Anticks" by Oliver Herford, 1894
-
----
-
-## AI Usage
-
-This README and various planning materials (folder structure, setup steps) were drafted and refined using OpenAI’s ChatGPT and Copilot, which assisted in formatting and generating structured documentation. No generated code or content was used directly in the core application without review.
+### Default Profile:
+- "Artful Anticks" by Oliver Herford (1894)
 
 ---
 
-## Contact
+##  AI Acknowledgement
 
-For academic-related questions, please reach out to:  
-John Koh – jksy1414@students.uwa.edu.au
+Documentation, instructions, and project structure were partially assisted by OpenAI’s ChatGPT and Copilot for drafting, formatting, and validation. All generated content was reviewed by the development team before use.
+
+---
+
+##  Contact
+
+For course-related questions:  
+**John Koh** – jksy1414@students.uwa.edu.au
+
+---
