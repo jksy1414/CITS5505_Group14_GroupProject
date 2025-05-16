@@ -99,6 +99,21 @@ flask run
 Visit: [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
 ---
+### Email Configuration for Password Reset
+To enable the password reset feature, you need to configure your own email credentials in the environment file (.env or named.env). This feature uses Flask-Mail to send verification codes.
+
+```bash
+Example (Gmail):
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USE_TLS=True
+MAIL_USERNAME=your_email@gmail.com
+MAIL_PASSWORD=your_app_password
+MAIL_DEFAULT_SENDER=your_email@gmail.com
+```
+If you use Gmail, you must generate an App Password and use that instead of your real password.
+
+---
 
 ##  Testing Instructions
 
