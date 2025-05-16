@@ -32,7 +32,7 @@ _CITS5505 Group 14 – The University of Western Australia_
 
 ##  Application Flow
 
-| Step | Page                       | Functionality                                       |
+| Step | Page / Tab                  | Functionality                                       |
 |------|----------------------------|----------------------------------------------------|
 | 1️⃣   | Home / Welcome             | Intro to FitBug                                    |
 | 2️⃣   | Login / Register           | Secure access                                      |
