@@ -10,6 +10,10 @@ from flask_login import login_user, logout_user, login_required, current_user
 from urllib.parse import urlparse, urljoin
 import pandas as pd
 import random, string, time, re, os
+from forms import LoginForm, RegisterForm
+
+
+
 
 
 # Create auth blueprint
@@ -24,104 +28,48 @@ def is_safe_url(target):
 # Logging in with existing user credentials
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        print("CSRF Token received:", request.form.get('csrf_token'))
-        # Other login logic...
-    """Login route for user authentication."""
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-
-        # Query the user by email
-        user = User.query.filter_by(email=email).first()
-
-        # Validate email and password
-        if not user or not user.check_password(password):
-            flash('Invalid email or password. Please try again.', 'danger')
-            return redirect(url_for('auth.login'))
-
-        # Log in the user
-        login_user(user)
-        flash('Login successful!', 'success')
-
-        # Redirect to the original page or account page
-        next_page = request.args.get('next')
-        if next_page and not is_safe_url(next_page):
-            return abort(400)  # Bad Request
-        return redirect(next_page) if next_page else redirect(url_for('home'))
-
-    # Capture the `next` parameter and pass it to the login template
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user)
+            flash('Login successful!', 'success')
+            next_page = request.args.get('next')
+            if next_page and not is_safe_url(next_page):
+                return abort(400)
+            return redirect(next_page or url_for('auth.account'))
+        else:
+            flash('Invalid email or password.', 'danger')
     next_page = request.args.get('next')
-    return render_template('login.html', next=next_page)
+    return render_template('login.html', form=form, next=next_page)
 
 # Registering a new user
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
-    """Register route for creating a new user."""
-    if request.method == 'POST':
-        username = request.form.get('username')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        confirm_password = request.form.get('confirm_password')
-        height = request.form.get('height')
-        weight = request.form.get('weight')
-        dob_str = request.form.get('dob') #date of birth
-
-        try:
-            dob = datetime.strptime(dob_str, "%Y-%m-%d").date()
-            today = date.today()
-            if dob > today:
-                flash("Date of birth cannot be in the future.", "danger")
-                return redirect(url_for('auth.register'))
-        except ValueError:
-            flash('Invalid date format for date of birth.', 'danger')
-            return redirect(url_for('auth.register'))
-
-        # Validate that all required fields are provided
-        if not all([username, email, password, confirm_password, height, weight, dob_str]):
-            flash('All fields are required!', 'danger')
-            return redirect(url_for('auth.register'))
-
-        # Validate password confirmation
-        if password != confirm_password:
-            flash('Passwords do not match!', 'danger')
-            return redirect(url_for('auth.register'))
-
-        # Check if username or email already exists
-        existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
+    form = RegisterForm()
+    if form.validate_on_submit():
+        existing_user = User.query.filter((User.username == form.username.data) | (User.email == form.email.data)).first()
         if existing_user:
             flash('Username or email already exists!', 'danger')
             return redirect(url_for('auth.register'))
 
         try:
-            # Create a new user
             new_user = User(
-                username=username,
-                email=email,
-                height=float(height),
-                weight=float(weight),
-                dob=dob
+                username=form.username.data,
+                email=form.email.data,
+                height=form.height.data,
+                weight=form.weight.data,
+                dob=form.dob.data
             )
-            new_user.set_password(password)  # Hash the password
+            new_user.set_password(form.password.data)
             db.session.add(new_user)
             db.session.commit()
-
-            # Log in the user immediately after registration
             login_user(new_user)
-
             flash('Registration successful!', 'success')
             return redirect(url_for('auth.account'))
-
-        except ValueError:
-            flash('Invalid value for height, weight, or age. Please provide valid numbers.', 'danger')
-            return redirect(url_for('auth.register'))
-
         except Exception as e:
-            # Handle unexpected errors
-            flash(f'An unexpected error occurred: {str(e)}', 'danger')
-            return redirect(url_for('auth.register'))
-
-    return render_template('register.html')
+            flash(f"Registration failed: {str(e)}", 'danger')
+    return render_template('register.html', form=form)
 
 # Account page with user details and health data
 @auth.route('/account', methods=['GET'])
@@ -310,7 +258,6 @@ def upload_avatar():
 @auth.route('/logout')
 @login_required
 def logout():
-    """Logout route to end the user session."""
     logout_user()
     flash('You have been logged out.', 'success')
     return redirect(url_for('auth.login'))

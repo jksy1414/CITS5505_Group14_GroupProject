@@ -1,59 +1,43 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_login import current_user
-from extensions import login_manager, db, mail, migrate
+from extensions import login_manager, db, mail, migrate, csrf  # ✅ include csrf from extensions
 from Routes.auth_routes import auth
 from models import User, Chart
 from dotenv import load_dotenv
+from pathlib import Path
 import os
 import csv
 import pandas as pd  # for reading CSVs
-from flask_wtf.csrf import CSRFProtect # CSRF Protect
-from pathlib import Path
-from dotenv import load_dotenv
-
-
-
 
 # Load environment variables
 env_path = Path('.') / 'named.env'
 load_dotenv(dotenv_path=env_path)
 
-
-# Load environment variables
-from pathlib import Path
-load_dotenv(dotenv_path=Path('.') / '.env')
-
 # Create Flask app instance
 app = Flask(__name__)
 
-# Protect cookie/session #csrf protection
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', '342ws-ij67f-uhn-oiuyt-68')  # Load from .env
-# Save SQLite DB location
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')    # Load from .env or use default
+# Configure app from environment
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', '342ws-ij67f-uhn-oiuyt-68')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
 
-# Configure Flask email for resetting passwords
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
 app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS') == 'True'
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 
-# Initialize CSRF Protection
-csrf = CSRFProtect(app)
-
-# Bind SQLAlchemy and Mail with Flask
+# Initialize extensions
 db.init_app(app)
 mail.init_app(app)
-
-# Initialize Flask-Migrate here
 migrate.init_app(app, db)
+csrf.init_app(app)  # ✅ CSRF initialized from shared extensions.py
 
-# Login management
-login_manager.login_view = 'auth.login'  # Redirect to login if not authenticated
+# Setup Flask-Login
 login_manager.init_app(app)
+login_manager.login_view = 'auth.login'
 
-# Load user function for Flask-Login
+# User loader
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
