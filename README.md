@@ -10,7 +10,7 @@ _CITS5505 Group 14 – The University of Western Australia_
 | Tharuki Dunyasha Silva  | 24327701       | TharuSilva       |
 | John Koh                | 23845086       | jksy1414         |
 | Maryam Saeed            | 23121354       | Mars-Martiny     |
-| Qidi Cai                | 24053566       | QidiC            |
+| Qidi Cai                | 24053566       | Stitchy-QIDI     |
 
 ---
 
