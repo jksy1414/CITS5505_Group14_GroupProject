@@ -37,11 +37,11 @@ _CITS5505 Group 14 – The University of Western Australia_
 | 1️⃣   | Home / Welcome             | Intro to FitBug                                    |
 | 2️⃣   | Login / Register           | Secure access                                      |
 | 3️⃣   | Data Upload                | Upload fitness CSVs                                |
-| 4️⃣   | Column Selection + Rename | Choose and rename headers for graphs               |
+| 4️⃣   | Column Selection + Rename  | Choose and rename headers for graphs               |
 | 5️⃣   | Analysis & Visualization   | View interactive graphs and summary statistics     |
 | 6️⃣   | Output Sharing             | Share results: private, friends, public, download  |
 | 7️⃣   | Account Page               | Profile, history, goal tracker, friend system      |
-
+| 8️⃣   | Explore Page               | view all shared graphs(public, private, friends)   |
 ---
 
 ##  Getting Started
