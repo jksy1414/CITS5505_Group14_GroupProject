@@ -188,7 +188,7 @@ test.csv is the file for testing the function in the web
 ##  .env File
 
 ```plaintext
-the .env file is include to show the example how to create the .env file, there is no secret key in it. 
+the .env file is include to show the example how the create the .env file would be, there is no secret key in it. 
 ```
 
 ---
