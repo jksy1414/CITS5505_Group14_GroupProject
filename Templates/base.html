@@ -40,9 +40,8 @@
               class="profile-pic">     
             </a> 
             
-            <a href = "{{ url_for('auth.logout')}}">
-              <button class="logout">Logout</button>
-            </a>
+            <button class="logout" onclick="window.location.href='{{ url_for('auth.logout') }}'">Logout</button>
+            
           {% else %}
             <a href="/login">
                 <button class="login">Login</button>
