@@ -179,6 +179,17 @@ CITS5505_Group14_GroupProject/
 ├── extension.py
 ├── forms.py  
 ```
+##  Testing File
+
+```plaintext
+test.csv is the file for testing the function in the web
+```
+
+##  .env File
+
+```plaintext
+the .env file is include to show the example how the create the .env file would be, there is no secret key in it. 
+```
 
 ---
 
