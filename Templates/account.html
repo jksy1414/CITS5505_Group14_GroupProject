@@ -2,6 +2,7 @@
 
 {% block title %}
     <title>FitBug: My Account</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 {% endblock %}
 
 {% block styles %}
@@ -250,9 +251,12 @@ function toggleTheme(mode) {
     document.getElementById('avatarInput').addEventListener('change', function() {
         const file = this.files[0];
         if (!file) return;
-
+        
         const formData = new FormData();
         formData.append('avatar', file);
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+        formData.append('csrf_token', csrfToken);
 
         fetch('{{ url_for("auth.upload_avatar") }}', {
             method: 'POST',
