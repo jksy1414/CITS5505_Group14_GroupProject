@@ -567,7 +567,7 @@ def analyze_full():
     csv_uploaded = bool(filepath)
 
     return render_template(
-        'analyze_full.html',
+        'analyze.html',
         step=step_param,
         columns=columns,
         selected_columns=selected_columns,
