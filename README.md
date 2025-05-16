@@ -140,14 +140,17 @@ pip install selenium chromedriver_autoinstaller
 ```
 
 
-**Note:** Before running any Selenium tests that involve login, make sure to first run:
+**📝Note:** Before running any Selenium tests that involve login, make sure to first run:
 
 ```bash
 python tests/selenium/test_register_success.py
-This script generates a test account and saves the credentials in a file named last_test_account.txt
-located at tests/selenium/test_files/last_test_account.txt.
-Any Selenium test that requires login (such as test_login_success.py, test_chart.py, etc.) depends on the credentials stored in this file.
 ```
+This script generates a test account and saves the credentials in a file named last_test_account.txt
+```bash
+located at tests/selenium/test_files/last_test_account.txt.
+```
+Any Selenium test that requires login (such as test_login_success.py, test_chart.py, etc.) depends on the credentials stored in this file.
+
 
 ---
 
