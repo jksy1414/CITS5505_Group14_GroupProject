@@ -15,38 +15,12 @@
 
     <!-- Navigation Tabs -->
     <div class="account-tabs">
-        <button class="tab-btn active" onclick="showTab('overview')">Overview</button>
         <button class="tab-btn" onclick="showTab('history')">History</button>
         <button class="tab-btn" onclick="showTab('activity')">Activity Log</button>
         <button class="tab-btn" onclick="showTab('goals')">Goals</button>
-        <button class="tab-btn" onclick="showTab('profile')">Profile</button>
+        <button class="tab-btn active" onclick="showTab('profile')">Profile</button>
         <button class="tab-btn" onclick="showTab('friends')">Friends</button>
         <button class="tab-btn" onclick="showTab('settings')">Settings</button>
-    </div>
-
-    <!-- Overview Tab -->
-    <div id="overview" class="tab-section active">
-        <h4>Calories Intake vs Burned (Weekly)</h4>
-        <canvas id="calorieChart" width="400" height="200"></canvas>
-
-        <h4>Your Daily Progress</h4>
-        <canvas id="lineChart" width="400" height="200"></canvas>
-
-        <h4>Weekly Summary</h4>
-        {% if show_weekly_summary %}
-        <canvas id="barChart" width="400" height="200"></canvas>
-        {% else %}
-        <p class="text-muted">Weekly Summary will appear after a full Calendar week of data.</p>
-        {% endif %}
-
-        {% if show_radar %}
-        <h4>Your Health Radar</h4>
-        <p><strong>Total Health Score:</strong> {{ health_score }}/100</p>
-        <canvas id="radarChart" width="400" height="400"></canvas>
-        {% else %}
-        <h4>Your Health Radar</h4>
-        <p class="text-muted">Not enough data yet (at least 3 days this week required).</p>
-        {% endif %}
     </div>
 
     <!-- History Tab -->
@@ -90,7 +64,7 @@
     </div>
 
     <!-- Profile Tab -->
-    <div id="profile" class="tab-section">
+    <div id="profile" class="tab-section active">
         <div id="profile-view" class="profile-container">
         <div class="profile-info">
             <p><strong>Username:</strong> {{ user.username }}</p>
@@ -301,10 +275,6 @@ function toggleTheme(mode) {
     });
 
     </script>
-    
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
 
 <script src="{{ url_for('static',filename='js/password_validate.js') }}"></script>
 

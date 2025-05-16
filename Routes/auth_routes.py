@@ -89,100 +89,6 @@ def account():
         except ZeroDivisionError:
             bmi= "Invalid height"
 
-    #data (calorie_intake， calorie_burned，steps, workout_duration, sleep_hours ) from Monday to Sunday for two pictures
-    today = date.today()
-    days = [today-timedelta(days=i) for i in range(6, -1, -1)]
-    steps = []
-    workout_duration = []
-    sleep_hours = []
-
-    intake = []
-    burned = []
-
-    labels = [d.strftime('%a') for d in days] # ['Mon', ..., 'Sun']
-
-    for d in days:
-        record = HealthData.query.filter_by(user_id=user.id, date=d).first()
-
-        if record:
-            intake.append(record.calories_intake)
-            burned.append(record.calories_burned)
-            steps.append(record.steps)
-            workout_duration.append(record.workout_duration)
-            sleep_hours.append(record.sleep_hours)
-        else: #no record, no picture
-            intake.append(None) 
-            burned.append(None)
-            steps.append(None)
-            workout_duration.append(None)
-            sleep_hours.append(None)
-
-    #get last Monday and last Sunday
-    monday_last_week = today - timedelta(days=today.weekday()+7)
-    sunday_last_week = monday_last_week + timedelta(days=6)
-
-    #query last week data
-    last_week_data = HealthData.query.filter(
-        HealthData.user_id == user.id,
-        HealthData.date >= monday_last_week,
-        HealthData.date <= sunday_last_week
-    ).all()
-
-    if len(last_week_data) ==7:
-        show_weekly_summary = True
-        #computing workout_days, active_days, avg_deficit
-        workout_days= sum(1 for d in last_week_data if d.workout_duration and d.workout_duration > 0)
-        active_days = sum(1 for d in last_week_data if d.steps and d.steps >= 6000)
-
-        deficits = [
-            (d.calories_burned or 0) - (d.calories_intake or 0)
-            for d in last_week_data
-        ]
-
-        avg_deficit = round(sum(deficits) / 7 , 1)
-
-        last_week_summary = {
-            'workout_days': workout_days,
-            'active_days': active_days,
-            'avg_deficit': avg_deficit
-        }
-    else:
-        show_weekly_summary = False
-        last_week_summary = None
-
-    monday_of_this_week = today - timedelta(days=today.weekday()) #Monday
-    sunday_of_this_week = monday_of_this_week + timedelta(days=6) #Sunday
-
-    #query this week data for radar
-    week_data = HealthData.query.filter(
-        HealthData.user_id == user.id,
-        HealthData.date >= monday_of_this_week,
-        HealthData.date <= sunday_of_this_week
-    ).all()
-    #at least 3 days data, or not display picture
-    if len(week_data) < 3: 
-        show_radar = False
-        radar_score = None
-        radar_breakdown = None
-        this_week_summary = None
-    else:
-        show_radar = True
-        aggregated = aggregate_week_data(week_data)
-        radar_score, radar_breakdown = calculate_health_score(aggregated)
-
-        workout_days = sum(1 for d in week_data if d.workout_duration and d.workout_duration > 0)
-        active_days = sum(1 for d in week_data if d.steps and d.steps >= 6000)
-        avg_deficit = round(
-            sum((d.calories_burned or 0) - (d.calories_intake or 0) for d in week_data) / len(week_data),
-            1
-        )
-
-        this_week_summary = {
-            'workout_days': workout_days,
-            'active_days': active_days,
-            'avg_deficit': avg_deficit
-        }
-
     # Fetch all accepted friend relationships
     friendships_sent = Friend.query.filter_by(user_id=current_user.id, status='accepted').all()
     friendships_received = Friend.query.filter_by(friend_id=current_user.id, status='accepted').all()
@@ -207,20 +113,7 @@ def account():
         user=user, 
         friends=friends,
         User=User,
-        bmi=bmi, 
-        health_score = radar_score, 
-        health_metrics = radar_breakdown,
-        calorie_labels = labels,
-        calorie_intake = intake,
-        calorie_burned = burned,
-        line_labels=labels,
-        line_steps=steps,
-        line_workout=workout_duration,
-        line_sleep=sleep_hours,
-        show_radar = show_radar,
-        show_weekly_summary = show_weekly_summary,
-        last_week_summary = last_week_summary,
-        this_week_summary = this_week_summary,
+        bmi=bmi,
         activity_data = activity_data,
         history_records=history_records,
         activity_logs=activity_logs, # ✅ include this to support Activity Log tab

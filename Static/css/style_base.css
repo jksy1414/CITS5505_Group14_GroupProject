@@ -333,3 +333,39 @@ body * {
   background: #567fa3;
   color: white;
 }
+
+/* 🌙 Dark Mode for login box */
+body.dark-mode .login-box {
+  background-color: #2c2c2c;
+  color: #ffffff;
+}
+
+body.dark-mode .login-box h2,
+body.dark-mode .login-box label,
+body.dark-mode .login-box input,
+body.dark-mode .login-box .form-control {
+  color: #ffffff;
+}
+
+body.dark-mode .login-box input {
+  background-color: #444444;
+  border: 1px solid #666666;
+}
+
+/* 🌙 Dark Mode for login-card */
+body.dark-mode .login-card {
+  background-color: #2c2c2c;
+  color: #ffffff;
+}
+
+body.dark-mode .login-card h2,
+body.dark-mode .login-card label,
+body.dark-mode .login-card input,
+body.dark-mode .login-card .form-control {
+  color: #ffffff;
+}
+
+body.dark-mode .login-card input {
+  background-color: #444444;
+  border: 1px solid #666666;
+}
