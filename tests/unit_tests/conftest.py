@@ -1,6 +1,10 @@
 # conftest.py
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
 import pytest
-from app import create_app, db
+from app import app, db
 
 
 # Used for tests that need full isolation (registration tests)
