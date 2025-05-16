@@ -171,6 +171,7 @@
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
           <input type="hidden" id="selectedColumnInput" name="selected_column" value="">
+          <input type="hidden" id="chartTypeInput" name="chart_type" value="">
           <input type="hidden" id="colorInput" name="color" value="#ffffff">
           <input type="hidden" id="fillInput" name="fill_color" value="#4bc0c0">
           <input type="hidden" id="borderInput" name="border_color" value="#4bc0c0">
@@ -297,8 +298,6 @@
             }
         }
     });
-
-    ctx.canvas.parentElement.style.backgroundColor = bgColor;
 
     const stats = document.getElementById('statSummary');
     stats.innerHTML = '';

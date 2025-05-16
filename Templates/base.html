@@ -31,10 +31,9 @@
             <a href ="/account">Account</a>-->
 
         </nav>
+
         <div class="actions">
-           
-          {% if current_user.is_authenticated %}
-          
+          {% if current_user.is_authenticated %}  
          <a href="/account">
               <img src="{{ url_for('static', filename=current_user.avatar) if current_user.avatar else url_for('static', filename='images/buggohome.jpg') }}"
               alt="Profile Picture"
