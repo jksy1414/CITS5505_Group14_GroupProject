@@ -120,7 +120,7 @@ If you use Gmail, you must generate an App Password and use that instead of your
 ###  Unit Tests
 
 ```bash
-pytest tests/
+pytest tests/unit_tests
 ```
 
 ###  Selenium System Tests
