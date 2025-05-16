@@ -48,21 +48,26 @@
     {% for chart in charts %}
     const ctx{{ chart.id }} = document.getElementById('chart-{{ chart.id }}').getContext('2d');
       new Chart(ctx{{ chart.id }}, {
-        type: '{{ chart.chart_type or "bar" }}',
+        type: '{{ chart.chart_type }}',
         data: {
           labels: {{ chart.labels | tojson }},
           datasets: [{
             label: '{{ chart.column_name }}',
             data: {{ chart.values | tojson }},
-            backgroundColor: '{{ chart.fill_color or "rgba(75, 192, 192, 0.4)" }}',
-            borderColor: '{{ chart.border_color or "rgba(75, 192, 192, 1)" }}',
-            borderWidth: 1
+            backgroundColor: '{{ chart.fill_color }}',
+            borderColor: '{{ chart.border_color }}',
+            borderWidth: 1,
+            fill: ['line', 'radar'].includes('{{ chart.chart_type }}'),
+            showLine: '{{ chart.chart_type }}' !== 'scatter'
           }]
         },
         options: {
           responsive: true,
           plugins: { legend: { display: true } },
-          scales: { y: { beginAtZero: true } }
+          scales: ['pie', 'doughnut'].includes('{{ chart.chart_type }}') ? {} : {
+                y: { beginAtZero: true },
+                x: { ticks: { autoSkip: true } }
+            }
         }
       });
 

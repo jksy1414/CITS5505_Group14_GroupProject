@@ -31,19 +31,17 @@
             <a href ="/account">Account</a>-->
 
         </nav>
+
         <div class="actions">
-           
-          {% if current_user.is_authenticated %}
-          
+          {% if current_user.is_authenticated %}  
          <a href="/account">
               <img src="{{ url_for('static', filename=current_user.avatar) if current_user.avatar else url_for('static', filename='images/buggohome.jpg') }}"
               alt="Profile Picture"
               class="profile-pic">     
             </a> 
             
-            <a href = "{{ url_for('auth.logout')}}">
-              <button class="logout">Logout</button>
-            </a>
+            <button class="logout" onclick="window.location.href='{{ url_for('auth.logout') }}'">Logout</button>
+            
           {% else %}
             <a href="/login">
                 <button class="login">Login</button>
