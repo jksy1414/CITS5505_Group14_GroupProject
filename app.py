@@ -253,15 +253,6 @@ def set_visibility_2():
     selected_columns = session.get('selected_columns', [])
     renamed_headers = session.get('renamed_headers', {})
 
-    # Debug checks to confirm session state
-    print(f"DEBUG: visibility = {visibility}")
-    print(f"DEBUG: session['csv_path'] = {filepath}")
-    print(f"DEBUG: session['selected_columns'] = {selected_columns}")
-    print(f"DEBUG: session['renamed_headers'] = {renamed_headers}")
-    print(f"DEBUG: selected_column = {selected_column}")
-    print(f"DEBUG: chart_type = {chart_type}")
-
-
     # Require login only if visibility is "public"
     if not current_user.is_authenticated:
         flash("You must be logged in to set visibility share graphs.", "danger")
@@ -331,6 +322,48 @@ if __name__ == '__main__':
 
 #CSRF Protect
 
-app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 csrf = CSRFProtect(app)
+
+
+
+# App factory function for testing 
+def create_app(test_config=None):
+    load_dotenv()
+    app = Flask(__name__)
+
+    # Default configuration
+    app.config['SECRET_KEY'] = 'your-secret-key'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+    app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
+    app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
+    app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
+    app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS') == 'True'
+    app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+    app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+
+    # Apply test config override
+    if test_config:
+        app.config.update(test_config)
+
+    # Extensions
+    db.init_app(app)
+    mail.init_app(app)
+    migrate.init_app(app, db)
+    login_manager.init_app(app)
+    csrf.init_app(app)
+
+    login_manager.login_view = 'auth.login'
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
+
+    # Register blueprints
+    app.register_blueprint(auth)
+
+    # Import routes here and attach
+    from Routes.main_routes import main as main_bp
+    app.register_blueprint(main_bp)
+
+    return app
