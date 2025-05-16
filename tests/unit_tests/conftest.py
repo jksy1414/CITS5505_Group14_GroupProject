@@ -1,6 +1,6 @@
 # conftest.py
 import pytest
-from app import app, db
+from app import create_app, db
 
 
 # Used for tests that need full isolation (registration tests)
