@@ -8,6 +8,7 @@ from pathlib import Path
 import os
 import csv
 import pandas as pd  # for reading CSVs
+from flask_wtf.csrf import CSRFProtect
 
 # Load environment variables
 env_path = Path('.') / 'named.env'
@@ -210,8 +211,8 @@ def set_visibility_2():
     
     # check for column selection
     if not selected_column: 
-            flash("Missing column selection for chart sharing.", "danger")
-            return redirect(url_for('auth.analyze_full', step='results'))
+        flash("Missing column selection for chart sharing.", "danger")
+        return redirect(url_for('auth.analyze_full', step='results'))
 
     # check for filepath
     if not filepath: 
