@@ -298,7 +298,11 @@ def forgot_password():
 
 @auth.route('/send_code', methods=['POST'])
 def send_code():
-    data = request.get_json()
+
+    try:
+        data = request.get_json(force=True)
+    except Exception as e:
+        return jsonify({'success': False, 'error': 'Invalid JSON'}), 400
     email = data.get('email')
 
     if not email:
@@ -316,8 +320,7 @@ def send_code():
 
     try:
         msg = Message("Password Reset Code",
-                      sender=current_app.config['MAIL_USERNAME'],
-                      recipients=[email])
+              recipients=[email])
         msg.body = f"Your password reset code is: {code}"
         mail.send(msg)
         return jsonify({'success': True})
