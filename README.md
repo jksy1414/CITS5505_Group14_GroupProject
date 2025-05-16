@@ -37,11 +37,11 @@ _CITS5505 Group 14 – The University of Western Australia_
 | 1️⃣   | Home / Welcome             | Intro to FitBug                                    |
 | 2️⃣   | Login / Register           | Secure access                                      |
 | 3️⃣   | Data Upload                | Upload fitness CSVs                                |
-| 4️⃣   | Column Selection + Rename | Choose and rename headers for graphs               |
+| 4️⃣   | Column Selection + Rename  | Choose and rename headers for graphs               |
 | 5️⃣   | Analysis & Visualization   | View interactive graphs and summary statistics     |
 | 6️⃣   | Output Sharing             | Share results: private, friends, public, download  |
 | 7️⃣   | Account Page               | Profile, history, goal tracker, friend system      |
-
+| 8️⃣   | Explore Page               | view all shared graphs(public, private, friends)   |
 ---
 
 ##  Getting Started
@@ -99,6 +99,21 @@ flask run
 Visit: [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
 ---
+### Email Configuration for Password Reset
+To enable the password reset feature, you need to configure your own email credentials in the environment file (.env or named.env). This feature uses Flask-Mail to send verification codes.
+
+```bash
+Example (Gmail):
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USE_TLS=True
+MAIL_USERNAME=your_email@gmail.com
+MAIL_PASSWORD=your_app_password
+MAIL_DEFAULT_SENDER=your_email@gmail.com
+```
+If you use Gmail, you must generate an App Password and use that instead of your real password.
+
+---
 
 ##  Testing Instructions
 
@@ -125,14 +140,17 @@ pip install selenium chromedriver_autoinstaller
 ```
 
 
-**Note:** Before running any Selenium tests that involve login, make sure to first run:
+**📝Note:** Before running any Selenium tests that involve login, make sure to first run:
 
 ```bash
 python tests/selenium/test_register_success.py
-This script generates a test account and saves the credentials in a file named last_test_account.txt
-located at tests/selenium/test_files/last_test_account.txt.
-Any Selenium test that requires login (such as test_login_success.py, test_chart.py, etc.) depends on the credentials stored in this file.
 ```
+This script generates a test account and saves the credentials in a file named last_test_account.txt
+```bash
+located at tests/selenium/test_files/last_test_account.txt.
+```
+Any Selenium test that requires login (such as test_login_success.py, test_chart.py, etc.) depends on the credentials stored in this file.
+
 
 ---
 
@@ -158,6 +176,8 @@ CITS5505_Group14_GroupProject/
 ├── requirements.txt
 ├── README.md
 ├── .env                     # Your environment variables (not committed)
+├── extension.py
+├── forms.py  
 ```
 
 ---
